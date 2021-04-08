@@ -1,0 +1,12 @@
+{
+  "name": "Barskollen_FrontEnd",
+  "displayName": "Barskollen_FrontEnd",
+  "expo": {
+    "name": "Barskollen_FrontEnd",
+    "slug": "Barskollen_FrontEnd",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
