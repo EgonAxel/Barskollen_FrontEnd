@@ -8,10 +8,11 @@ import {Card, FAB} from 'react-native-paper';
 function Home() {
 
     const [data, setData] = useState([])
+    
 
     useEffect(() => {
 
-        fetch("http://192.168.1.73/beer/",  {
+        fetch("http://192.168.56.1/beer/",  {
             method:"GET"
 
         })

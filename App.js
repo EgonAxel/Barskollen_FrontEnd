@@ -1,14 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Home from './Screens/Home'
+import Beers from './Screens/HomeInfinityScroll'
 import ExempelClass from './Screens/ExempelClass'
 
 export default function App() {
   return (
     <View style={styles.container}>
 
-        <Home name = 'Snogg'/>
+        <Beers name = 'Snogg'/>
         {/* <ExempelClass email = 'Snoggmail@snogg'/> */}
 
       <StatusBar style="auto" />
