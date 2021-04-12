@@ -8,9 +8,10 @@ export default function App() {
   return (
     <View style={styles.container}>
 
-        <Beers name = 'Snogg'/>
-        {/* <ExempelClass email = 'Snoggmail@snogg'/> */}
-
+        {/* <Home/> */}
+        <Beers/> {/* Tas från './Screens/HomeInfinityScroll'*/}
+       
+       
       <StatusBar style="auto" />
     </View>
   );

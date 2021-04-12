@@ -2,6 +2,14 @@ import React, {Component} from 'react';
 import {ScrollView, View, Text, FlatList, Image, StyleSheet} from 'react-native';
 import {Card} from 'react-native-elements';
 import axios from 'axios';
+
+// Installera dessa: 
+// npm i --save axios 
+// npm i react-native-elements --save
+// npm i --save react-native-vector-icons // required by react-native-elements
+
+
+
 class Beers extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -14,7 +22,7 @@ class Beers extends React.PureComponent {
   fetchBeer = () => {
     const {offset} = this.state;
     axios
-      .get(`http://192.168.56.1/beer/?limit=20&offset=${offset}`)
+      .get(`http://192.168.1.73/beer/?limit=20&offset=${offset}`) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
