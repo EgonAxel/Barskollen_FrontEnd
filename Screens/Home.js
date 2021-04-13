@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12
       },
     appButtonText: {
-        fontFamily: 'tahoma',
+        //fontFamily: '',
         fontSize: 18,
         color: "#fff",
         fontWeight: "bold",

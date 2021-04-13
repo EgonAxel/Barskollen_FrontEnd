@@ -22,7 +22,7 @@ class Beers extends React.PureComponent {
   fetchBeer = () => {
     const {offset} = this.state;
     axios
-      .get(`http://192.168.1.73/beer/?limit=20&offset=${offset}`) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1/beer/?limit=20&offset=${offset}&ordering=-rating`) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -34,9 +34,10 @@ class Beers extends React.PureComponent {
       });
   };
   fetchMoreBeers = () => {
+    console.log(this.state.offset)
     this.setState(
       prevState => ({
-        offset: prevState.offset + 1,
+        offset: prevState.offset + 20 ,
       }),
       () => {
         this.fetchBeer();
@@ -46,19 +47,11 @@ class Beers extends React.PureComponent {
   componentDidMount() {
     this.fetchBeer(this.state.offset);
   }
-  render() {
-    return (
-        <FlatList
-          contentContainerStyle={{
-            backgroundColor: '#FBFBF8',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 15,
-          }}
-          data={this.state.beers}
-          keyExtractor={beer => beer.beer_ID.toString()}
-          renderItem={({item}) => (
-            <View
+  _renderListItem(item){
+    
+      return(
+        
+        <View
               style={{
                 marginTop: 10,
               }}>
@@ -71,12 +64,30 @@ class Beers extends React.PureComponent {
               <Text style = {styles.textStyles}>{item.alcohol_percentage + '% vol'}</Text>
               </Card>
             </View>
-          )}
+        )
+    }
+  render() {
+    return (
+      
+        <FlatList
+        style={{flex:1}}
+          contentContainerStyle={{
+            backgroundColor: '#FFFFFF',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 15,
           
-
+          }}
+          data={this.state.beers}
+          keyExtractor={(beer, index) => String(index)}
+          
+          renderItem={({ item }) => this._renderListItem(item)}
+          //horizontal={true}
+        
           onEndReached={this.fetchMoreBeers}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={2}
            />
+           
           
 
         
@@ -88,24 +99,25 @@ class Beers extends React.PureComponent {
 }
 const styles = StyleSheet.create({
     cardStyle: {
-        padding:20,
-        margin:40,
+        padding:5,
+        margin:5,
         justifyContent: 'center',
         alignContent: 'center',
-        backgroundColor: 'grey',
-        borderRadius: 60,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        flex:1,
        
     },
     imageStyle: {
-        flex: 1,
-        width: 100,
-        height: 200,
+        
+        width: 80,
+        height: 150,
         resizeMode: 'contain',
         alignSelf: 'center'
     },
 
     textStyles : {
-        fontSize:25,
+        fontSize:15,
         textAlign: 'center',
       },
 })
