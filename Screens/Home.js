@@ -1,84 +1,74 @@
 
 
-import React, {useState, useEffect} from 'react'
-import { StyleSheet, Text, View, Button, FlatList, Image, Alert} from 'react-native';
-import {Card, FAB} from 'react-native-paper';
+import React from 'react'
+import { StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
+
+//const AppButton istället för vanlig button för att få en redigerbar knapp som funkar på både ios o andriod.
+// länk för knappar: https://blog.logrocket.com/creating-custom-buttons-in-react-native/
+
+const AppButton = ({ onPress, title }) => (
+    <TouchableOpacity
+     onPress={onPress} 
+     style={styles.appButtonContainer}>                 
+      <Text style={styles.appButtonText}>{title}</Text>
+    </TouchableOpacity>
+  );
 
 
-function Home() {
+function Home({ navigation }) {
+  
+return (
+ <View style={styles.buttonContainer}>
+     
+     <AppButton 
+      title="Topplistan"
+      onPress={() =>
+        //props.navigation.navigate('')
+        console.log('Klicka Topplistan')
+      }
+    />
+    <AppButton 
+      title="Utforska"
+      onPress={() =>
+        navigation.navigate('Utforska')
+      }
+    />
 
-    const [data, setData] = useState([])
-    
-
-    useEffect(() => {
-
-        fetch("http://192.168.56.1/beer/",  {
-            method:"GET"
-
-        })
-        
-        .then(resp => resp.json())
-        .then(data => {
-                setData(data.results)       
-        })
-       
-        .catch(error => Alert.alert("Error", error.message))
-        
-    }, [] )
-
-    const renderData = (item) => {
-        return(
-   
-         <Card  style = {styles.cardStyle}>
-    
-              <Text style = {styles.textStyles}>{item.name}</Text>
-              <Text style = {styles.textStyles}>{item.beer_type}</Text>
-              <Image source={{uri: item.picture_url + '_100.png' }} style={styles.imageStyle} />
-              <Text style = {styles.textStyles}>{item.container_type}</Text>
-              <Text style = {styles.textStyles}>{item.volume + ' ml'}</Text>
-              <Text style = {styles.textStyles}>{item.alcohol_percentage + '% vol'}</Text>
-    
-        </Card>
-   
-        )   
-    }
-    return (
- <View>
-    
-         <FlatList 
-             data = {data}
-             renderItem = {({item}) => {
-            return renderData(item)
-          }}
-          keyExtractor = {item => `${item.beer_ID}`}
-     />
+<AppButton 
+      title="Mitt konto"
+      onPress={() =>
+        navigation.navigate('Mitt konto')
+      }
+    />
 
 </View>
     )
 }
 
 const styles = StyleSheet.create({
-    cardStyle: {
-        padding:20,
-        margin:40,
+  
+    buttonContainer: {
+        margin: 10,
+        padding: 10,
         justifyContent: 'center',
-        alignContent: 'center',
-        backgroundColor: 'grey',
-        borderRadius: 60,
-       
-    },
-    imageStyle: {
-        flex: 1,
-        width: 100,
-        height: 200,
-        resizeMode: 'contain',
-        alignSelf: 'center'
     },
 
-    textStyles : {
-        fontSize:25,
-        textAlign: 'center',
+    appButtonContainer: {
+        margin: 15,
+        elevation: 8,
+        backgroundColor: "#009688",
+        borderRadius: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 12
       },
+    appButtonText: {
+        fontFamily: 'tahoma',
+        fontSize: 18,
+        color: "#fff",
+        fontWeight: "bold",
+        alignSelf: "center",
+        textTransform: "uppercase"
+      }
 })
 
 export default Home
