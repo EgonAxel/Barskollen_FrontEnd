@@ -51,7 +51,7 @@ function UserProfile({ navigation }) {
             paddingHorizontal: 12
           },
         appButtonText: {
-            //fontFamily: 'tahoma',
+           // fontFamily: 'tahoma',
             fontSize: 18,
             color: "#fff",
             fontWeight: "bold",
