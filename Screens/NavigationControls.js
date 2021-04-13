@@ -1,14 +1,16 @@
 
 import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Home from './Home';
-import Beers from './HomeInfinityScroll';
+import ExploreBeer from './ExploreBeer';
 import UserProfile from './UserProfile';
 import IndividualBeer from './IndividualBeer';
 
 
 const Tab = createMaterialBottomTabNavigator();
+
 
 function NavigationControls() {
   return (
@@ -42,7 +44,7 @@ function NavigationControls() {
     />
     <Tab.Screen
         name="Utforska"
-        component={Beers}
+        component={ExploreBeerStackScreen}
         options={{
           tabBarLabel: 'Utforska',
           tabBarIcon: ({ color }) => (
@@ -50,11 +52,21 @@ function NavigationControls() {
           ),
         }}
       />
-      <Tab.Screen
-        name="Individuel öl"
-        component={IndividualBeer}
-      />
+
+      
     </Tab.Navigator>
 );
 }
+
+const ExploreBeerStack = createStackNavigator();
+
+function ExploreBeerStackScreen() {
+  return (
+    <ExploreBeerStack.Navigator>
+      <ExploreBeerStack.Screen name="Utforska" component={ExploreBeer} />
+      <ExploreBeerStack.Screen name="IndividualBeer" component={IndividualBeer} />
+    </ExploreBeerStack.Navigator>
+  );
+}
+
 export default NavigationControls

@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {ScrollView, View, Text, FlatList, Image, StyleSheet} from 'react-native';
 import {Card} from 'react-native-elements';
 import axios from 'axios';
-
 import { TouchableOpacity } from 'react-native';
+
 
 // Installera dessa: 
 // npm i --save axios 
@@ -24,7 +24,7 @@ class Beers extends React.PureComponent {
   fetchBeer = () => {
     const {offset} = this.state;
     axios
-      .get(`http://192.168.56.1/beer/?limit=20&offset=${offset}&ordering=-rating`) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.73/beer/?limit=20&offset=${offset}&ordering=-rating`) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -57,7 +57,7 @@ class Beers extends React.PureComponent {
               style={{
                 marginTop: 10,
               }}>
-              <TouchableOpacity onPress={() => console.log('klicka öl' + item.name)}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID})}>
               <Card pointerEvents="none">
               <Text style = {styles.textStyles}>{item.name}</Text>
               <Text style = {styles.textStyles}>{item.beer_type}</Text>
@@ -71,6 +71,7 @@ class Beers extends React.PureComponent {
         )
     }
   render() {
+    
     return (
       
         <FlatList
