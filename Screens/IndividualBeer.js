@@ -1,4 +1,5 @@
 
+
 import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
 
@@ -11,31 +12,37 @@ const AppButton = ({ onPress, title }) => (
     </TouchableOpacity>
   );
 
-function UserProfile({ navigation }) {
+function IndividualBeer({  }) {
   
     return (
-     <View style={styles.buttonContainer}>
-         
-         <AppButton 
-          title="Mina bärs"
-          onPress={() =>
-            //props.navigation.navigate('')
-            console.log('Klicka Topplistan')
-          }
-        />
+        <View style={styles.buttonContainer}>
+     
         <AppButton 
-          title="Utforska"
-          onPress={() =>
-            navigation.navigate('Utforska')
-          }
-        />
-    
-    </View>
+         title="Ska vara individsuella öl"
+         onPress={() =>
+           //props.navigation.navigate('')
+           console.log('Klicka Topplistan')
+         }
+       />
+       <AppButton 
+         title="skit i dessa knappar"
+         onPress={() =>
+           navigation.navigate('Utforska')
+         }
+       />
+   
+   <AppButton 
+         title="bara skit azz"
+         onPress={() =>
+           navigation.navigate('Mitt konto')
+         }
+       />
+   
+   </View>
         )
     }
 
     const styles = StyleSheet.create({
-  
         buttonContainer: {
             margin: 10,
             padding: 10,
@@ -58,6 +65,7 @@ function UserProfile({ navigation }) {
             alignSelf: "center",
             textTransform: "uppercase"
           }
+
     })
     
-    export default UserProfile  
+    export default IndividualBeer  

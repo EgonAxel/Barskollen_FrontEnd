@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Home from './Home';
 import Beers from './HomeInfinityScroll';
 import UserProfile from './UserProfile';
+import IndividualBeer from './IndividualBeer';
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -48,6 +49,10 @@ function NavigationControls() {
             <MaterialCommunityIcons name="bottle-soda" color={color} size={26} />
           ),
         }}
+      />
+      <Tab.Screen
+        name="Individuel öl"
+        component={IndividualBeer}
       />
     </Tab.Navigator>
 );

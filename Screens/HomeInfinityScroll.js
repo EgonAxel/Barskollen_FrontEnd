@@ -3,6 +3,8 @@ import {ScrollView, View, Text, FlatList, Image, StyleSheet} from 'react-native'
 import {Card} from 'react-native-elements';
 import axios from 'axios';
 
+import { TouchableOpacity } from 'react-native';
+
 // Installera dessa: 
 // npm i --save axios 
 // npm i react-native-elements --save
@@ -62,7 +64,8 @@ class Beers extends React.PureComponent {
               style={{
                 marginTop: 10,
               }}>
-              <Card>
+              <TouchableOpacity onPress={() => console.log('klicka öl' + item.name)}>
+              <Card pointerEvents="none">
               <Text style = {styles.textStyles}>{item.name}</Text>
               <Text style = {styles.textStyles}>{item.beer_type}</Text>
               <Image source={{uri: item.picture_url + '_100.png' }} style={styles.imageStyle} />
@@ -70,6 +73,7 @@ class Beers extends React.PureComponent {
               <Text style = {styles.textStyles}>{item.volume + ' ml'}</Text>
               <Text style = {styles.textStyles}>{item.alcohol_percentage + '% vol'}</Text>
               </Card>
+              </TouchableOpacity>
             </View>
           )}
           
