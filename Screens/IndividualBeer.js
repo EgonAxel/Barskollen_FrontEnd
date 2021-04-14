@@ -64,7 +64,7 @@ return (
     <FlatList
     style={{flex: 1}}
       contentContainerStyle={{
-        backgroundColor: '#c3fca4',
+        backgroundColor: '#d9f7cd',
         alignItems: 'center',
         justifyContent: 'center',
         // marginTop: 15,

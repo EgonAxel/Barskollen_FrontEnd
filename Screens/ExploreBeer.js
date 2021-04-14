@@ -79,7 +79,7 @@ class Beers extends React.PureComponent {
         <FlatList
         style={{flex: 1}}
           contentContainerStyle={{
-            backgroundColor: '#effce8',
+            backgroundColor: '#d9f7cd',
             alignItems: 'center',
             justifyContent: 'center',
             // marginTop: 15,
@@ -104,16 +104,24 @@ const styles = StyleSheet.create({
     viewStyle: {
       marginTop: 15,
       width: 400,
-      backgroundColor: '#f9fcf7',
+      backgroundColor: '#effce8',
       borderRadius: 15,
       borderStyle: 'solid', 
-      borderColor: '#e3e3e3',
+      borderColor: '#effce8',
       borderWidth: 3,
+      shadowColor: "#000",
+      shadowOffset: {
+	      width: 3,
+	      height: 3
+      },
+      shadowOpacity: 0.5,
+      shadowRadius: 5,
+      elevation: 20,
     },
 
     beerImage: {
         width: 100,
-        height: 200,
+        height: 100,
         marginTop: 10,
         marginBottom: 10,
         marginLeft: 10,
@@ -122,16 +130,16 @@ const styles = StyleSheet.create({
     },
 
     productNameBold: {
-      fontSize: 20,
-      fontWeight: '700',
+      fontSize: 14,
+      fontWeight: '500',
       textAlign: 'left',
     },
 
     productNameThin: {
-      fontSize: 18,
-      fontWeight: '600',
+      fontSize: 12,
+      fontWeight: '400',
       textAlign: 'left',
-      marginBottom: 20,
+      marginBottom: 5,
     },
 
     beerInstance: {
@@ -139,13 +147,14 @@ const styles = StyleSheet.create({
       paddingBottom: 5,
       textAlign: 'left',
       flexDirection: 'row',
+      maxWidth: 265,
     },
 
     beerInformation: {
       marginTop: 15,
       paddingBottom: 5,
       flexDirection: 'column',
-      left: 50,
+      left: 15,
     },
 
     attributeStyle: {
@@ -155,16 +164,13 @@ const styles = StyleSheet.create({
       },
 
     alcohol_percentage: {
-      fontSize: 20,
+      fontSize: 14,
       textAlign: 'left',
-      marginTop: 20,
     },
 
     rating: {
-      flex: 1,
-      fontSize: 20,
+      fontSize: 14,
       textAlign: 'left',
-      marginTop: 20,
     },
 })
 export default Beers;
