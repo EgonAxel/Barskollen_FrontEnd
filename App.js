@@ -29,6 +29,7 @@ export default function App() {
           containerStyle={{
             backgroundColor: '#fff',
             justifyContent: 'space-around',
+            height: 100,
           }}
           rightComponent={<Ionicons name="beer-outline" size={30}  /> }
         />

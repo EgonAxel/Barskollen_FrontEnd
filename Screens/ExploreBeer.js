@@ -24,7 +24,7 @@ class Beers extends React.PureComponent {
   fetchBeer = () => {
     const {offset} = this.state;
     axios
-      .get(`http://192.168.1.73:80/beer/?limit=20&offset=${offset}&ordering=-rating`) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&ordering=-rating`) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -50,24 +50,26 @@ class Beers extends React.PureComponent {
     this.fetchBeer(this.state.offset);
   }
   _renderListItem(item){
-    console.log()
+    
       return(
-        
-        <View
-              style={{
-                marginTop: 10,
-              }}>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID:item.beer_ID}) }>
-              <Card pointerEvents="none">
-              <Text style = {styles.textStyles}>{item.name}</Text>
-              <Text style = {styles.textStyles}>{item.beer_type}</Text>
-              <Image source={{uri: item.picture_url + '_100.png' }} style={styles.imageStyle} />
-              <Text style = {styles.textStyles}>{item.container_type}</Text>
-              <Text style = {styles.textStyles}>{item.volume + ' ml'}</Text>
-              <Text style = {styles.textStyles}>{item.alcohol_percentage + '% vol'}</Text>
-              </Card>
-              </TouchableOpacity>
-            </View>
+        // Bortkommenderad från <Card>: pointerEvents="none">
+        <View style = {styles.viewStyle}>
+          {/* <Card style = {styles.cardStyle}> */}
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID})}>
+                <View style = {styles.beerInstance}>
+                  <Image style = {styles.beerImage} source = {{uri: item.picture_url + '_100.png' }}/>
+                    <View style = {styles.beerInformation}>
+                      <Text style = {styles.productNameBold}>{item.name}</Text>
+                      <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+                      {/* <Text style = {styles.attributeStyle}>{item.container_type}{'\n'}</Text> */}
+                      {/* <Text style = {styles.attributeStyle}>{item.volume + ' ml'}{'\n'}</Text> */}
+                      <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                      <Text style = {styles.rating}>{'Rating: ' + Number((item.avg_rating).toFixed(1)) + ' av 5'}</Text>
+                    </View>
+                </View> 
+            </TouchableOpacity>
+          {/* </Card> */}
+        </View>
         )
     }
   render() {
@@ -77,10 +79,10 @@ class Beers extends React.PureComponent {
         <FlatList
         style={{flex: 1}}
           contentContainerStyle={{
-            backgroundColor: '#ffffff',
+            backgroundColor: '#effce8',
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 15,
+            // marginTop: 15,
           
           }}
           data={this.state.beers}
@@ -92,38 +94,77 @@ class Beers extends React.PureComponent {
           onEndReached={this.fetchMoreBeers}
           onEndReachedThreshold={2}
            />
-           
-          
-
-        
     );
-    
-    
+
   }
   
 }
 const styles = StyleSheet.create({
-    cardStyle: {
-        padding:5,
-        margin:5,
-        justifyContent: 'center',
-        alignContent: 'center',
-        backgroundColor: '#FFFFFF',
-        borderRadius: 10,
-        flex:1,
-       
-    },
-    imageStyle: {
-        
-        width: 80,
-        height: 150,
-        resizeMode: 'contain',
-        alignSelf: 'center'
+
+    viewStyle: {
+      marginTop: 15,
+      width: 400,
+      backgroundColor: '#f9fcf7',
+      borderRadius: 15,
+      borderStyle: 'solid', 
+      borderColor: '#e3e3e3',
+      borderWidth: 3,
     },
 
-    textStyles : {
-        fontSize: 15,
-        textAlign: 'center',
+    beerImage: {
+        width: 100,
+        height: 200,
+        marginTop: 10,
+        marginBottom: 10,
+        marginLeft: 10,
+        resizeMode: 'contain',
+        left: 0,
+    },
+
+    productNameBold: {
+      fontSize: 20,
+      fontWeight: '700',
+      textAlign: 'left',
+    },
+
+    productNameThin: {
+      fontSize: 18,
+      fontWeight: '600',
+      textAlign: 'left',
+      marginBottom: 20,
+    },
+
+    beerInstance: {
+      textAlign: 'center',
+      paddingBottom: 5,
+      textAlign: 'left',
+      flexDirection: 'row',
+    },
+
+    beerInformation: {
+      marginTop: 15,
+      paddingBottom: 5,
+      flexDirection: 'column',
+      left: 50,
+    },
+
+    attributeStyle: {
+        fontSize: 20,
+        textAlign: 'left',
+        paddingBottom: 0,
       },
+
+    alcohol_percentage: {
+      fontSize: 20,
+      textAlign: 'left',
+      marginTop: 20,
+    },
+
+    rating: {
+      flex: 1,
+      fontSize: 20,
+      textAlign: 'left',
+      marginTop: 20,
+    },
 })
 export default Beers;

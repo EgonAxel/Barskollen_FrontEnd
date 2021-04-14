@@ -19,7 +19,7 @@ class individualBeer extends React.PureComponent {
   }
   fetchBeer = () => {
     axios
-      .get(`http://192.168.56.1/beer/${this.state.id}`) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/${this.state.id}`) //Här behävs din egen adress till APIn
       .then(response => {
         console.log()
         this.setState({
@@ -40,24 +40,21 @@ class individualBeer extends React.PureComponent {
 _renderListItem(item){
   return(
     
-    <View
-          style={{
-            marginTop: 10,
-          }}>
-        
-          <Card pointerEvents="none">
-          <Text style = {styles.textStyles}>{item.name}</Text>
-          <Text style = {styles.textStyles}>{item.beer_type}</Text>
-          <Image source={{uri: item.picture_url + '_100.png' }} style={styles.imageStyle} />
-          <Text style = {styles.textStyles}>{item.container_type}</Text>
-          <Text style = {styles.textStyles}>{item.volume + ' ml'}</Text>
-          <Text style = {styles.textStyles}>{item.alcohol_percentage + '% vol'}</Text>
-          {/* <Text style = {styles.textStyles}>{item.bitterness + ' Bitterhet'}</Text>
-          <Text style = {styles.textStyles}>{item.fullness + ' Fyllighet'}</Text>
-          <Text style = {styles.textStyles}>{item.sweetness + ' Sötma' }</Text>
-          <Text style = {styles.textStyles}>{item.avg_rating + ' Betyg' }</Text> */}
-          </Card>
-          
+    <View style = {styles.viewStyle}>
+          {/* <Card pointerEvents="none"> */}
+          <Text style = {styles.productNameBold}>{item.name}</Text>
+          <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+          <Image source={{uri: item.picture_url + '_100.png' }} style={styles.beerImage} />
+          <Text style = {styles.alcoholPercentageStyle}>{item.alcohol_percentage + '% vol'}</Text>
+          <Text style = {styles.containerAndVolumeStyle}>{item.container_type + ', ' + item.volume + ' ml'}</Text>
+          {/* <Text style = {styles.volumeStyle}>{item.volume + ' ml'}</Text> */}
+          <View style = {styles.tasteClockWrap}>
+            <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + item.bitterness}</Text>
+            <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + item.fullness}</Text>
+            <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  item.sweetness}</Text>
+          </View>
+          <Text style = {styles.rating}>{'Rating: ' + Number((item.avg_rating).toFixed(1)) + ' av 5'}</Text> 
+          {/* </Card> */}
         </View>
     )
 }
@@ -67,10 +64,10 @@ return (
     <FlatList
     style={{flex: 1}}
       contentContainerStyle={{
-        backgroundColor: '#ffffff',
+        backgroundColor: '#c3fca4',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 15,
+        // marginTop: 15,
       
       }}
       data={this.state.beers}
@@ -79,44 +76,79 @@ return (
       renderItem={({ item }) => this._renderListItem(item)}
       //horizontal={true}
        />
-       
-      
 
-    
     );
-
-
   }
-
 }
 
 const styles = StyleSheet.create({
-  cardStyle: {
-      padding:5,
-      margin:5,
-      justifyContent: 'center',
-      alignContent: 'center',
-      backgroundColor: '#FFFFFF',
-      borderRadius: 10,
-      flex:1,
-     
+
+  viewStyle: {
+    marginTop: 15,
+    width: 400,
+    height: 720,
+    backgroundColor: '#effce8',
+    borderRadius: 15,
+    borderStyle: 'solid', 
+    borderColor: '#e3e3e3',
+    borderWidth: 3,
+    marginBottom: 15,
   },
-  imageStyle: {
-      
-      width: 80,
-      height: 150,
+
+  productNameBold: {
+    fontSize: 25,
+    fontWeight: '700',
+    marginTop: 25,
+    textAlign: 'center',
+  },
+
+  productNameThin: {
+    fontSize: 18,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+
+  beerImage: {
+      width: 200,
+      height: 300,
+      marginBottom: 20,
       resizeMode: 'contain',
       alignSelf: 'center'
   },
 
-  textStyles : {
-      fontSize: 15,
+
+  alcoholPercentageStyle: {
+    fontSize: 22,
+    textAlign: 'center',
+    fontWeight: '500',
+    marginBottom: 10,
+  },
+
+  containerAndVolumeStyle: {
+    fontSize: 20,
+    textAlign: 'center',
+
+  },
+
+  tasteClockWrap: {
+    flex: 1,
+    marginTop: 50,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+
+  tasteClockStyle : {
+      fontSize: 20,
+      fontWeight: 'bold',
       textAlign: 'center',
     },
+
+  rating: {
+    fontSize: 25,
+    textAlign: 'center',
+    marginBottom: 100,
+  },
 })
 
-
-  
-
-  
 export default individualBeer  
