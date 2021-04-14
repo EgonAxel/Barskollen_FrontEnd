@@ -75,6 +75,7 @@ function ExploreBeerStackScreen() {
           headerTitleStyle: { alignSelf: 'center' },
           headerStyle: {
             backgroundColor: '#fff',
+            height: 75,
             }}
           }
         />
@@ -85,7 +86,8 @@ function ExploreBeerStackScreen() {
           title: 'Individual beer' ,
           headerTitleStyle: { alignSelf: 'center' },
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: '#fff', 
+            height: 75,
             }}
           } 
          />
