@@ -9,6 +9,7 @@ import Home from './Home';
 import ExploreBeer from './ExploreBeer';
 import UserProfile from './UserProfile';
 import IndividualBeer from './IndividualBeer';
+import Constants from 'expo-constants'
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -40,7 +41,8 @@ function NavigationControls() {
         options={{
           tabBarLabel: 'Startsida',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={30} />
+            <MaterialCommunityIcons name="home" color={color} size={30}
+             />
           ),
         }}
     />
@@ -64,9 +66,29 @@ const ExploreBeerStack = createStackNavigator();
 
 function ExploreBeerStackScreen() {
   return (
-    <ExploreBeerStack.Navigator>
-      <ExploreBeerStack.Screen name="Utforska" component={ExploreBeer} />
-      <ExploreBeerStack.Screen name="IndividualBeer" component={IndividualBeer} />
+    <ExploreBeerStack.Navigator>  
+      <ExploreBeerStack.Screen 
+        name="Utforska" 
+        component={ExploreBeer} 
+        options={{ 
+          title: 'Utforska',
+          headerTitleStyle: { alignSelf: 'center' },
+          headerStyle: {
+            backgroundColor: '#fff',
+            }}
+          }
+        />
+      <ExploreBeerStack.Screen 
+        name="IndividualBeer" 
+        component={IndividualBeer}
+        options={{ 
+          title: 'Individual beer' ,
+          headerTitleStyle: { alignSelf: 'center' },
+          headerStyle: {
+            backgroundColor: '#fff',
+            }}
+          } 
+         />
     </ExploreBeerStack.Navigator>
   );
 }

@@ -19,7 +19,7 @@ function Home({ navigation }) {
   
 return (
  <View style={styles.buttonContainer}>
-     
+  
      <AppButton 
       title="Topplistan"
       onPress={() =>
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#009688",
         borderRadius: 10,
         paddingVertical: 20,
-        paddingHorizontal: 12
+        paddingHorizontal: 12,
       },
     appButtonText: {
         //fontFamily: '',
