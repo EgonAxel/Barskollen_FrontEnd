@@ -24,7 +24,7 @@ class Beers extends React.PureComponent {
   fetchBeer = () => {
     const {offset} = this.state;
     axios
-      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&ordering=-rating`) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1/beer/?limit=20&offset=${offset}&ordering=-rating`) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -50,14 +50,14 @@ class Beers extends React.PureComponent {
     this.fetchBeer(this.state.offset);
   }
   _renderListItem(item){
-    
+    console.log()
       return(
         
         <View
               style={{
                 marginTop: 10,
               }}>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID})}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID:item.beer_ID}) }>
               <Card pointerEvents="none">
               <Text style = {styles.textStyles}>{item.name}</Text>
               <Text style = {styles.textStyles}>{item.beer_type}</Text>
