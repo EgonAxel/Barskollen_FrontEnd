@@ -3,6 +3,8 @@ import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons'; 
+import { Ionicons } from '@expo/vector-icons'; 
 import Home from './Home';
 import ExploreBeer from './ExploreBeer';
 import UserProfile from './UserProfile';
@@ -17,7 +19,7 @@ function NavigationControls() {
 
     <Tab.Navigator
      initialRouteName="Home"
-      activeColor="#e91e63"
+      activeColor="#ffffff"
       labelStyle={{ fontSize: 12 }}
       style={{ backgroundColor: 'tomato' }}
     >
@@ -28,7 +30,7 @@ function NavigationControls() {
         options={{
           tabBarLabel: 'Mitt konto',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="face-profile" color={color} size={26} />
+            <MaterialIcons name="face" size={30} color={color} />
           ),
         }}
       /> 
@@ -36,9 +38,9 @@ function NavigationControls() {
         name="Home"
         component={Home}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: 'Startsida',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
+            <MaterialCommunityIcons name="home" color={color} size={30} />
           ),
         }}
     />
@@ -48,7 +50,7 @@ function NavigationControls() {
         options={{
           tabBarLabel: 'Utforska',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="bottle-soda" color={color} size={26} />
+            <Ionicons name="beer-outline" size={30} color={color} />
           ),
         }}
       />

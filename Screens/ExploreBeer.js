@@ -24,7 +24,7 @@ class Beers extends React.PureComponent {
   fetchBeer = () => {
     const {offset} = this.state;
     axios
-      .get(`http://192.168.1.73/beer/?limit=20&offset=${offset}&ordering=-rating`) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&ordering=-rating`) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -75,9 +75,9 @@ class Beers extends React.PureComponent {
     return (
       
         <FlatList
-        style={{flex:1}}
+        style={{flex: 1}}
           contentContainerStyle={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#ffffff',
             alignItems: 'center',
             justifyContent: 'center',
             marginTop: 15,
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     },
 
     textStyles : {
-        fontSize:15,
+        fontSize: 15,
         textAlign: 'center',
       },
 })
