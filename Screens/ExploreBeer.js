@@ -50,14 +50,14 @@ class Beers extends React.PureComponent {
     this.fetchBeer(this.state.offset);
   }
   _renderListItem(item){
-    
+    console.log()
       return(
         
         <View
               style={{
                 marginTop: 10,
               }}>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID})}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID:item.beer_ID}) }>
               <Card pointerEvents="none">
               <Text style = {styles.textStyles}>{item.name}</Text>
               <Text style = {styles.textStyles}>{item.beer_type}</Text>
