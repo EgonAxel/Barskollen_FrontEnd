@@ -14,6 +14,18 @@ const AppButton = ({ onPress, title }) => (
       <Text style={styles.appButtonText}>{title}</Text>
     </TouchableOpacity>
   );
+  async function save(key, value) {
+    await SecureStore.setItemAsync(key, value);
+  }
+  
+  async function getValueFor(key) {
+    let result = await SecureStore.getItemAsync(key);
+    if (result) {
+      return(result);
+    } else {
+      return(None);
+    }
+  }
 
 
 function Home({ navigation }) {
@@ -21,13 +33,14 @@ function Home({ navigation }) {
 return (
  <View style={styles.buttonContainer}>
   
-     <AppButton 
+  <AppButton 
       title="Topplistan"
-      onPress={() =>
-        async function save(key, value) {             //-------- ATM används topplistan knappen som "log in"
-          await SecureStore.setItemAsync(key, value);
-        }
-      }
+      onPress={() => {
+        save("Token", "e81a635ac58256dd9ff9a9626542d05743b2c4d3");
+        getValueFor("Token").then((token) => {
+          console.log(token)
+        })
+      }}
     />
     <AppButton 
       title="Utforska"

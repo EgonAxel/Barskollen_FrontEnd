@@ -29,7 +29,7 @@ class individualBeer extends React.PureComponent {
   fetchBeer = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://192.168.1.73:8000/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1:80/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         console.log()
         this.setState({
