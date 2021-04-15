@@ -3,13 +3,21 @@ import {ScrollView, View, Text, FlatList, Image, StyleSheet} from 'react-native'
 import {Card} from 'react-native-elements';
 import axios from 'axios';
 import { TouchableOpacity } from 'react-native';
-
+import * as SecureStore from 'expo-secure-store';
 
 // Installera dessa: 
 // npm i --save axios 
 // npm i react-native-elements --save
 // npm i --save react-native-vector-icons // required by react-native-elements
 
+async function getValueFor(key) {
+  let result = await SecureStore.getItemAsync(key);
+  if (result) {
+     return(result);
+   } else {
+     return(None);
+   }
+ }
 
 
 class Beers extends React.PureComponent {
@@ -23,18 +31,19 @@ class Beers extends React.PureComponent {
   }
   fetchBeer = () => {
     const {offset} = this.state;
-    axios
-    .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&ordering=-rating`, {headers: { 'Authorization': `Token e81a635ac58256dd9ff9a9626542d05743b2c4d3`}}) //Här behävs din egen adress till APIn
+    getValueFor("Token").then((token) => {
+      axios
+      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&ordering=-rating`, {headers: { 'Authorization': `Token `  + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
-          
         });
       })
       .catch(error => {
         this.setState({error: error.message});
       });
-  };
+    })
+  }
   fetchMoreBeers = () => {
     console.log(this.state.offset)
     this.setState(

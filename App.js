@@ -2,11 +2,12 @@
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, KeyboardAvoidingView} from 'react-native';
 import { Header } from 'react-native-elements';
 import NavigationControls from './Screens/NavigationControls'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons'; 
+import LogIn from './Screens/LogIn'
 
 
 //npm install @react-navigation/native @react-navigation/stack
@@ -17,9 +18,14 @@ import { Ionicons } from '@expo/vector-icons';
 //npm i --save react-native-vector-icons
 //npm i --save react-native-safe-area-context      
 
-  
+
 export default function App() {
     return (
+      <KeyboardAvoidingView
+          style={{flex: 1}}
+          enabled>
+        <LogIn/>
+    </KeyboardAvoidingView>,
     <SafeAreaProvider>            
         <Header                                   // --- För att ha en header behövs en safearea runt appen 
           placement="left"
@@ -29,7 +35,7 @@ export default function App() {
           containerStyle={{
             backgroundColor: '#fff',
             justifyContent: 'space-around',
-            height: 100,
+            //height: 100,
           }}
           rightComponent={<Ionicons name="beer-outline" size={30}  /> }
         />

@@ -6,6 +6,16 @@ import {Card} from 'react-native-elements';
 import axios from 'axios';
 import { TouchableOpacity } from 'react-native';
 
+import * as SecureStore from 'expo-secure-store';
+async function getValueFor(key) {
+ let result = await SecureStore.getItemAsync(key);
+ if (result) {
+    return(result);
+  } else {
+    return(None);
+  }
+}
+
 
 class individualBeer extends React.PureComponent {
   constructor(props) {
@@ -18,20 +28,20 @@ class individualBeer extends React.PureComponent {
     };
   }
   fetchBeer = () => {
+    getValueFor("Token").then((token) => {
     axios
-      .get(`http://127.0.0.1:8000/beer/${this.state.id}/`, {headers: { 'Authorization': `Token e81a635ac58256dd9ff9a9626542d05743b2c4d3`}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.73:8000/beer/${this.state.id}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         console.log()
         this.setState({
           beers: this.state.beers.concat(response.data),
-          
-          
         });
         console.log()
       })
       .catch(error => {
         this.setState({error: error.message});
       });
+    })
   };
   componentDidMount() {
     this.fetchBeer(this.state.offset);

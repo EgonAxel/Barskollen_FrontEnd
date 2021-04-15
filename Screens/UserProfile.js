@@ -20,13 +20,13 @@ function UserProfile({ navigation }) {
           title="Mina bärs"
           onPress={() =>
             //props.navigation.navigate('')
-            console.log('Klicka Topplistan')
+            console.log('Klicka mina bärs')
           }
         />
         <AppButton 
-          title="Utforska"
+          title="Logga ut"
           onPress={() =>
-            navigation.navigate('Utforska')
+            console.log('Klivkade logga ut')
           }
         />
     

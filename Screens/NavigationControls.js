@@ -9,7 +9,7 @@ import Home from './Home';
 import ExploreBeer from './ExploreBeer';
 import UserProfile from './UserProfile';
 import IndividualBeer from './IndividualBeer';
-import Constants from 'expo-constants'
+import LogIn from './LogIn'
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -19,11 +19,21 @@ function NavigationControls() {
   return (
 
     <Tab.Navigator
-     initialRouteName="Home"
-      activeColor="#ffffff"
+      initialRouteName="Home"
+      activeColor="#fff"
       labelStyle={{ fontSize: 12 }}
-      style={{ backgroundColor: 'tomato' }}
+      barStyle={{ backgroundColor: '#009688' } }
     >
+    <Tab.Screen
+        name="Logga in"
+        component={LogIn}
+        options={{
+          tabBarLabel: 'Logga in',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="lock" size={30} color={color} />
+          ),
+        }}
+      />
 
     <Tab.Screen
         name="Mitt konto"
@@ -67,7 +77,7 @@ const ExploreBeerStack = createStackNavigator();
 function ExploreBeerStackScreen() {
   return (
     <ExploreBeerStack.Navigator>  
-      <ExploreBeerStack.Screen 
+      <ExploreBeerStack.Screen
         name="Utforska" 
         component={ExploreBeer} 
         options={{ 

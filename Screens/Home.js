@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 
 //const AppButton istället för vanlig button för att få en redigerbar knapp som funkar på både ios o andriod.
 // länk för knappar: https://blog.logrocket.com/creating-custom-buttons-in-react-native/
@@ -23,8 +24,9 @@ return (
      <AppButton 
       title="Topplistan"
       onPress={() =>
-        //props.navigation.navigate('')
-        console.log('Klicka Topplistan')
+        async function save(key, value) {             //-------- ATM används topplistan knappen som "log in"
+          await SecureStore.setItemAsync(key, value);
+        }
       }
     />
     <AppButton 
