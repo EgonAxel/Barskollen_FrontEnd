@@ -10,6 +10,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // npm i react-native-elements --save
 // npm i --save react-native-vector-icons // required by react-native-elements
 
+// npm install react-native-stars --save  //För stärnor
+
 async function getValueFor(key) {
   let result = await SecureStore.getItemAsync(key);
   if (result) {
