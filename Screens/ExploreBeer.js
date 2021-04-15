@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
-import {ScrollView, View, Text, FlatList, Image, StyleSheet} from 'react-native';
+import {ScrollView, View, Text, FlatList, Image, StyleSheet,TouchableOpacity} from 'react-native';
 import {Card} from 'react-native-elements';
 import axios from 'axios';
-import { TouchableOpacity } from 'react-native';
+import Stars from 'react-native-stars';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 
 // Installera dessa: 
@@ -24,7 +26,7 @@ class Beers extends React.PureComponent {
   fetchBeer = () => {
     const {offset} = this.state;
     axios
-    .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&ordering=-rating`, {headers: { 'Authorization': `Token e81a635ac58256dd9ff9a9626542d05743b2c4d3`}}) //Här behävs din egen adress till APIn
+    .get(`http://192.168.56.1:80/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token e81a635ac58256dd9ff9a9626542d05743b2c4d3`}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -64,7 +66,16 @@ class Beers extends React.PureComponent {
                       {/* <Text style = {styles.attributeStyle}>{item.container_type}{'\n'}</Text> */}
                       {/* <Text style = {styles.attributeStyle}>{item.volume + ' ml'}{'\n'}</Text> */}
                       <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                      <Text style = {styles.rating}>{'Rating: ' + Number((item.avg_rating).toFixed(1)) + ' av 5'}</Text>
+                      
+                      <Stars
+                      display= {Number((item.avg_rating).toFixed(1))}
+                        half={true}
+                        fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                        emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                        halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                        />
+                        
+                    
                     </View>
                 </View> 
             </TouchableOpacity>
@@ -171,6 +182,19 @@ const styles = StyleSheet.create({
     rating: {
       fontSize: 14,
       textAlign: 'left',
+    },
+    myStarStyle: {
+      color: 'black',
+      backgroundColor: 'transparent',
+      textShadowColor: 'black',
+      textShadowOffset: {width: 1, height: 1},
+      textShadowRadius: 2,
+      fontSize: 30,
+      left: 15
+  
+    },
+    myEmptyStarStyle: {
+      color: 'black',
     },
 })
 export default Beers;

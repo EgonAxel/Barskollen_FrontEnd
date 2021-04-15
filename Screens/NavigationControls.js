@@ -10,7 +10,7 @@ import ExploreBeer from './ExploreBeer';
 import UserProfile from './UserProfile';
 import IndividualBeer from './IndividualBeer';
 import Constants from 'expo-constants'
-
+import commentLayout from './commentLayout';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -84,6 +84,18 @@ function ExploreBeerStackScreen() {
         component={IndividualBeer}
         options={{ 
           title: 'Individual beer' ,
+          headerTitleStyle: { alignSelf: 'center' },
+          headerStyle: {
+            backgroundColor: '#fff', 
+            height: 75,
+            }}
+          } 
+         />
+          <ExploreBeerStack.Screen 
+        name="commentLayout" 
+        component={commentLayout}
+        options={{ 
+          title: 'commentLayout' ,
           headerTitleStyle: { alignSelf: 'center' },
           headerStyle: {
             backgroundColor: '#fff', 

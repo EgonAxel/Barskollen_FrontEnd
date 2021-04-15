@@ -1,10 +1,9 @@
 
 
-import React, {Component} from 'react';
-import {ScrollView, View, Text, FlatList, Image, StyleSheet} from 'react-native';
-import {Card} from 'react-native-elements';
+import React from 'react';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import axios from 'axios';
-import { TouchableOpacity } from 'react-native';
+
 
 
 class individualBeer extends React.PureComponent {
@@ -14,12 +13,12 @@ class individualBeer extends React.PureComponent {
       beers: [],
       offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
       error: null,
-      id: this.props.route.params.beer_ID
+      beer_ID: this.props.route.params.beer_ID
     };
   }
   fetchBeer = () => {
     axios
-      .get(`http://127.0.0.1:8000/beer/${this.state.id}/`, {headers: { 'Authorization': `Token e81a635ac58256dd9ff9a9626542d05743b2c4d3`}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1:80/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token e81a635ac58256dd9ff9a9626542d05743b2c4d3`}}) //Här behävs din egen adress till APIn
       .then(response => {
         console.log()
         this.setState({
@@ -41,12 +40,19 @@ _renderListItem(item){
   return(
     
     <View style = {styles.viewStyle}>
-          {/* <Card pointerEvents="none"> */}
+          {/* <Card pointerEvents="none"> */} 
           <Text style = {styles.productNameBold}>{item.name}</Text>
           <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+          <View style = {styles.imageWrap}>
           <Image source={{uri: item.picture_url + '_100.png' }} style={styles.beerImage} />
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('commentLayout', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url} )}>
+           <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
+          </TouchableOpacity>
+          </View>
+          <View style = {styles.textWrap}>
           <Text style = {styles.alcoholPercentageStyle}>{item.alcohol_percentage + '% vol'}</Text>
           <Text style = {styles.containerAndVolumeStyle}>{item.container_type + ', ' + item.volume + ' ml'}</Text>
+          </View>
           {/* <Text style = {styles.volumeStyle}>{item.volume + ' ml'}</Text> */}
           <View style = {styles.tasteClockWrap}>
             <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + item.bitterness}</Text>
@@ -106,21 +112,45 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 5,
   },
 
   beerImage: {
       width: 200,
       height: 300,
-      marginBottom: 20,
       resizeMode: 'contain',
       alignSelf: 'center'
   },
+  imageWrap: {
+    flex: 3,
+    marginTop: 80,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginBottom: 20
+},
+textWrap: {
+  flex: 2,
+  marginTop: 120,
+  flexDirection: 'row',
+  justifyContent: 'space-evenly',
+},
+tasteClockWrap: {
+  flex: 1,
+  flexDirection: 'row',
+  justifyContent: 'space-evenly',
+},
+
+  capImage: {
+    width: 150,
+    height: 200,
+    resizeMode: 'contain',
+    alignSelf: 'center'
+},
 
 
   alcoholPercentageStyle: {
     fontSize: 22,
-    textAlign: 'center',
+    textAlign: 'right',
     fontWeight: '500',
     marginBottom: 10,
   },
@@ -129,13 +159,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
 
-  },
-
-  tasteClockWrap: {
-    flex: 1,
-    marginTop: 50,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
   },
 
   tasteClockStyle : {
