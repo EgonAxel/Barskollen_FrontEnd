@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {ScrollView, View, Text, FlatList, Image, StyleSheet} from 'react-native';
-import {Card} from 'react-native-elements';
+import React from 'react';
+import {View, Text, FlatList, Image, StyleSheet,TouchableOpacity} from 'react-native';
 import axios from 'axios';
-import { TouchableOpacity } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import Stars from 'react-native-stars';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // Installera dessa: 
 // npm i --save axios 
@@ -73,7 +73,16 @@ class Beers extends React.PureComponent {
                       {/* <Text style = {styles.attributeStyle}>{item.container_type}{'\n'}</Text> */}
                       {/* <Text style = {styles.attributeStyle}>{item.volume + ' ml'}{'\n'}</Text> */}
                       <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                      <Text style = {styles.rating}>{'Rating: ' + Number((item.avg_rating).toFixed(1)) + ' av 5'}</Text>
+                      
+                      <Stars
+                      display= {Number((item.avg_rating).toFixed(1))}
+                        half={true}
+                        fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                        emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                        halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                        />
+                        
+                    
                     </View>
                 </View> 
             </TouchableOpacity>
@@ -180,6 +189,19 @@ const styles = StyleSheet.create({
     rating: {
       fontSize: 14,
       textAlign: 'left',
+    },
+    myStarStyle: {
+      color: 'black',
+      backgroundColor: 'transparent',
+      textShadowColor: 'black',
+      textShadowOffset: {width: 1, height: 1},
+      textShadowRadius: 2,
+      fontSize: 30,
+      left: 15
+  
+    },
+    myEmptyStarStyle: {
+      color: 'black',
     },
 })
 export default Beers;
