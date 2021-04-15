@@ -34,7 +34,7 @@ class commentLayout extends React.PureComponent {
         <View style={{alignItems:'center'}}>
           <Stars
             update={(val)=>{this.setState({stars: val})}}
-            half={true}
+            // half={true}
             display= {Number((this.state.stars).toFixed(1))}
             fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
             emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
