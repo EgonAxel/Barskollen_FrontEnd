@@ -35,7 +35,7 @@ class Beers extends React.PureComponent {
     const {offset} = this.state;
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.56.1:80/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token `  + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.160:8080/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token `  + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -75,14 +75,13 @@ class Beers extends React.PureComponent {
                       {/* <Text style = {styles.attributeStyle}>{item.container_type}{'\n'}</Text> */}
                       {/* <Text style = {styles.attributeStyle}>{item.volume + ' ml'}{'\n'}</Text> */}
                       <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                      
                       <Stars
-                      display= {Number((item.avg_rating).toFixed(1))}
+                        display= {Number((item.avg_rating).toFixed(1))}
                         half={true}
                         fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
                         emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
                         halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                        />
+                      />
                         
                     
                     </View>
@@ -99,7 +98,7 @@ class Beers extends React.PureComponent {
         <FlatList
         style={{flex: 1}}
           contentContainerStyle={{
-            backgroundColor: '#d9f7cd',
+            backgroundColor: '#ffffff',
             alignItems: 'center',
             justifyContent: 'center',
             // marginTop: 15,
@@ -123,19 +122,19 @@ const styles = StyleSheet.create({
 
     viewStyle: {
       marginTop: 15,
-      width: 400,
-      backgroundColor: '#effce8',
+      width: 350,
+      backgroundColor: '#ffffff',
       borderRadius: 15,
       borderStyle: 'solid', 
-      borderColor: '#effce8',
-      borderWidth: 3,
-      shadowColor: "#000",
+      borderColor: '#dadada',
+      borderWidth: 1,
+      shadowColor: "#000000",
       shadowOffset: {
-	      width: 3,
-	      height: 3
+	      width: 1,
+	      height: 1
       },
       shadowOpacity: 0.5,
-      shadowRadius: 5,
+      shadowRadius: 3,
       elevation: 20,
     },
 

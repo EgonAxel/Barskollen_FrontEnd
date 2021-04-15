@@ -29,7 +29,7 @@ class individualBeer extends React.PureComponent {
   fetchBeer = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://192.168.56.1:80/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.160:8080/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         console.log()
         this.setState({
@@ -80,7 +80,7 @@ return (
     <FlatList
     style={{flex: 1}}
       contentContainerStyle={{
-        backgroundColor: '#d9f7cd',
+        backgroundColor: '#ffffff',
         alignItems: 'center',
         justifyContent: 'center',
         // marginTop: 15,
@@ -101,14 +101,21 @@ const styles = StyleSheet.create({
 
   viewStyle: {
     marginTop: 15,
-    width: 400,
-    height: 720,
-    backgroundColor: '#effce8',
+    width: 350,
+    height: 525,
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
-    borderColor: '#e3e3e3',
-    borderWidth: 3,
-    marginBottom: 15,
+    borderColor: '#dadada',
+    borderWidth: 1,
+    shadowColor: "#000000",
+    shadowOffset: {
+	    width: 1,
+	    height: 1
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 20,
   },
 
   productNameBold: {
@@ -138,17 +145,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     marginBottom: 20
 },
-textWrap: {
-  flex: 2,
-  marginTop: 120,
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
-},
-tasteClockWrap: {
-  flex: 1,
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
-},
+
+  textWrap: {
+    flex: 2,
+    marginTop: 120,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  
+  tasteClockWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
 
   capImage: {
     width: 150,
@@ -157,10 +166,9 @@ tasteClockWrap: {
     alignSelf: 'center'
 },
 
-
   alcoholPercentageStyle: {
-    fontSize: 22,
-    textAlign: 'right',
+    fontSize: 20,
+    textAlign: 'center',
     fontWeight: '500',
     marginBottom: 10,
   },
@@ -168,19 +176,18 @@ tasteClockWrap: {
   containerAndVolumeStyle: {
     fontSize: 20,
     textAlign: 'center',
-
   },
 
-  tasteClockStyle : {
-      fontSize: 20,
-      fontWeight: 'bold',
+  tasteClockStyle: {
+      fontSize: 16,
+      fontWeight: '400',
       textAlign: 'center',
     },
 
   rating: {
-    fontSize: 25,
+    fontSize: 18,
     textAlign: 'center',
-    marginBottom: 100,
+    marginBottom: 25,
   },
 })
 
