@@ -5,9 +5,9 @@ import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity} from 'react-
 import axios from 'axios';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-
 import * as SecureStore from 'expo-secure-store';
+
+
 async function getValueFor(key) {
  let result = await SecureStore.getItemAsync(key);
  if (result) {
@@ -31,7 +31,7 @@ class individualBeer extends React.PureComponent {
   fetchBeer = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://192.168.1.160:8080/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1:80/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         console.log()
         this.setState({
@@ -57,9 +57,9 @@ _renderListItem(item){
           <Text style = {styles.productNameThin}>{item.beer_type}</Text>
           <View style = {styles.imageWrap}>
           <Image source={{uri: item.picture_url + '_100.png' }} style={styles.beerImage} />
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('commentLayout', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url} )}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('commentLayout', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url})}>
            <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
-          </TouchableOpacity>
+           </TouchableOpacity>
           </View>
           <View style = {styles.textWrap}>
           <Text style = {styles.alcoholPercentageStyle}>{item.alcohol_percentage + '% vol'}</Text>
@@ -82,7 +82,9 @@ _renderListItem(item){
           </View>
           <Text style = {styles.rating}>{'Rating: ' + Number((item.avg_rating).toFixed(1)) + ' av 5'}</Text> 
           {/* </Card> */}
+          
     </View>
+    
     )
 }
 render() {

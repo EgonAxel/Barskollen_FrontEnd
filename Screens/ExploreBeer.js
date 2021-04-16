@@ -34,8 +34,9 @@ class Beers extends React.PureComponent {
   fetchBeer = () => {
     const {offset} = this.state;
     getValueFor("Token").then((token) => {
+      console.log(token)
       axios
-      .get(`http://192.168.1.160:8080/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token `  + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1:80/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -47,7 +48,6 @@ class Beers extends React.PureComponent {
     })
   }
   fetchMoreBeers = () => {
-    console.log(this.state.offset)
     this.setState(
       prevState => ({
         offset: prevState.offset + 20 ,

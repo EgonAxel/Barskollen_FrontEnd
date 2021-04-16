@@ -1,8 +1,18 @@
 import React from 'react';
-import {ScrollView, View, Text, FlatList, Image, StyleSheet, Touch} from 'react-native';
+import {ScrollView, View, Text, FlatList, Image, StyleSheet,TouchableOpacity} from 'react-native';
 import Stars from 'react-native-stars';
+import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as SecureStore from 'expo-secure-store';
 
+async function getValueFor(key) {
+  let result = await SecureStore.getItemAsync(key);
+  if (result) {
+     return(result);
+   } else {
+     return(None);
+   }
+ }
 
 class commentLayout extends React.PureComponent {
     constructor(props) {
@@ -16,7 +26,16 @@ class commentLayout extends React.PureComponent {
       };
     }
     
-   
+   postRatingComment(starValue){
+      getValueFor("Username").then((username) => {
+        axios
+         .post(`http://192.168.56.1:80/review/`, {rating: starValue, user:username}) //Här behövs din egen adress till APIn
+         .catch(error => {
+         this.setState({error: error.message});
+         });
+
+          })
+      }
 
   commentLayout(){
     
@@ -30,7 +49,12 @@ class commentLayout extends React.PureComponent {
       
     <View style = {styles.viewStyle}>
       <Text style = {styles.productNameBold}>{this.state.beer_name}</Text>
-      <Image source={{uri: this.state.beer_pic + '_100.png' }} style={styles.beerImage} />   
+      <View style = {styles.imageWrap}>
+      <Image source={{uri: this.state.beer_pic + '_100.png' }} style={styles.beerImage} /> 
+      <TouchableOpacity onPress={() => this.postRatingComment(this.state.stars)}>
+           <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
+           </TouchableOpacity>
+           </View>
         <View style={{alignItems:'center'}}>
           <Stars
             update={(val)=>{this.setState({stars: val})}}
@@ -96,7 +120,19 @@ class commentLayout extends React.PureComponent {
         resizeMode: 'contain',
         alignSelf: 'center'
     },
-  
+    capImage: {
+      width: 150,
+      height: 200,
+      resizeMode: 'contain',
+      alignSelf: 'center'
+  },
+    imageWrap: {
+      flex: 3,
+      marginTop: 80,
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      marginBottom: 20
+  },
   
     alcoholPercentageStyle: {
       fontSize: 22,

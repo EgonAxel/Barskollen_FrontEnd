@@ -16,7 +16,9 @@ import LogIn from './Screens/LogIn'
 
 //npm i react-native-elements --save       ---  För header och element från react native element
 //npm i --save react-native-vector-icons
-//npm i --save react-native-safe-area-context      
+//npm i --save react-native-safe-area-context  
+//expo install expo-secure-store
+//npm install react-native-stars --save
 
 
 export default function App() {

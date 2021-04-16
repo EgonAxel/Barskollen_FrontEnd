@@ -32,9 +32,11 @@ class LogIn extends Component {
       }
       else {
          axios
-         .post(`http://192.168.1.160:8080/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+         .post(`http://192.168.56.1:80/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
          .then(response => {
+            console.log(token)
             save("Token", str(response.data.token));
+            //save("Username", str(response.data.username));
          })
          .catch(error => {
          this.setState({error: error.message});
@@ -76,8 +78,8 @@ class LogIn extends Component {
             
             <TouchableOpacity
                style = {styles.submitButton}
-               onPress = {
-                  () => this.login(this.state.username,  this.state.password, this.state.confirmPassword)
+               onPress = { 
+                  () => this.login(this.state.username,  this.state.password, this.state.confirmPassword) 
                }>
                <Text style = {styles.submitButtonText}> Skapa konto </Text>
             </TouchableOpacity>
