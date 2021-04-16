@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
    },
    textInputFields: {
       paddingLeft: 15,
+      paddingRight: 15,
       marginTop: 10,
       marginRight: 40,
       marginBottom: 5,
