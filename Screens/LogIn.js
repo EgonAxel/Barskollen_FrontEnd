@@ -26,17 +26,25 @@ class LogIn extends Component {
    handleConfirmPassword = (text)=> {
       this.setState({ confirmPassword: text})
    }
-   login = (username, pass, pass2) => {
+   login = (username, pass, pass2, navigation) => {
       if (pass !== pass2) {
          Alert.alert("Fel lösenord", "Lösenorden matchar inte") /*   Första strängen är alert-titel, andra strängen är alert-meddelandet  */ 
       }
       else {
          axios
-         .post(`http://192.168.1.160:8080/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+         .post(`http://192.168.1.73:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
          .then(response => {
-            save("Token", str(response.data.token));
+           
+            if (response.request._aborted !== 'true') {
+                this.props.navigation.replace('NavigationControls');
+                save("Token", str(response.data.token));
+            }
+            else{
+                alert('Fel lösenord eller användarnamn');
+                console.log('Please check your email id or password');
+            }
          })
-         .catch(error => {
+         .catch((error) => {
          this.setState({error: error.message});
          });
       }
@@ -45,7 +53,7 @@ class LogIn extends Component {
       return (
         <View style = {styles.container}> 
          <View>
-           <Text style = {styles.topTitle}>Skapa konto</Text>
+           <Text style = {styles.topTitle}>Logga in</Text>
             <TextInput style = {styles.textInputFields}
                underlineColorAndroid = "transparent"
                placeholder = "Användarnamn"
@@ -79,7 +87,7 @@ class LogIn extends Component {
                onPress = {
                   () => this.login(this.state.username,  this.state.password, this.state.confirmPassword)
                }>
-               <Text style = {styles.submitButtonText}> Skapa konto </Text>
+               <Text style = {styles.submitButtonText}> Logga in </Text>
             </TouchableOpacity>
          </View>
         </View>  

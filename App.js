@@ -1,13 +1,12 @@
 
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import NavigationControls from './Screens/NavigationControls';
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, KeyboardAvoidingView} from 'react-native';
-import { Header } from 'react-native-elements';
-import NavigationControls from './Screens/NavigationControls'
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons'; 
+
 import LogIn from './Screens/LogIn'
+import RegisterScreen from './Screens/RegisterScreen'
 
 
 //npm install @react-navigation/native @react-navigation/stack
@@ -19,29 +18,61 @@ import LogIn from './Screens/LogIn'
 //npm i --save react-native-safe-area-context      
 
 
+const Stack = createStackNavigator();
+
+const Auth = () => {
+  // Stack Navigator for Login and Sign up Screen
+  return (
+    <Stack.Navigator initialRouteName="LoginScreen">
+      <Stack.Screen
+        name="LoginScreen"
+        component={LogIn}
+        options={{headerShown: false}}
+      />
+      {/* <Stack.Screen
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{
+          title: 'Register', //Set Header Title
+          headerStyle: {
+            backgroundColor: '#307ecc', //Set Header color
+          },
+          headerTintColor: '#fff', //Set Header text color
+          headerTitleStyle: {
+            fontWeight: 'bold', //Set Header text style
+          },
+        }}
+      /> */}
+    </Stack.Navigator>
+  );
+};
+
+
+
+
 export default function App() {
     return (
-      <KeyboardAvoidingView
-          style={{flex: 1}}
-          enabled>
-        <LogIn/>
-    </KeyboardAvoidingView>,
-    <SafeAreaProvider>            
-        <Header                                   // --- För att ha en header behövs en safearea runt appen 
-          placement="left"
-          statusBarProps={{ barStyle: 'light-content' }}
-          barStyle="light-content" // or directly
-          leftComponent={{text: 'Bärskollen', style: { color: 'black' , fontSize: 25}}}
-          containerStyle={{
-            backgroundColor: '#fff',
-            justifyContent: 'space-around',
-            //height: 100,
-          }}
-          rightComponent={<Ionicons name="beer-outline" size={30}  /> }
+
+<NavigationContainer>
+
+      <Stack.Navigator initialRouteName="Auth">
+        
+        {/* Auth Navigator: Include Login and Signup */}
+        <Stack.Screen
+          name="Auth"
+          component={Auth}
+          options={{headerShown: false}}
         />
-      <NavigationContainer>
-        <NavigationControls/> 
-      </NavigationContainer>
-    </SafeAreaProvider>
+        {/* NavigationControls as a landing page */}
+        <Stack.Screen
+          name="NavigationControls"
+          component={NavigationControls}
+          // Hiding header for Navigation Drawer
+          options={{headerShown: false}}
+        />
+
+      </Stack.Navigator>
+  </NavigationContainer>
+
     )
 }
