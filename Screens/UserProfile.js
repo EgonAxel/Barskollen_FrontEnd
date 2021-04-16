@@ -26,7 +26,7 @@ function UserProfile({ navigation }) {
         <AppButton 
           title="Logga ut"
           onPress={() =>
-            console.log('Klivkade logga ut')
+            navigation.navigate('Auth')
           }
         />
     

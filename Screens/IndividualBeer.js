@@ -33,11 +33,10 @@ class individualBeer extends React.PureComponent {
     axios
       .get(`http://192.168.56.1:80/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
-        console.log()
         this.setState({
           beers: this.state.beers.concat(response.data),
         });
-        console.log()
+     
       })
       .catch(error => {
         this.setState({error: error.message});

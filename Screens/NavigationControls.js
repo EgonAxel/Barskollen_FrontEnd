@@ -2,14 +2,16 @@
 import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { Ionicons } from '@expo/vector-icons'; 
+import { Header } from 'react-native-elements';
+
 import Home from './Home';
 import ExploreBeer from './ExploreBeer';
 import UserProfile from './UserProfile';
 import IndividualBeer from './IndividualBeer';
-import LogIn from './LogIn'
 import commentLayout from './commentLayout';
 
 const Tab = createMaterialBottomTabNavigator();
@@ -18,22 +20,27 @@ const Tab = createMaterialBottomTabNavigator();
 function NavigationControls() {
   return (
 
+
+    <SafeAreaProvider>            
+      <Header                                   // --- För att ha en header behövs en safearea runt appen 
+        placement="left"
+        statusBarProps={{ barStyle: 'light-content' }}
+        barStyle="light-content" // or directly
+        leftComponent={{text: 'Bärskollen', style: { color: 'black' , fontSize: 25}}}
+        containerStyle={{
+          backgroundColor: '#fff',
+          justifyContent: 'space-around',
+          //height: 100,
+        }}
+        rightComponent={<Ionicons name="beer-outline" size={30}  /> }
+      />
+  
     <Tab.Navigator
       initialRouteName="Home"
       activeColor="#fff"
       labelStyle={{ fontSize: 12 }}
       barStyle={{ backgroundColor: '#009688' } }
     >
-    <Tab.Screen
-        name="Logga in"
-        component={LogIn}
-        options={{
-          tabBarLabel: 'Logga in',
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="lock" size={30} color={color} />
-          ),
-        }}
-      />
 
     <Tab.Screen
         name="Mitt konto"
@@ -69,6 +76,7 @@ function NavigationControls() {
 
       
     </Tab.Navigator>
+  </SafeAreaProvider>
 );
 }
 

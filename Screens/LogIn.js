@@ -26,7 +26,7 @@ class LogIn extends Component {
    handleConfirmPassword = (text)=> {
       this.setState({ confirmPassword: text})
    }
-   login = (username, pass, pass2) => {
+   login = (username, pass, pass2, navigation) => {
       if (pass !== pass2) {
          Alert.alert("Fel lösenord", "Lösenorden matchar inte") /*   Första strängen är alert-titel, andra strängen är alert-meddelandet  */ 
       }
@@ -34,20 +34,29 @@ class LogIn extends Component {
          axios
          .post(`http://192.168.56.1:80/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
          .then(response => {
-            console.log(token)
-            save("Token", str(response.data.token));
-            //save("Username", str(response.data.username));
+           
+            if (response.request._aborted !== 'true') {
+               console.log(response.data.token)
+                save("Token", str(response.data.token));
+            }
+            else{
+                alert('Fel lösenord eller användarnamn');
+                console.log('Please check your email id or password');
+            }
+            
          })
-         .catch(error => {
+         .catch((error) => {
          this.setState({error: error.message});
          });
+         console.log(this.props.token)
+         this.props.navigation.replace('NavigationControls')
       }
    }
    render() {
       return (
         <View style = {styles.container}> 
          <View>
-           <Text style = {styles.topTitle}>Skapa konto</Text>
+           <Text style = {styles.topTitle}>Logga in</Text>
             <TextInput style = {styles.textInputFields}
                underlineColorAndroid = "transparent"
                placeholder = "Användarnamn"
@@ -79,9 +88,9 @@ class LogIn extends Component {
             <TouchableOpacity
                style = {styles.submitButton}
                onPress = { 
-                  () => this.login(this.state.username,  this.state.password, this.state.confirmPassword) 
+                  () =>  this.login(this.state.username,  this.state.password, this.state.confirmPassword)
                }>
-               <Text style = {styles.submitButtonText}> Skapa konto </Text>
+               <Text style = {styles.submitButtonText}> Logga in </Text>
             </TouchableOpacity>
          </View>
         </View>  
@@ -101,6 +110,7 @@ const styles = StyleSheet.create({
    },
    textInputFields: {
       paddingLeft: 15,
+      paddingRight: 15,
       marginTop: 10,
       marginRight: 40,
       marginBottom: 5,
