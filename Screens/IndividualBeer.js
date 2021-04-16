@@ -3,6 +3,8 @@
 import React from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import axios from 'axios';
+import Stars from 'react-native-stars';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 import * as SecureStore from 'expo-secure-store';
@@ -69,9 +71,18 @@ _renderListItem(item){
             <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + item.fullness}</Text>
             <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  item.sweetness}</Text>
           </View>
+          <View style = {styles.ratingStars}>
+            <Stars
+              display= {Number((item.avg_rating).toFixed(1))}
+              half={true}
+              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+            />
+          </View>
           <Text style = {styles.rating}>{'Rating: ' + Number((item.avg_rating).toFixed(1)) + ' av 5'}</Text> 
           {/* </Card> */}
-        </View>
+    </View>
     )
 }
 render() {
@@ -133,8 +144,8 @@ const styles = StyleSheet.create({
   },
 
   beerImage: {
-      width: 200,
-      height: 300,
+      width: 150,
+      height: 250,
       resizeMode: 'contain',
       alignSelf: 'center'
   },
@@ -188,6 +199,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     marginBottom: 25,
+  },
+
+  myStarStyle: {
+    color: '#009688',
+    backgroundColor: 'transparent',
+    textShadowColor: 'black',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 2,
+    fontSize: 30,
+    left: 15
+  },
+  myEmptyStarStyle: {
+    color: '#009688',
+  },
+  ratingStars: {
+    
   },
 })
 

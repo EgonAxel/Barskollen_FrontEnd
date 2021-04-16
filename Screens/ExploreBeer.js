@@ -75,17 +75,17 @@ class Beers extends React.PureComponent {
                       {/* <Text style = {styles.attributeStyle}>{item.container_type}{'\n'}</Text> */}
                       {/* <Text style = {styles.attributeStyle}>{item.volume + ' ml'}{'\n'}</Text> */}
                       <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                      <Stars
-                        display= {Number((item.avg_rating).toFixed(1))}
-                        half={true}
-                        fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                        emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                        halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                      />
-                        
-                    
                     </View>
                 </View> 
+                <View style = {styles.ratingStars}>
+                <Stars
+                    display= {Number((item.avg_rating).toFixed(1))}
+                    half={true}
+                    fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                    emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                    halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                />
+                </View>
             </TouchableOpacity>
           {/* </Card> */}
         </View>
@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     viewStyle: {
       marginTop: 15,
       width: 350,
+      height: 125,
       backgroundColor: '#ffffff',
       borderRadius: 15,
       borderStyle: 'solid', 
@@ -162,8 +163,6 @@ const styles = StyleSheet.create({
     },
 
     beerInstance: {
-      textAlign: 'center',
-      paddingBottom: 5,
       textAlign: 'left',
       flexDirection: 'row',
       maxWidth: 265,
@@ -179,7 +178,6 @@ const styles = StyleSheet.create({
     attributeStyle: {
         fontSize: 20,
         textAlign: 'left',
-        paddingBottom: 0,
       },
 
     alcohol_percentage: {
@@ -187,22 +185,22 @@ const styles = StyleSheet.create({
       textAlign: 'left',
     },
 
-    rating: {
-      fontSize: 14,
-      textAlign: 'left',
-    },
     myStarStyle: {
-      color: 'black',
+      color: '#009688',
       backgroundColor: 'transparent',
       textShadowColor: 'black',
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 2,
       fontSize: 30,
       left: 15
-  
     },
     myEmptyStarStyle: {
-      color: 'black',
+      color: '#009688',
     },
+    ratingStars: {
+      marginTop: -40,
+      marginLeft: 15,
+    },
+
 })
 export default Beers;

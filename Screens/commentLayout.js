@@ -125,7 +125,7 @@ class commentLayout extends React.PureComponent {
       },
 
       myStarStyle: {
-        color: 'black',
+        color: '#009688',
         backgroundColor: 'transparent',
         textShadowColor: 'black',
         textShadowOffset: {
@@ -137,7 +137,7 @@ class commentLayout extends React.PureComponent {
     
       },
       myEmptyStarStyle: {
-        color: 'black',
+        color: '#009688',
       },
   
     rating: {

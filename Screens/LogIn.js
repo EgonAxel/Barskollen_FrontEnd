@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native'
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
@@ -9,32 +9,37 @@ async function save(key, value) {
 
 class LogIn extends Component {
    state = {
-      username:'', 
+      username: '',
+      email: '', 
       password: '',
       confirmPassword: '',
    }
    handleUsername = (text) => {
     this.setState({ username: text })
    }
+   handleEmail = (text) => {
+      this.setState({ email: text })
+     }
    handlePassword = (text) => {
       this.setState({ password: text })
    }
    handleConfirmPassword = (text)=> {
       this.setState({ confirmPassword: text})
    }
-   login = (username, pass) => {
-      axios
-      .post(`http://192.168.1.160:8080/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
-      .then(response => {
-         save("Token", str(response.data.token));
-        this.setState({
-          login: this.state.login.concat(response.data),
-        });
-        console.log()
-      })
-      .catch(error => {
-        this.setState({error: error.message});
-      });
+   login = (username, pass, pass2) => {
+      if (pass !== pass2) {
+         Alert.alert("Fel lösenord", "Lösenorden matchar inte") /*   Första strängen är alert-titel, andra strängen är alert-meddelandet  */ 
+      }
+      else {
+         axios
+         .post(`http://192.168.1.160:8080/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+         .then(response => {
+            save("Token", str(response.data.token));
+         })
+         .catch(error => {
+         this.setState({error: error.message});
+         });
+      }
    }
    render() {
       return (
@@ -48,10 +53,10 @@ class LogIn extends Component {
                autoCapitalize = "none"
                onChangeText = {this.handleUsername}/>
 
-            {/* <TextInput style = {styles.input}
+            {/* <TextInput style = {styles.textInputFields}
                underlineColorAndroid = "transparent"
                placeholder = "Email"
-               placeholderTextColor = "black"
+               placeholderTextColor = "grey"
                autoCapitalize = "none"
                onChangeText = {this.handleEmail}/> */}
             
@@ -67,12 +72,12 @@ class LogIn extends Component {
                placeholder = "Bekräfta lösenord"
                placeholderTextColor = "grey"
                autoCapitalize = "none"
-               onChangeText = {this.handlePassword}/>
+               onChangeText = {this.handleConfirmPassword}/>
             
             <TouchableOpacity
                style = {styles.submitButton}
                onPress = {
-                  () => this.login(this.state.username,  this.state.password)
+                  () => this.login(this.state.username,  this.state.password, this.state.confirmPassword)
                }>
                <Text style = {styles.submitButtonText}> Skapa konto </Text>
             </TouchableOpacity>
