@@ -31,6 +31,7 @@ class LogIn extends Component {
                 alert('Fel lösenord eller användarnamn');
                 console.log('Please check your email id or password');
             }
+            
          })
          .catch((error) => {
          this.setState({error: error.message});
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
    },
    textInputFields: {
       paddingLeft: 15,
+      paddingRight: 15,
       marginTop: 10,
       marginRight: 40,
       marginBottom: 5,

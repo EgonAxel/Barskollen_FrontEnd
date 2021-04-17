@@ -15,7 +15,9 @@ import Register from './Screens/Register'
 
 //npm i react-native-elements --save       ---  För header och element från react native element
 //npm i --save react-native-vector-icons
-//npm i --save react-native-safe-area-context      
+//npm i --save react-native-safe-area-context  
+//expo install expo-secure-store
+//npm install react-native-stars --save
 
 
 const Stack = createStackNavigator();
