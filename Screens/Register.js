@@ -7,7 +7,7 @@ async function save(key, value) {
    await SecureStore.setItemAsync(key, value);
  }
 
-   class LogIn extends Component {
+   class Register extends Component {
       state = {
          username: '',
          email: '', 
@@ -33,28 +33,35 @@ async function save(key, value) {
    handleDateOfBirth = (text)=> {
       this.setState({ dateOfBirth: text})
    }
-   login = (username, pass, pass2, email, dob) => {
+   registerUser = (username, pass, pass2, email, dob) => {
+      if (!username) {
+         Alert.alert('Användarnamn saknas','Fyll i användarnamn')
+         return
+      }
+      if (!pass) {
+         Alert.alert('Lösenord saknas','Fyll i lösenord')
+         return
+      }
+      if (!email) {
+         Alert.alert('Email saknas','Fyll i emailadress')
+         return
+      }
       if (pass !== pass2) {
          Alert.alert("Fel lösenord", "Lösenorden matchar inte") /*   Första strängen är alert-titel, andra strängen är alert-meddelandet  */ 
       }
-      else {
-         axios
-         .post(`http://127.0.0.1:8000/user/register`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
-         .then(response => {
-            if (response.request._aborted !== 'true') {
-               save("Token", response.data.token)
-               this.props.navigation.replace('NavigationControls')
-            }
-            else {
-                alert('Fel lösenord eller användarnamn');
-                console.log('Please check your email id or password');
-            }
-         })
-         .catch((error) => {
-         this.setState({error: error.message});
-         console.log(error.message);
+      axios
+      .post(`http://127.0.0.1:8000/user/register`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
+      .then(response => {
+         if (response.request.status === 200) { //Status 200 är 'Success'
+            save("Token", response.data.token);
+            this.props.navigation.replace('NavigationControls')
+         }
+      })
+      .catch((error) => {
+         if (error.response.status !== 200) {//Status 400 är 'Bad request'
+         Alert.alert('Kunde inte skapa konto','\nKontrollera att fälten fyllts i korrekt')
+         }
          });
-      }
    }
    render() {
       return (
@@ -97,11 +104,11 @@ async function save(key, value) {
                onChangeText = {this.handleConfirmPassword}/>
 
             <TouchableOpacity
-               style = {styles.submitButton}
+               style = {styles.registerButton}
                onPress = {
-                  () => this.login(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
+                  () => this.registerUser(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
                }>
-               <Text style = {styles.submitButtonText}> Registrera dig </Text>
+               <Text style = {styles.registerButtonText}> Registrera dig </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -116,7 +123,7 @@ async function save(key, value) {
       )
    }
 }
-export default LogIn
+export default Register
 
 const styles = StyleSheet.create({
    container: {
@@ -142,7 +149,7 @@ const styles = StyleSheet.create({
       borderWidth: 2,
       borderRadius: 10,
    },
-   submitButton: {
+   registerButton: {
       backgroundColor: '#009688',
       padding: 10,
       marginTop: 10,
@@ -161,7 +168,7 @@ const styles = StyleSheet.create({
       height: 40,
       borderRadius: 10,
    },
-   submitButtonText:{
+   registerButtonText:{
       alignSelf: 'center',
       color: 'white'
    },

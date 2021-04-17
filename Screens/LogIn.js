@@ -20,22 +20,27 @@ class LogIn extends Component {
       this.setState({ password: text })
    }
    login = (username, pass) => {
+      if (!username) {
+         Alert.alert('Användarnamn saknas','Fyll i användarnamn')
+         return
+      }
+      if (!pass) {
+         Alert.alert('Lösenord saknas','Fyll i lösenord')
+         return
+      }
       axios
-         .post(`http://127.0.0.1:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+         .post(`http://172.20.10.3:8080/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
          .then(response => {
-            if (response.request._aborted !== 'true') {
-               save("Token", response.data.token)
+            if (response.request.status === 200) { //Status 200 är 'Success'
+               save("Token", response.data.token);
                this.props.navigation.replace('NavigationControls')
             }
-            else {
-                alert('Fel lösenord eller användarnamn');
-                console.log('Please check your email id or password');
-            }
-            
          })
          .catch((error) => {
-         this.setState({error: error.message});
-         });
+            if (error.response.status !== 200) {//Status 400 är 'Bad request'
+            Alert.alert('Kunde inte logga in','\nKontrollera användarnamn och lösenord')
+            }
+            });
    }
    render() {
       return (
