@@ -7,21 +7,39 @@ async function save(key, value) {
    await SecureStore.setItemAsync(key, value);
  }
 
-class LogIn extends Component {
-   state = {
-      username: '',
-      email: '', 
-      password: '',
-   }
+   class LogIn extends Component {
+      state = {
+         username: '',
+         email: '', 
+         password: '',
+         dateOfBirth: '',
+         confirmPassword: '',
+    }
    handleUsername = (text) => {
-    this.setState({ username: text })
+      this.setState({ username: text })
+   }
+   handleEmail = (text) => {
+      this.setState({ email: text })
    }
    handlePassword = (text) => {
       this.setState({ password: text })
    }
-   login = (username, pass) => {
-      axios
-         .post(`http://127.0.0.1:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+   handleConfirmPassword = (text)=> {
+      this.setState({ confirmPassword: text})
+   }
+   handleEmail = (text)=> {
+      this.setState({ email: text})
+   }
+   handleDateOfBirth = (text)=> {
+      this.setState({ dateOfBirth: text})
+   }
+   login = (username, pass, pass2, email, dob) => {
+      if (pass !== pass2) {
+         Alert.alert("Fel lösenord", "Lösenorden matchar inte") /*   Första strängen är alert-titel, andra strängen är alert-meddelandet  */ 
+      }
+      else {
+         axios
+         .post(`http://127.0.0.1:8000/user/register`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
          .then(response => {
             if (response.request._aborted !== 'true') {
                save("Token", response.data.token)
@@ -34,13 +52,15 @@ class LogIn extends Component {
          })
          .catch((error) => {
          this.setState({error: error.message});
+         console.log(error.message);
          });
+      }
    }
    render() {
       return (
         <View style = {styles.container}> 
          <View>
-           <Text style = {styles.topTitle}>Logga in</Text>
+           <Text style = {styles.topTitle}>Registrera dig</Text>
             <TextInput style = {styles.textInputFields}
                underlineColorAndroid = "transparent"
                placeholder = "Användarnamn"
@@ -48,33 +68,48 @@ class LogIn extends Component {
                autoCapitalize = "none"
                onChangeText = {this.handleUsername}/>
 
-            {/* <TextInput style = {styles.textInputFields}
+            <TextInput style = {styles.textInputFields}
                underlineColorAndroid = "transparent"
-               placeholder = "Email"
+               placeholder = "Email-adress"
                placeholderTextColor = "grey"
                autoCapitalize = "none"
-               onChangeText = {this.handleEmail}/> */}
-            
+               onChangeText = {this.handleEmail}/>
+
+            <TextInput style = {styles.textInputFields}
+               underlineColorAndroid = "transparent"
+               placeholder = "Födelsedatum ÅÅÅÅ-MM-DD"
+               placeholderTextColor = "grey"
+               autoCapitalize = "none"
+               onChangeText = {this.handleDateOfBirth}/>
+
             <TextInput secureTextEntry={true} style = {styles.textInputFields}
                underlineColorAndroid = "transparent"
                placeholder = "Lösenord"
                placeholderTextColor = "grey"
                autoCapitalize = "none"
                onChangeText = {this.handlePassword}/>
-            
+
+            <TextInput secureTextEntry={true} style = {styles.textInputFields}
+               underlineColorAndroid = "transparent"
+               placeholder = "Bekräfta lösenord"
+               placeholderTextColor = "grey"
+               autoCapitalize = "none"
+               onChangeText = {this.handleConfirmPassword}/>
+
             <TouchableOpacity
                style = {styles.submitButton}
                onPress = {
-                  () => this.login(this.state.username,  this.state.password)
+                  () => this.login(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
                }>
-               <Text style = {styles.submitButtonText}> Logga in </Text>
+               <Text style = {styles.submitButtonText}> Registrera dig </Text>
             </TouchableOpacity>
+
             <TouchableOpacity
-               style = {styles.registerButton}
+               style = {styles.alreadyHaveAnAccount}
                onPress = {
-                  () => this.props.navigation.replace('Register')
+                  () => this.props.navigation.replace('LoginScreen')
                }>
-               <Text style = {styles.registerButtonText}> Inget konto? Registrera dig! </Text>
+               <Text style = {styles.alreadyHaveAnAccountText}> Jag har redan ett konto </Text>
             </TouchableOpacity>
          </View>
         </View>  
@@ -92,6 +127,10 @@ const styles = StyleSheet.create({
     fontSize: 30,
     alignSelf: 'center',
    },
+   dateOfBirthText:  {
+      fontSize: 15,
+      alignSelf: 'center',
+     },
    textInputFields: {
       paddingLeft: 15,
       marginTop: 10,
@@ -113,7 +152,7 @@ const styles = StyleSheet.create({
       height: 40,
       borderRadius: 10,
    },
-   registerButton: {
+   alreadyHaveAnAccount: {
       padding: 10,
       marginTop: 20,
       marginRight: 40,
@@ -122,12 +161,12 @@ const styles = StyleSheet.create({
       height: 40,
       borderRadius: 10,
    },
-   submitButtonText: {
+   submitButtonText:{
       alignSelf: 'center',
-      color: 'white',
+      color: 'white'
    },
-   registerButtonText: {
+   alreadyHaveAnAccountText:{
       alignSelf: 'center',
       color: '#009688',
-   },
+   }
 })

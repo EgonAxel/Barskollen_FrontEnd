@@ -36,7 +36,6 @@ return (
   <AppButton 
       title="Topplistan"
       onPress={() => {
-        save("Token", "fb7bc1a9dab70d8e5c74457839243528cf454d0a");
         getValueFor("Token").then((token) => {
           console.log(token)
         })

@@ -6,7 +6,7 @@ import NavigationControls from './Screens/NavigationControls';
 import React from 'react';
 
 import LogIn from './Screens/LogIn'
-import RegisterScreen from './Screens/RegisterScreen'
+import Register from './Screens/Register'
 
 
 //npm install @react-navigation/native @react-navigation/stack
@@ -29,20 +29,11 @@ const Auth = () => {
         component={LogIn}
         options={{headerShown: false}}
       />
-      {/* <Stack.Screen
-        name="RegisterScreen"
-        component={RegisterScreen}
-        options={{
-          title: 'Register', //Set Header Title
-          headerStyle: {
-            backgroundColor: '#307ecc', //Set Header color
-          },
-          headerTintColor: '#fff', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      /> */}
+      <Stack.Screen
+        name="Register"
+        component={Register}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
