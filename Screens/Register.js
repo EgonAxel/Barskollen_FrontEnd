@@ -53,83 +53,78 @@ async function save(key, value) {
       if (pass !== pass2) {
          Alert.alert("Fel lösenord", "Lösenorden matchar inte") /*   Första strängen är alert-titel, andra strängen är alert-meddelandet  */ 
       }
-      axios.all(
-         [axios
-         .post(`http://172.20.10.3:8080/user/register`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
-         ])
-         // [axios
-         // .post(`http://172.20.10.3:8080/api-token-auth/`, {username:username, password:pass})
-         // ])
+      axios
+      .post(`http://127.0.0.1:8000/user/register`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
       .then(response => {
-         if (response.request.status === 200) { //Status 200 är 'Success'
+         if (response.request.status === 201) { //Status 200 är 'Success'
+            console.log(response.data.token);
             save("Token", response.data.token);
             this.props.navigation.replace('NavigationControls')
          }
       })
       .catch((error) => {
-         if (error.response.status !== 200) {//Status 400 är 'Bad request'
+         if (error.response.status !== 201) {//Status 400 är 'Bad request'
          Alert.alert('Kunde inte skapa konto','\nKontrollera att fälten fyllts i korrekt')
          }
          });
    }
    render() {
       return (
-        <View style = {styles.container}>
-            <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}/> 
-               <View>
-                  <Text style = {styles.topTitle}>Registrera dig</Text>
-                     <TextInput style = {styles.textInputFields}
-                        underlineColorAndroid = "transparent"
-                        placeholder = "Användarnamn"
-                        placeholderTextColor = "grey"
-                        autoCapitalize = "none"
-                        onChangeText = {this.handleUsername}/>
+         <View style = {styles.container}>
+            <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}> 
+               <Text style = {styles.topTitle}>Registrera dig</Text>
+               <TextInput style = {styles.textInputFields}
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Användarnamn"
+                  placeholderTextColor = "grey"
+                  autoCapitalize = "none"
+                  onChangeText = {this.handleUsername}/>
 
-                     <TextInput style = {styles.textInputFields}
-                        underlineColorAndroid = "transparent"
-                        placeholder = "Email-adress"
-                        placeholderTextColor = "grey"
-                        autoCapitalize = "none"
-                        onChangeText = {this.handleEmail}/>
+               <TextInput style = {styles.textInputFields}
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Email-adress"
+                  placeholderTextColor = "grey"
+                  autoCapitalize = "none"
+                  onChangeText = {this.handleEmail}/>
 
-                     <TextInput style = {styles.textInputFields}
-                        underlineColorAndroid = "transparent"
-                        placeholder = "Födelsedatum (ÅÅÅÅ-MM-DD)"
-                        placeholderTextColor = "grey"
-                        autoCapitalize = "none"
-                        onChangeText = {this.handleDateOfBirth}/>
+               <TextInput style = {styles.textInputFields}
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Födelsedatum (ÅÅÅÅ-MM-DD)"
+                  placeholderTextColor = "grey"
+                  autoCapitalize = "none"
+                  onChangeText = {this.handleDateOfBirth}/>
 
-                     <TextInput secureTextEntry={true} style = {styles.textInputFields}
-                        underlineColorAndroid = "transparent"
-                        placeholder = "Lösenord"
-                        placeholderTextColor = "grey"
-                        autoCapitalize = "none"
-                        onChangeText = {this.handlePassword}/>
+               <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Lösenord"
+                  placeholderTextColor = "grey"
+                  autoCapitalize = "none"
+                  onChangeText = {this.handlePassword}/>
 
-                     <TextInput secureTextEntry={true} style = {styles.textInputFields}
-                        underlineColorAndroid = "transparent"
-                        placeholder = "Bekräfta lösenord"
-                        placeholderTextColor = "grey"
-                        autoCapitalize = "none"
-                        onChangeText = {this.handleConfirmPassword}/>
+               <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Bekräfta lösenord"
+                  placeholderTextColor = "grey"
+                  autoCapitalize = "none"
+                  onChangeText = {this.handleConfirmPassword}/>
 
-                     <TouchableOpacity
-                        style = {styles.registerButton}
-                        onPress = {
-                           () => this.registerUser(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
-                        }>
-                        <Text style = {styles.registerButtonText}> Registrera konto </Text>
-                     </TouchableOpacity>
+               <TouchableOpacity
+                  style = {styles.registerButton}
+                  onPress = {
+                     () => this.registerUser(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
+                  }>
+                  <Text style = {styles.registerButtonText}> Registrera konto </Text>
+               </TouchableOpacity>
 
-                     <TouchableOpacity
-                        style = {styles.alreadyHaveAnAccount}
-                        onPress = {
-                           () => this.props.navigation.replace('LoginScreen')
-                        }>
-                        <Text style = {styles.alreadyHaveAnAccountText}> Jag har redan ett konto </Text>
-                     </TouchableOpacity>
-               </View>
-         </View>  
+               <TouchableOpacity
+                  style = {styles.alreadyHaveAnAccount}
+                  onPress = {
+                     () => this.props.navigation.replace('LoginScreen')
+                  }>
+                  <Text style = {styles.alreadyHaveAnAccountText}> Jag har redan ett konto </Text>
+               </TouchableOpacity>
+            </ImageBackground>
+         </View>
       )
    }
 }
@@ -145,8 +140,7 @@ const styles = StyleSheet.create({
       fontWeight: '700',
       fontSize: 30,
       alignSelf: 'center',
-      marginBottom: 30,
-      marginTop: -600,
+      marginBottom: 20,
    },
    backgroundImage: {
       flex: 1,

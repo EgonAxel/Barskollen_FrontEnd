@@ -22,11 +22,11 @@ class LogIn extends Component {
    }
    login = (username, pass) => {
       if (!username) {
-         Alert.alert('Användarnamn saknas','Fyll i användarnamn')
+         Alert.alert('Användarnamn saknas','Fyll i användarnamn!')
          return
       }
       if (!pass) {
-         Alert.alert('Lösenord saknas','Fyll i lösenord')
+         Alert.alert('Lösenord saknas','Fyll i lösenord!')
          return
       }
       axios
@@ -45,39 +45,39 @@ class LogIn extends Component {
    }
    render() {
       return (
-        <View style = {styles.container}>
-         <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}/>
-            <View>
+         <View style = {styles.container}>
+            <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}>
                <Text style = {styles.topTitle}>Logga in</Text>
-                  <TextInput style = {styles.textInputFields}
-                     underlineColorAndroid = "transparent"
-                     placeholder = "Användarnamn"
-                     placeholderTextColor = "grey"
-                     autoCapitalize = "none"
-                     onChangeText = {this.handleUsername}/>
+               <TextInput style = {styles.textInputFields}
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Användarnamn"
+                  placeholderTextColor = "grey"
+                  autoCapitalize = "none"
+                  onChangeText = {this.handleUsername}/>
                   
-                  <TextInput secureTextEntry={true} style = {styles.textInputFields}
-                     underlineColorAndroid = "transparent"
-                     placeholder = "Lösenord"
-                     placeholderTextColor = "grey"
-                     autoCapitalize = "none"
-                     onChangeText = {this.handlePassword}/>
-                  
-                  <TouchableOpacity
-                     style = {styles.submitButton}
-                     onPress = {
-                        () => this.login(this.state.username,  this.state.password)
-                     }>
-                     <Text style = {styles.submitButtonText}> Logga in </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                     style = {styles.registerButton}
-                     onPress = {
-                        () => this.props.navigation.replace('Register')
-                     }>
-                     <Text style = {styles.registerButtonText}> Inget konto? Registrera dig! </Text>
-                  </TouchableOpacity>
-            </View>
+               <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Lösenord"
+                  placeholderTextColor = "grey"
+                  autoCapitalize = "none"
+                  onChangeText = {this.handlePassword}/>
+               
+               <TouchableOpacity
+                  style = {styles.submitButton}
+                  onPress = {
+                     () => this.login(this.state.username,  this.state.password)
+                  }>
+                  <Text style = {styles.submitButtonText}> Logga in </Text>
+               </TouchableOpacity>
+
+               <TouchableOpacity
+                  style = {styles.registerButton}
+                  onPress = {
+                     () => this.props.navigation.replace('Register')
+                  }>
+                  <Text style = {styles.registerButtonText}> Inget konto? Registrera dig! </Text>
+               </TouchableOpacity>
+            </ImageBackground>
         </View>  
       )
    }
@@ -87,6 +87,7 @@ export default LogIn
 const styles = StyleSheet.create({
    container: {
     flex: 1,
+    flexDirection: "column",
     justifyContent: 'center',
    },
    backgroundImage: {
@@ -99,10 +100,7 @@ const styles = StyleSheet.create({
       fontWeight: '700',
       fontSize: 30,
       alignSelf: 'center',
-      marginBottom: 30,
-      marginTop: -600,
-      color: 'black',
-
+      marginBottom: 20,
    },
    textInputFields: {
       fontFamily: 'Avenir',
