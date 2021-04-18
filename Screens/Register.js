@@ -52,12 +52,13 @@ async function save(key, value) {
       }
       if (pass !== pass2) {
          Alert.alert("Fel lösenord", "Lösenorden matchar inte") /*   Första strängen är alert-titel, andra strängen är alert-meddelandet  */ 
+         return
       }
       axios
       .post(`http://127.0.0.1:8000/user/register`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
       .then(response => {
-         if (response.request.status === 201) { //Status 200 är 'Success'
-            console.log(response.data.token);
+         if (response.request.status === 201) { 
+            console.log('Genererad token: ', response.data.token);
             save("Token", response.data.token);
             this.props.navigation.replace('NavigationControls')
          }

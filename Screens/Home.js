@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
       },
     appButtonText: {
-        //fontFamily: '',
+        fontFamily: 'Avenir',
         fontSize: 18,
         color: "#fff",
         fontWeight: "bold",

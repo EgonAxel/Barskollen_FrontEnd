@@ -36,7 +36,7 @@ class Beers extends React.PureComponent {
     getValueFor("Token").then((token) => {
       console.log(token)
       axios
-      .get(`http://172.20.10.3:8080/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -150,13 +150,15 @@ const styles = StyleSheet.create({
     },
 
     productNameBold: {
+      fontFamily: 'Avenir',
       fontSize: 14,
       fontWeight: '500',
       textAlign: 'left',
     },
 
     productNameThin: {
-      fontSize: 12,
+      fontFamily: 'Avenir',
+      fontSize: 14,
       fontWeight: '400',
       textAlign: 'left',
       marginBottom: 5,
@@ -181,6 +183,7 @@ const styles = StyleSheet.create({
       },
 
     alcohol_percentage: {
+      fontFamily: 'Avenir',
       fontSize: 14,
       textAlign: 'left',
     },
@@ -188,11 +191,11 @@ const styles = StyleSheet.create({
     myStarStyle: {
       color: '#009688',
       backgroundColor: 'transparent',
-      textShadowColor: 'black',
+      textShadowColor: '#dadada',
       textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 2,
-      fontSize: 30,
-      left: 15
+      textShadowRadius: 5,
+      fontSize: 25,
+      left: 5
     },
     myEmptyStarStyle: {
       color: '#009688',

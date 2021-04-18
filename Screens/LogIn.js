@@ -7,7 +7,6 @@ async function save(key, value) {
    await SecureStore.setItemAsync(key, value);
  }
 
-
 class LogIn extends Component {
    state = {
       username: '',
@@ -30,7 +29,7 @@ class LogIn extends Component {
          return
       }
       axios
-         .post(`http://172.20.10.3:8080/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+         .post(`http://127.0.0.1:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
          .then(response => {
             if (response.request.status === 200) { //Status 200 är 'Success'
                save("Token", response.data.token);

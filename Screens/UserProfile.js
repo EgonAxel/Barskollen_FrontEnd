@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
-
+import axios from 'axios';
 
 const AppButton = ({ onPress, title }) => (
     <TouchableOpacity
@@ -10,26 +10,28 @@ const AppButton = ({ onPress, title }) => (
       <Text style={styles.appButtonText}>{title}</Text>
     </TouchableOpacity>
   );
-
+    
 function UserProfile({ navigation }) {
   
     return (
-     <View style={styles.buttonContainer}>
-         
-         <AppButton 
-          title="Mina bärs"
-          onPress={() =>
-            //props.navigation.navigate('')
-            console.log('Klicka mina bärs')
-          }
-        />
-        <AppButton 
-          title="Logga ut"
-          onPress={() =>
-            navigation.navigate('Auth')
-          }
-        />
-    
+      <View style = {styles.userInformation}>
+        <Text> 
+        </Text>
+        <View style = {styles.buttonContainer}>
+            <AppButton 
+              title="Mina bärs"
+              onPress={() =>
+                //props.navigation.navigate('')
+                console.log('Klicka mina bärs')
+              }
+            />
+            <AppButton 
+              title="Logga ut"
+              onPress={() =>
+                navigation.navigate('Auth')
+              }
+            />
+        </View>
     </View>
         )
     }
@@ -51,7 +53,7 @@ function UserProfile({ navigation }) {
             paddingHorizontal: 12
           },
         appButtonText: {
-           // fontFamily: 'tahoma',
+            fontFamily: 'Avenir',
             fontSize: 18,
             color: "#fff",
             fontWeight: "bold",

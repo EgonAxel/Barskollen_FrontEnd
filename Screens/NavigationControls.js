@@ -73,8 +73,6 @@ function NavigationControls() {
           ),
         }}
       />
-
-      
     </Tab.Navigator>
   </SafeAreaProvider>
 );
