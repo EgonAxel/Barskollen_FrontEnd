@@ -36,7 +36,7 @@ class Beers extends React.PureComponent {
     getValueFor("Token").then((token) => {
       console.log(token)
       axios
-      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://172.20.10.3:8080/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
