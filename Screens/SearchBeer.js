@@ -4,6 +4,8 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { SearchBar } from 'react-native-elements';
+import ResultScreenRouteProp from './NavigationControls'
 
 // Installera dessa: 
 // npm i --save axios 
@@ -11,6 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // npm i --save react-native-vector-icons // required by react-native-elements
 
 // npm install react-native-stars --save  //För stärnor
+
 
 async function getValueFor(key) {
   let result = await SecureStore.getItemAsync(key);
@@ -22,21 +25,22 @@ async function getValueFor(key) {
  }
 
 
-class Beers extends React.PureComponent {
+class SearchBeers extends React.PureComponent {
   constructor(props) {
-    super(props);
+    super(props); 
     this.state = {
       beers: [],
-      offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
+      search: '',  //Bestämmer vilken öl som sak sökas
       error: null,
     };
   }
-  fetchBeer = () => {
-    const {offset} = this.state;
+  fetchBeer = (props: ResultScreenRouteProp) => {
+    const {search} = props.params.text;
+  //  console.log(search);
     getValueFor("Token").then((token) => {
       console.log(token)
       axios
-      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.73:8000/beer/?search=${search}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -47,24 +51,26 @@ class Beers extends React.PureComponent {
       });
     })
   }
-  fetchMoreBeers = () => {
-    this.setState(
-      prevState => ({
-        offset: prevState.offset + 20 ,
-      }),
-      () => {
-        this.fetchBeer();
-      },
-    );
-  };
-  componentDidMount() {
-    this.fetchBeer(this.state.offset);
-  }
+  // fetchMoreBeers = () => {
+  //   this.setState(
+  //     prevState => ({
+  //       offset: prevState.offset + 20 ,
+  //     }),
+  //     () => {
+  //       this.fetchBeer();
+  //     },
+  //   );
+  // };
+  // componentDidMount() {
+  //   this.fetchBeer(this.state.offset);
+  // }
+
   _renderListItem(item){
     
       return(
         // Bortkommenderad från <Card>: pointerEvents="none">
-        <View style = {styles.viewStyle}>
+
+        <View style = {styles.viewStyle}>      
           {/* <Card style = {styles.cardStyle}> */}
             <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID})}>
                 <View style = {styles.beerInstance}>
@@ -92,16 +98,13 @@ class Beers extends React.PureComponent {
         )
     }
   render() {
-    
     return (
         <FlatList
-        style={{flex: 1}}
-          contentContainerStyle={{
-            backgroundColor: '#ffffff',
-            alignItems: 'center',
-            justifyContent: 'center',
-            // marginTop: 15,
-          
+          style={{flex: 1}}
+            contentContainerStyle={{
+             backgroundColor: '#ffffff',
+             alignItems: 'center',
+             justifyContent: 'center',
           }}
           data={this.state.beers}
           keyExtractor={(beer, index) => String(index)}
@@ -109,14 +112,12 @@ class Beers extends React.PureComponent {
           renderItem={({ item }) => this._renderListItem(item)}
           //horizontal={true}
         
-          onEndReached={this.fetchMoreBeers}
-          onEndReachedThreshold={2}
-           />
-       
+          // onEndReached={this.fetchMoreBeers}
+          // onEndReachedThreshold={2}
+           />    
+         
     );
-
   }
-  
 }
 const styles = StyleSheet.create({
 
@@ -138,7 +139,9 @@ const styles = StyleSheet.create({
       shadowRadius: 3,
       elevation: 20,
     },
-
+    // container: {
+    //   flex: 1,
+    // },
     beerImage: {
         width: 100,
         height: 100,
@@ -206,4 +209,4 @@ const styles = StyleSheet.create({
     },
 
 })
-export default Beers;
+export default SearchBeers;

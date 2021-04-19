@@ -7,7 +7,6 @@ import { Header } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons'; 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-
 //const AppButton istället för vanlig button för att få en redigerbar knapp som funkar på både ios o andriod.
 // länk för knappar: https://blog.logrocket.com/creating-custom-buttons-in-react-native/
 
