@@ -99,6 +99,7 @@ class commentLayout extends React.PureComponent {
       shadowOpacity: 0.5,
       shadowRadius: 3,
       elevation: 20,
+      alignSelf: 'center'
     },
   
     productNameBold: {
