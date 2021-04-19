@@ -60,6 +60,7 @@ async function save(key, value) {
          if (response.request.status === 201) { 
             console.log('Genererad token: ', response.data.token);
             save("Token", response.data.token);
+            save("Username", this.state.username);
             this.props.navigation.replace('NavigationControls')
          }
       })
