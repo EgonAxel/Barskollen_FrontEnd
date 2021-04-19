@@ -29,7 +29,7 @@ class LogIn extends Component {
          return
       }
       axios
-         .post(`http://127.0.0.1:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+         .post(`http://192.168.1.73:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
          .then(response => {
             if (response.request.status === 200) { //Status 200 är 'Success'
                save("Token", response.data.token);
@@ -95,14 +95,14 @@ const styles = StyleSheet.create({
       justifyContent: "center",
     },
    topTitle:  {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       fontWeight: '700',
       fontSize: 30,
       alignSelf: 'center',
       marginBottom: 20,
    },
    textInputFields: {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       paddingLeft: 15,
       paddingRight: 15,
       marginTop: 10,
@@ -137,13 +137,13 @@ const styles = StyleSheet.create({
       opacity: 0.5,
    },
    submitButtonText: {
-      fontFamily: 'Avenir',
+      //fontFamily: 'Avenir',
       fontWeight: '700',
       alignSelf: 'center',
       color: 'white',
    },
    registerButtonText: {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       fontWeight: '800',
       alignSelf: 'center',
       color: '#009688',

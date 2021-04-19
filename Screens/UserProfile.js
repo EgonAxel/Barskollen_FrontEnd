@@ -2,6 +2,9 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
 import axios from 'axios';
+import { Header } from 'react-native-elements';
+import { Ionicons } from '@expo/vector-icons'; 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const AppButton = ({ onPress, title }) => (
     <TouchableOpacity
@@ -14,9 +17,22 @@ const AppButton = ({ onPress, title }) => (
 function UserProfile({ navigation }) {
   
     return (
-      <View style = {styles.userInformation}>
-        <Text> 
-        </Text>
+    <SafeAreaProvider>
+      <View>
+          <Header                                   // --- För att ha en header behövs en safearea runt appen 
+            placement="left"
+            statusBarProps={{ barStyle: 'light-content' }}
+            barStyle="light-content" // or directly
+            leftComponent={{text: 'Bärskollen', style: { color: 'black' , fontSize: 35}}}
+            containerStyle={{
+              backgroundColor: '#fff',
+              justifyContent: 'space-around',
+              //height: 100,
+              
+            }}
+            rightComponent={<Ionicons name="person-outline" size={45}  /> }
+          />
+  
         <View style = {styles.buttonContainer}>
             <AppButton 
               title="Mina bärs"
@@ -33,6 +49,7 @@ function UserProfile({ navigation }) {
             />
         </View>
     </View>
+  </SafeAreaProvider>
         )
     }
 
@@ -53,7 +70,7 @@ function UserProfile({ navigation }) {
             paddingHorizontal: 12
           },
         appButtonText: {
-            fontFamily: 'Avenir',
+          //  fontFamily: 'Avenir',
             fontSize: 18,
             color: "#fff",
             fontWeight: "bold",

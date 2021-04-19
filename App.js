@@ -40,9 +40,6 @@ const Auth = () => {
   );
 };
 
-
-
-
 export default function App() {
     return (
 

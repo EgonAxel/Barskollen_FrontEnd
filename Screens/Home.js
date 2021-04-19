@@ -3,6 +3,10 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { Header } from 'react-native-elements';
+import { Ionicons } from '@expo/vector-icons'; 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 //const AppButton istället för vanlig button för att få en redigerbar knapp som funkar på både ios o andriod.
 // länk för knappar: https://blog.logrocket.com/creating-custom-buttons-in-react-native/
@@ -31,31 +35,43 @@ const AppButton = ({ onPress, title }) => (
 function Home({ navigation }) {
   
 return (
- <View style={styles.buttonContainer}>
-  
-  <AppButton 
-      title="Topplistan"
-      onPress={() => {
-        getValueFor("Token").then((token) => {
-          console.log(token)
-        })
-      }}
-    />
-    <AppButton 
-      title="Utforska"
-      onPress={() =>
-        navigation.navigate('Utforska')
-      }
-    />
-
-<AppButton 
-      title="Mitt konto"
-      onPress={() =>
-        navigation.navigate('Mitt konto')
-      }
-    />
-
-</View>
+<SafeAreaProvider>
+  <View>
+    <Header                   // --- För att ha en header behövs en safearea runt appen 
+          placement="left"
+          statusBarProps={{ barStyle: 'light-content' }}
+          barStyle="light-content" // or directly
+          leftComponent={{text: 'Bärskollen', style: { color: 'black' , fontSize: 35}}}
+          containerStyle={{
+            backgroundColor: '#fff',
+            justifyContent: 'space-around', 
+          }}
+          rightComponent={<Ionicons name="beer-outline" size={45}  /> }
+          />
+    <View style={styles.buttonContainer}>
+        <AppButton 
+            title="Topplistan"
+            onPress={() => {
+              getValueFor("Token").then((token) => {
+                console.log(token)
+              })
+            }}
+          />
+          <AppButton 
+            title="Utforska"
+            onPress={() =>
+              navigation.navigate('Utforska')
+            }
+          />
+        <AppButton 
+            title="Mitt konto"
+            onPress={() =>
+              navigation.navigate('Mitt konto')
+            }
+          />
+      </View> 
+    </View>
+  </SafeAreaProvider> 
     )
 }
 
@@ -76,7 +92,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
       },
     appButtonText: {
-        fontFamily: 'Avenir',
+       // fontFamily: 'Avenir',
         fontSize: 18,
         color: "#fff",
         fontWeight: "bold",

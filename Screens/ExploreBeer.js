@@ -36,7 +36,7 @@ class Beers extends React.PureComponent {
     getValueFor("Token").then((token) => {
       console.log(token)
       axios
-      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -150,14 +150,14 @@ const styles = StyleSheet.create({
     },
 
     productNameBold: {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       fontSize: 14,
       fontWeight: '500',
       textAlign: 'left',
     },
 
     productNameThin: {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       fontSize: 14,
       fontWeight: '400',
       textAlign: 'left',
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
       },
 
     alcohol_percentage: {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       fontSize: 14,
       textAlign: 'left',
     },

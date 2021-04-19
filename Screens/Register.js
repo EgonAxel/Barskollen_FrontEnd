@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
    },
    topTitle:  {
-      fontFamily: 'Avenir',
+    //  fontFamily: 'Avenir',
       fontWeight: '700',
       fontSize: 30,
       alignSelf: 'center',
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
      },
    textInputFields: {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       paddingLeft: 15,
       marginTop: 10,
       marginRight: 40,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
       backgroundColor: 'white'
    },
    registerButton: {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       backgroundColor: '#009688',
       padding: 10,
       marginTop: 10,
@@ -188,13 +188,13 @@ const styles = StyleSheet.create({
       opacity: 0.5,
    },
    registerButtonText: {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       fontWeight: '700',
       alignSelf: 'center',
       color: 'white'
    },
    alreadyHaveAnAccountText: {
-      fontFamily: 'Avenir',
+     // fontFamily: 'Avenir',
       fontWeight: '800',
       alignSelf: 'center',
       color: '#009688',
