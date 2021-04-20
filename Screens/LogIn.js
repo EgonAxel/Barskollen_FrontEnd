@@ -53,14 +53,20 @@ class LogIn extends Component {
                   placeholder = "Användarnamn"
                   placeholderTextColor = "grey"
                   autoCapitalize = "none"
-                  onChangeText = {this.handleUsername}/>
+                  returnKeyType="next"
+                  onChangeText = {this.handleUsername}
+                  onSubmitEditing={() => { this.passwordInput.focus(); }}
+                  blurOnSubmit={false}/>
                   
                <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                  ref={(input) => { this.passwordInput = input; }}
                   underlineColorAndroid = "transparent"
                   placeholder = "Lösenord"
                   placeholderTextColor = "grey"
                   autoCapitalize = "none"
-                  onChangeText = {this.handlePassword}/>
+                  returnKeyType="go"
+                  onChangeText = {this.handlePassword}
+                  onSubmitEditing={() => { this.login(this.state.username,  this.state.password) }}/>
                
                <TouchableOpacity
                   style = {styles.submitButton}

@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, Text, FlatList, Image, StyleSheet,TouchableOpacity} from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, SectionList} from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import RNPickerSelect from 'react-native-picker-select';
 
 // Installera dessa: 
 // npm i --save axios 
@@ -28,15 +29,24 @@ class Beers extends React.PureComponent {
     this.state = {
       beers: [],
       offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
+      searchText: "",
+      orderingValue: "",
       error: null,
     };
   }
-  fetchBeer = () => {
-    const {offset} = this.state;
+  handleSearchText = (text) => {
+    this.setState({ searchText: text })
+  }
+  handleFilterAction = () => {
+    this.setState({
+      offset: 0,
+      beers: []})
+    this.fetchBeer(0, this.state.searchText, this.state.orderingValue)
+  }
+  fetchBeer = (offset, searchText, orderingValue) => {
     getValueFor("Token").then((token) => {
-      console.log(token)
       axios
-      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -48,55 +58,112 @@ class Beers extends React.PureComponent {
     })
   }
   fetchMoreBeers = () => {
-    this.setState(
-      prevState => ({
-        offset: prevState.offset + 20 ,
-      }),
-      () => {
-        this.fetchBeer();
-      },
-    );
-  };
-  componentDidMount() {
-    this.fetchBeer(this.state.offset);
+    if (this.state.beers.length >= 20) {
+      this.setState(
+        prevState => ({
+          offset: prevState.offset + 20,
+        }),
+        () => {
+          this.fetchBeer(this.state.offset, this.state.searchText, this.state.orderingValue);
+        },
+      );
+    };
   }
-  _renderListItem(item){
-    
-      return(
-        // Bortkommenderad från <Card>: pointerEvents="none">
-        <View style = {styles.viewStyle}>
-          {/* <Card style = {styles.cardStyle}> */}
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID})}>
-                <View style = {styles.beerInstance}>
-                  <Image style = {styles.beerImage} source = {{uri: item.picture_url + '_100.png' }}/>
-                    <View style = {styles.beerInformation}>
-                      <Text style = {styles.productNameBold}>{item.name}</Text>
-                      <Text style = {styles.productNameThin}>{item.beer_type}</Text>
-                      {/* <Text style = {styles.attributeStyle}>{item.container_type}{'\n'}</Text> */}
-                      {/* <Text style = {styles.attributeStyle}>{item.volume + ' ml'}{'\n'}</Text> */}
-                      <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                    </View>
-                </View> 
-                <View style = {styles.ratingStars}>
-                <Stars
-                    display= {Number((item.avg_rating).toFixed(1))}
-                    half={true}
-                    fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                    emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                    halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                />
-                </View>
-            </TouchableOpacity>
-          {/* </Card> */}
-        </View>
-        )
-    }
-  render() {
-    
+  componentDidMount() {
+    this.fetchBeer(this.state.offset, this.state.searchText, this.state.orderingValue);
+  }
+  _renderListItem(item) {
+    return(
+      // Bortkommenderad från <Card>: pointerEvents="none">
+      <View style = {styles.viewStyle}>
+        {/* <Card style = {styles.cardStyle}> */}
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID})}>
+              <View style = {styles.beerInstance}>
+                <Image style = {styles.beerImage} source = {{uri: item.picture_url + '_100.png' }}/>
+                  <View style = {styles.beerInformation}>
+                    <Text style = {styles.productNameBold}>{item.name}</Text>
+                    <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+                    {/* <Text style = {styles.attributeStyle}>{item.container_type}{'\n'}</Text> */}
+                    {/* <Text style = {styles.attributeStyle}>{item.volume + ' ml'}{'\n'}</Text> */}
+                    <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                  </View>
+              </View> 
+              <View style = {styles.ratingStars}>
+              <Stars
+                  display= {Number((item.avg_rating).toFixed(1))}
+                  half={true}
+                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+              />
+              </View>
+          </TouchableOpacity>
+        {/* </Card> */}
+      </View>
+      )
+  }
+
+  renderListHeader = () => {
     return (
-      
+      <View>
+        <View style={{width: "100%", flexDirection:"row"}}>
+          <TextInput style = {styles.textInputFields}
+            underlineColorAndroid = "transparent"
+            placeholder = "Sök efter en öl..."
+            placeholderTextColor = "grey"
+            autoCapitalize = "none"
+            returnKeyType="search"
+            onChangeText={this.handleSearchText}
+            onSubmitEditing={this.handleFilterAction}/>
+          <TouchableOpacity
+            style = {styles.searchButton}
+            onPress = { () => {
+              this.handleFilterAction()
+            }}>
+            <Text style = {styles.searchButtonText}> Sök </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{flexDirection:"row", justifyContent:"space-evenly"}}>
+          <RNPickerSelect style = {styles.orderingText}
+              placeholder={{
+              label: 'Filtrering',
+              value: null,
+              }}
+              onValueChange={(value) => this.setState({filterValue: value}, console.log(value))}
+              // this.setState({offset: 0})
+              // this.fetchBeer(this.state.offset)
+              items={[
+                { label: 'Filtrera på öltyp', value: 'type', inputLabel: '' },
+                { label: 'Filtrera på volym', value: 'volume', inputLabel: '' },
+                { label: 'Filtrera på volymprocent', value: 'percentage', inputLabel: '' },
+              ]}
+            />
+            <RNPickerSelect style = {styles.orderingText}
+              placeholder={{
+              label: 'Sortering',
+              value: null,
+              }}
+              onValueChange={(value) => this.setState({orderingValue: value}, )}
+              // this.setState({offset: 0})
+              // this.fetchBeer(this.state.offset)
+              items={[
+                { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: '' },
+                { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: '' },
+                // { label: 'Sortera på öltyp', value: 'type', inputLabel: '' },
+                { label: 'Sortera alfabetiskt (a-ö)', value: 'name', inputLabel: '' },
+                { label: 'Sortera alfabetiskt (ö-a)', value: '-name', inputLabel: '' },
+              ]}
+            />
+        </View>
+      </View>
+    )}
+
+  render() {
+
+    return (
+      <View style={{flex: 1}}>
         <FlatList
-        style={{flex: 1}}
+          style={{flex: 1}}
           contentContainerStyle={{
             backgroundColor: '#ffffff',
             alignItems: 'center',
@@ -112,7 +179,8 @@ class Beers extends React.PureComponent {
         
           onEndReached={this.fetchMoreBeers}
           onEndReachedThreshold={2}
-           />
+          ListHeaderComponent={this.renderListHeader}/>
+      </View>
     );
 
   }
@@ -139,6 +207,34 @@ const styles = StyleSheet.create({
       elevation: 20,
     },
 
+    textInputFields: {
+      // fontFamily: 'Avenir',
+      padding: 10,
+      marginTop: 10,
+      marginBottom: 5,
+      marginRight: 5,
+      height: 40,
+      width: "70%",
+      borderColor: '#009688',
+      borderWidth: 2,
+      borderRadius: 10,
+      backgroundColor: 'white'
+    },
+    searchButton: {
+      // fontFamily: 'Avenir',
+       backgroundColor: '#009688',
+       padding: 10,
+       marginTop: 10,
+       marginBottom: 5,
+       height: 40,
+       borderRadius: 10,
+    },
+    searchButtonText: {
+      // fontFamily: 'Avenir',
+       fontWeight: '700',
+       alignSelf: 'center',
+       color: 'white'
+    },
     beerImage: {
         width: 100,
         height: 100,

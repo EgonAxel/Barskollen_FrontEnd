@@ -80,34 +80,51 @@ async function save(key, value) {
                   placeholder = "Användarnamn"
                   placeholderTextColor = "grey"
                   autoCapitalize = "none"
-                  onChangeText = {this.handleUsername}/>
+                  returnKeyType="next"
+                  onChangeText = {this.handleUsername}
+                  onSubmitEditing={() => { this.emailInput.focus(); }}
+                  blurOnSubmit={false}/>
 
                <TextInput style = {styles.textInputFields}
+                  ref={(input) => { this.emailInput = input; }}
                   underlineColorAndroid = "transparent"
                   placeholder = "Email-adress"
                   placeholderTextColor = "grey"
                   autoCapitalize = "none"
-                  onChangeText = {this.handleEmail}/>
+                  returnKeyType="next"
+                  onChangeText = {this.handleEmail}
+                  onSubmitEditing={() => { this.birthDateInput.focus(); }}
+                  blurOnSubmit={false}/>
 
                <TextInput style = {styles.textInputFields}
+                  ref={(input) => { this.birthDateInput = input; }}
                   underlineColorAndroid = "transparent"
                   placeholder = "Födelsedatum (ÅÅÅÅ-MM-DD)"
                   placeholderTextColor = "grey"
                   autoCapitalize = "none"
-                  onChangeText = {this.handleDateOfBirth}/>
+                  returnKeyType="next"
+                  onChangeText = {this.handleDateOfBirth}
+                  onSubmitEditing={() => { this.passwordInput.focus(); }}
+                  blurOnSubmit={false}/>
 
                <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                  ref={(input) => { this.passwordInput = input; }}
                   underlineColorAndroid = "transparent"
                   placeholder = "Lösenord"
                   placeholderTextColor = "grey"
                   autoCapitalize = "none"
-                  onChangeText = {this.handlePassword}/>
+                  returnKeyType="next"
+                  onChangeText = {this.handlePassword}
+                  onSubmitEditing={() => { this.confirmPasswordInput.focus(); }}
+                  blurOnSubmit={false}/>
 
                <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                  ref={(input) => { this.confirmPasswordInput = input; }}
                   underlineColorAndroid = "transparent"
                   placeholder = "Bekräfta lösenord"
                   placeholderTextColor = "grey"
                   autoCapitalize = "none"
+                  returnKeyType="go"
                   onChangeText = {this.handleConfirmPassword}/>
 
                <TouchableOpacity
