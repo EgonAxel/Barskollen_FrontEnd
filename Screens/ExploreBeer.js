@@ -35,7 +35,7 @@ class Beers extends React.PureComponent {
     };
   }
   handleSearchText = (text) => {
-    this.state.searchText = text         //----För att söka medans man skriver
+    this.setState({searchText: text})         //----För att söka medans man skriver
     this.handleFilterAction()          
   }
   handleFilterAction = () => {
@@ -47,7 +47,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
