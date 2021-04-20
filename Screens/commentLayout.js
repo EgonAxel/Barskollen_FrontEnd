@@ -32,7 +32,7 @@ class commentLayout extends React.PureComponent {
         getValueFor("Token").then((token) => {
           console.log(token);
           axios
-            .post(`http://127.0.0.1:8000/review/`, { beer:beer_ID, user:username, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+            .post(`http://192.168.1.73:8000/review/`, { beer:beer_ID, user:username, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
             .catch(error => {
             this.setState({error: error.message});
             });

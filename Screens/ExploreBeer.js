@@ -35,7 +35,8 @@ class Beers extends React.PureComponent {
     };
   }
   handleSearchText = (text) => {
-    this.setState({ searchText: text })
+    this.state.searchText = text         //----För att söka medans man skriver
+    this.handleFilterAction()          
   }
   handleFilterAction = () => {
     this.setState({
@@ -46,7 +47,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -105,7 +106,7 @@ class Beers extends React.PureComponent {
 
   renderListHeader = () => {
     return (
-      <View>
+      <View style={{height: 100}}>
         <View style={{width: "100%", flexDirection:"row"}}>
           <TextInput style = {styles.textInputFields}
             underlineColorAndroid = "transparent"
@@ -123,8 +124,14 @@ class Beers extends React.PureComponent {
             <Text style = {styles.searchButtonText}> Sök </Text>
           </TouchableOpacity>
         </View>
-        <View style={{flexDirection:"row", justifyContent:"space-evenly"}}>
-          <RNPickerSelect style = {styles.orderingText}
+        <View style={{flexDirection:"row", justifyContent:"space-evenly"}} 
+        style={
+              Platform.OS === 'ios'
+                ? pickerSelectStyles.inputIOS
+                : pickerSelectStyles.inputAndroid
+            }>  
+          <RNPickerSelect style={pickerSelectStyles}
+              useNativeAndroidPickerStyle={false}
               placeholder={{
               label: 'Filtrering',
               value: null,
@@ -138,7 +145,8 @@ class Beers extends React.PureComponent {
                 { label: 'Filtrera på volymprocent', value: 'percentage', inputLabel: '' },
               ]}
             />
-            <RNPickerSelect style = {styles.orderingText}
+            <RNPickerSelect style={pickerSelectStyles}
+              useNativeAndroidPickerStyle={false}
               placeholder={{
               label: 'Sortering',
               value: null,
@@ -300,6 +308,29 @@ const styles = StyleSheet.create({
       marginTop: -40,
       marginLeft: 15,
     },
-
 })
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 16,
+    //paddingHorizontal: 10,
+    //paddingVertical: 8,
+    borderWidth: 0.5,
+    //borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+});
+
 export default Beers;
