@@ -47,7 +47,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -107,8 +107,9 @@ class Beers extends React.PureComponent {
   renderListHeader = () => {
     return (
       <View style={{height: 100}}>
-        <View style={{width: "100%", flexDirection:"row"}}>
+        <View style={{ flexDirection:"row"}}>
           <TextInput style = {styles.textInputFields}
+            //clearButtonMode="always"
             underlineColorAndroid = "transparent"
             placeholder = "Sök efter en öl..."
             placeholderTextColor = "grey"
@@ -123,7 +124,7 @@ class Beers extends React.PureComponent {
             }}>
             <Text style = {styles.searchButtonText}> Sök </Text>
           </TouchableOpacity>
-        </View>
+        </View> 
         <View style={ Platform.OS === 'ios'
               ? pickerSelectStyles.inputIOS
               : pickerSelectStyles.inputAndroid, 
@@ -206,13 +207,13 @@ const pickerSelectStyles = StyleSheet.create({
   },
   inputAndroid: {
     fontSize: 14,
-    //paddingHorizontal: 10,
-    //paddingVertical: 8,
-    borderWidth: 0.5,
-    //borderColor: 'purple',
-    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 30,
+    borderWidth: 2,
+    borderColor: '#009688',
+    borderRadius: 10,
     color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
+    //paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
 
