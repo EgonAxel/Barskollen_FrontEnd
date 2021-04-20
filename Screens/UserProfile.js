@@ -79,6 +79,7 @@ class UserProfile extends React.PureComponent {
               <View style = {styles.beerInstance}>
                 <Image style = {styles.beerImage} source = {{uri: "https://product-cdn.systembolaget.se/productimages/" + item.beer + "/" + item.beer + '_100.png' }}/>
                 <View style = {styles.ratingStars}>
+                  <Text style = {styles.productNameBold} > {item.beer_name} </Text>
                   <Stars
                       display= {Number((item.rating).toFixed(1))}
                       fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
     viewStyle: {
       marginTop: 15,
       width: 350,
-      height: 200,
+      height: 150,
       backgroundColor: '#ffffff',
       borderRadius: 15,
       borderStyle: 'solid', 
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
     },
     beerImage: {
         width: 100,
-        height: 170,
+        height: 120,
         marginTop: 10,
         marginBottom: 10,
         marginLeft: 10,
@@ -212,6 +213,7 @@ const styles = StyleSheet.create({
     productNameBold: {
      // fontFamily: 'Avenir',
       fontSize: 14,
+      marginBottom: 5,
       fontWeight: '500',
       textAlign: 'left',
     },
@@ -255,7 +257,6 @@ const styles = StyleSheet.create({
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 5,
       fontSize: 35,
-      left: 5
     },
     myEmptyStarStyle: {
       color: '#009688',
@@ -263,6 +264,7 @@ const styles = StyleSheet.create({
     ratingStars: {
       alignSelf: "center",
       marginLeft: "10%",
+      flexDirection: 'column',
     },
 })
 
