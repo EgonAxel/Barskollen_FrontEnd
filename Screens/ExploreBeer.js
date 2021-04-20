@@ -5,6 +5,10 @@ import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNPickerSelect from 'react-native-picker-select';
+import { Dimensions } from 'react-native';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 // Installera dessa: 
 // npm i --save axios 
@@ -35,19 +39,25 @@ class Beers extends React.PureComponent {
     };
   }
   handleSearchText = (text) => {
-    this.setState({searchText: text})         //----För att söka medans man skriver
-    this.handleFilterAction(text)          
+      this.setState({searchText: text})         //----För att söka medans man skriver
+      this.handleFilterAction(text)
   }
   handleFilterAction = (text) => {
+    console.log(text)
     this.setState({
       offset: 0,
       beers: []})
-    this.fetchBeer(0, text, this.state.orderingValue)
+    if (typeof text != "undefined") {
+      this.fetchBeer(0, text, this.state.orderingValue)
+    }
+    else {
+      this.fetchBeer(0, "", this.state.orderingValue)
+    }
   }
   fetchBeer = (offset, searchText, orderingValue) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -107,9 +117,9 @@ class Beers extends React.PureComponent {
   renderListHeader = () => {
     return (
       <View style={{height: 100}}>
-        <View style={{ flexDirection:"row"}}>
-          <TextInput style = {styles.textInputFields}
-            //clearButtonMode="always"
+        <View style={styles.searchBarRow}>
+          <TextInput style = {styles.searchField}
+            clearButtonMode = 'always'
             underlineColorAndroid = "transparent"
             placeholder = "Sök efter en öl..."
             placeholderTextColor = "grey"
@@ -124,12 +134,12 @@ class Beers extends React.PureComponent {
             }}>
             <Text style = {styles.searchButtonText}> Sök </Text>
           </TouchableOpacity>
-        </View> 
+        </View>
         <View style={ Platform.OS === 'ios'
               ? pickerSelectStyles.inputIOS
               : pickerSelectStyles.inputAndroid, 
               { flexDirection:"row", 
-                justifyContent:"space-evenly",
+                justifyContent:"space-between",
               }}>  
           <RNPickerSelect style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
@@ -141,9 +151,9 @@ class Beers extends React.PureComponent {
               // this.setState({offset: 0})
               // this.fetchBeer(this.state.offset)
               items={[
-                { label: 'Filtrera på öltyp', value: 'type', inputLabel: '' },
-                { label: 'Filtrera på volym', value: 'volume', inputLabel: '' },
-                { label: 'Filtrera på volymprocent', value: 'percentage', inputLabel: '' },
+                { label: 'Filtrera på ljus lager', value: 'ljus_lager', inputLabel: 'Ljus lager' },
+                { label: 'Filtrera på ale', value: 'ale', inputLabel: 'Ale' },
+                // { label: 'Filtrera på volym', value: 'volume', inputLabel: 'Volym' },
               ]}
             />
             <RNPickerSelect style={pickerSelectStyles}
@@ -190,20 +200,22 @@ class Beers extends React.PureComponent {
           ListHeaderComponent={this.renderListHeader}/>
       </View>
     );
-
   }
-  
 }
+
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: { //
+    minWidth: windowWidth * 0.3,
+    maxWidth: windowWidth * 0.4,
+    textAlign: 'center',
     fontSize: 14,
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderWidth: 2,
     borderColor: '#009688',
     borderRadius: 10,
-    color: 'black',
-    // paddingRight: 30, // to ensure the text is never behind the icon
+    color: '#009688',
+
   },
   inputAndroid: {
     fontSize: 14,
@@ -219,118 +231,128 @@ const pickerSelectStyles = StyleSheet.create({
 
 const styles = StyleSheet.create({
 
-    viewStyle: {
-      marginTop: 15,
-      width: 350,
-      height: 125,
-      backgroundColor: '#ffffff',
-      borderRadius: 15,
-      borderStyle: 'solid', 
-      borderColor: '#dadada',
-      borderWidth: 1,
-      shadowColor: "#000000",
-      shadowOffset: {
-	      width: 1,
-	      height: 1
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 3,
-      elevation: 20,
+  viewStyle: {
+    marginTop: 15,
+    width: windowWidth * 0.93,
+    height: 125,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    borderStyle: 'solid', 
+    borderColor: '#dadada',
+    borderWidth: 1,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 1,
+      height: 1
     },
-
-    textInputFields: {
-      // fontFamily: 'Avenir',
-      padding: 10,
-      marginTop: 10,
-      marginBottom: 5,
-      marginRight: 5,
-      height: 40,
-      width: "70%",
-      borderColor: '#009688',
-      borderWidth: 2,
-      borderRadius: 10,
-      backgroundColor: 'white'
-    },
-    searchButton: {
-      // fontFamily: 'Avenir',
-       backgroundColor: '#009688',
-       padding: 10,
-       marginTop: 10,
-       marginBottom: 5,
-       height: 40,
-       borderRadius: 10,
-    },
-    searchButtonText: {
-      // fontFamily: 'Avenir',
-       fontWeight: '700',
-       alignSelf: 'center',
-       color: 'white'
-    },
-    beerImage: {
-        width: 100,
-        height: 100,
-        marginTop: 10,
-        marginBottom: 10,
-        marginLeft: 10,
-        resizeMode: 'contain',
-        left: 0,
-    },
-
-    productNameBold: {
-     // fontFamily: 'Avenir',
-      fontSize: 14,
-      fontWeight: '500',
-      textAlign: 'left',
-    },
-
-    productNameThin: {
-     // fontFamily: 'Avenir',
-      fontSize: 14,
-      fontWeight: '400',
-      textAlign: 'left',
-      marginBottom: 5,
-    },
-
-    beerInstance: {
-      textAlign: 'left',
-      flexDirection: 'row',
-      maxWidth: 265,
-    },
-
-    beerInformation: {
-      marginTop: 15,
-      paddingBottom: 5,
-      flexDirection: 'column',
-      left: 15,
-    },
-
-    attributeStyle: {
-        fontSize: 20,
-        textAlign: 'left',
-      },
-
-    alcohol_percentage: {
-     // fontFamily: 'Avenir',
-      fontSize: 14,
-      textAlign: 'left',
-    },
-
-    myStarStyle: {
-      color: '#009688',
-      backgroundColor: 'transparent',
-      textShadowColor: '#dadada',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 5,
-      fontSize: 25,
-      left: 5
-    },
-    myEmptyStarStyle: {
-      color: '#009688',
-    },
-    ratingStars: {
-      marginTop: -40,
-      marginLeft: 15,
-    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 20,
+  },
+  textInputFields: {
+    // fontFamily: 'Avenir',
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 5,
+    marginRight: 5,
+    height: 40,
+    width: "70%",
+    borderColor: '#009688',
+    borderWidth: 2,
+    borderRadius: 10,
+    backgroundColor: 'white'
+  },
+  searchBarRow: {
+    marginTop: 10,
+    width: "100%", 
+    flexDirection:"row"
+  },
+  searchField: {
+    // fontFamily: 'Avenir',
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 5,
+    marginRight: 5,
+    height: 40,
+    width: windowWidth * 0.7,
+    borderColor: '#009688',
+    borderWidth: 2,
+    borderRadius: 10,
+    backgroundColor: 'white'
+  },
+  searchButton: {
+    // fontFamily: 'Avenir',
+    backgroundColor: '#009688',
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 5,
+    height: 40,
+    borderRadius: 10,
+  },
+  searchButtonText: {
+    // fontFamily: 'Avenir',
+    fontWeight: '700',
+    alignSelf: 'center',
+    color: 'white'
+  },
+  beerImage: {
+    width: 100,
+    height: 100,
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 10,
+    resizeMode: 'contain',
+    left: 0,
+  },
+  productNameBold: {
+    // fontFamily: 'Avenir',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'left',
+  },
+  productNameThin: {
+    // fontFamily: 'Avenir',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'left',
+    marginBottom: 5,
+  },
+  beerInstance: {
+    textAlign: 'left',
+    flexDirection: 'row',
+    maxWidth: 265,
+  },
+  beerInformation: {
+    marginTop: 15,
+    paddingBottom: 5,
+    flexDirection: 'column',
+    left: 15,
+  },
+  attributeStyle: {
+    fontSize: 20,
+    textAlign: 'left',
+  },
+  alcohol_percentage: {
+    // fontFamily: 'Avenir',
+    fontSize: 14,
+    textAlign: 'left',
+  },
+  myStarStyle: {
+    color: '#009688',
+    backgroundColor: 'transparent',
+    textShadowColor: '#dadada',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 5,
+    fontSize: 25,
+    left: 5
+  },
+  myEmptyStarStyle: {
+    color: '#009688',
+  },
+  ratingStars: {
+    marginTop: -40,
+    marginLeft: 15,
+  },
 })
 
 export default Beers;

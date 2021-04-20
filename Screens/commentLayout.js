@@ -26,13 +26,13 @@ class commentLayout extends React.PureComponent {
       };
     }
     
-   postRatingComment(beer_ID, starValue) {
+   postRatingComment(beer_ID, beer_name, starValue) {
       getValueFor("Username").then((username) => {
         console.log(username)
         getValueFor("Token").then((token) => {
           console.log(token);
           axios
-            .post(`http://192.168.56.1:80/review/`, { beer:beer_ID, user:username, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+            .post(`http://127.0.0.1:8000/review/`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
             .catch(error => {
             this.setState({error: error.message});
             });
@@ -54,7 +54,7 @@ class commentLayout extends React.PureComponent {
       <Text style = {styles.productNameBold}>{this.state.beer_name}</Text>
       <View style = {styles.imageWrap}>
       <Image source={{uri: this.state.beer_pic + '_100.png' }} style={styles.beerImage} /> 
-      <TouchableOpacity onPress={() => this.postRatingComment(this.state.beer_ID, this.state.stars)}>
+      <TouchableOpacity onPress={() => this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars)}>
            <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
            </TouchableOpacity>
            </View>

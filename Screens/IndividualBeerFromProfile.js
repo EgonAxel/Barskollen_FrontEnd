@@ -1,12 +1,9 @@
-
-
 import React from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SecureStore from 'expo-secure-store';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 async function getValueFor(key) {
@@ -18,35 +15,24 @@ async function getValueFor(key) {
   }
 }
 
-
-class individualBeer extends React.PureComponent {
+class IndividualBeerFromProfile extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       beers: [],
-      reviews:[],
       offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
       error: null,
       beer_ID: this.props.route.params.beer_ID,
-      beer_name: this.props.route.params.beer_name,
-      beer_pic: this.props.route.params.beer_pic,
-      beer_percentage: this.props.route.params.beer_percentage,
-      beer_volume:this.props.route.params.beer_volume,
-      beer_container_type:this.props.route.params.beer_container_type,
-      beer_bitterness:this.props.route.params.beer_bitterness,
-      beer_sweetness: this.props.route.params.beer_sweetness,
-      beer_fullness:this.props.route.params.beer_fullness,
-      beer_avgrating:this.props.route.params.beer_avgrating
+      rating: this.props.route.params.rating
     };
   }
-  
-  fetchReview = () => {
+  fetchBeer = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
-          reviews: this.state.reviews.concat(response.data.results),
+          beers: this.state.beers.concat(response.data),
         });
      
       })
@@ -55,88 +41,61 @@ class individualBeer extends React.PureComponent {
       });
     })
   };
-  fetchMoreReviews = () => {
-    this.setState(
-      prevState => ({
-        offset: prevState.offset + 20 ,
-      }),
-      () => {
-        this.fetchReview();
-      },
-    );
-  };
   componentDidMount() {
-    this.fetchReview(this.state.offset, this.state.reviews);
+    this.fetchBeer(this.state.offset);
   }
 
 _renderListItem(item){
-
   return(
     
-    <View style = {styles.commentWrap}>
-         
+    <View style = {styles.viewStyle}>
+          {/* <Card pointerEvents="none"> */} 
+          <Text style = {styles.productNameBold}>{item.name}</Text>
+          <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+          <View style = {styles.imageWrap}>
+          <Image source={{uri: item.picture_url + '_200.png' }} style={styles.beerImage} />
+          </View>
+          <View style = {styles.textWrap}>
+          <Text style = {styles.alcoholPercentageStyle}>{item.alcohol_percentage + '% vol'}</Text>
+          <Text style = {styles.containerAndVolumeStyle}>{item.container_type + ', ' + item.volume + ' ml'}</Text>
+          </View>
+          {/* <Text style = {styles.volumeStyle}>{item.volume + ' ml'}</Text> */}
+          <View style = {styles.tasteClockWrap}>
+            <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + item.bitterness}</Text>
+            <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + item.fullness}</Text>
+            <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  item.sweetness}</Text>
+          </View>
           <View style = {styles.ratingStars}>
-          <Text style = {styles.productNameBold}>{item.user}</Text>
             <Stars
-              display= {Number(item.rating)}
+              display= {Number((item.avg_rating).toFixed(1))}
               half={true}
               fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
               emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
               halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
             />
           </View>
+          <Text style = {styles.rating}>{'Medelrating: ' + Number((item.avg_rating).toFixed(1)) + ' av 5'}</Text>
+          <View style = {styles.ratingStars}>
+            <Stars
+              display= {Number(this.state.rating)}
+              half={true}
+              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+            />
+          </View>
+          <Text style = {styles.rating}>{'Din rating: ' + Number(this.state.rating) + ' av 5'}</Text> 
           {/* </Card> */}
-         
           
-  
     </View>
     
     )
 }
-renderListHeader = () => {
-  return (
-    <View style={{height: 600}}>
-      <View style = {styles.viewStyle}>
-          {/* <Card pointerEvents="none"> */} 
-          <Text style = {styles.productNameBold}>{this.state.beer_name}</Text>
-          <Text style = {styles.productNameThin}>{this.state.beer_type}</Text>
-          <View style = {styles.imageWrap}>
-          <Image source={{uri: this.state.beer_pic + '_200.png' }} style={styles.beerImage} />
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('commentLayout', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic})}>
-           <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
-           </TouchableOpacity>
-          </View>
-          <View style = {styles.textWrap}>
-          <Text style = {styles.alcoholPercentageStyle}>{this.state.beer_percentage + '% vol'}</Text>
-          <Text style = {styles.containerAndVolumeStyle}>{this.state.beer_container_type + ', ' + this.state.beer_volume + ' ml'}</Text>
-          </View>
-          <View style = {styles.tasteClockWrap}>
-            <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + this.state.beer_bitterness}</Text>
-            <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + this.state.beer_fullness}</Text>
-            <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  this.state.beer_sweetness}</Text>
-          </View>
-          <View style = {styles.ratingStars}>
-            <Stars
-              display= {Number(this.state.beer_avgrating).toFixed(1)}
-              half={true}
-              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-            />
-          </View>
-          <Text style = {styles.rating}>{'Rating: ' + Number(this.state.beer_avgrating).toFixed(1) + ' av 5'}</Text> 
-          {/* </Card> */}
-    </View>
-    </View>
-  )}
-
 render() {
-return (
-  
 
+return (
     <FlatList
-      style={{flex: 1}}
-    
+    style={{flex: 1}}
       contentContainerStyle={{
         backgroundColor: '#ffffff',
         alignItems: 'center',
@@ -144,16 +103,12 @@ return (
         // marginTop: 15,
       
       }}
-    
-      
-    data={this.state.reviews}
-     
+      data={this.state.beers}
       keyExtractor={(beer, index) => String(index)}
+      
       renderItem={({ item }) => this._renderListItem(item)}
-      ListHeaderComponent={this.renderListHeader()}
       //horizontal={true}
        />
-       
     );
   }
 }
@@ -163,7 +118,7 @@ const styles = StyleSheet.create({
   viewStyle: {
     marginTop: 15,
     width: 350,
-    height: 525,
+    height: 600,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
@@ -212,25 +167,6 @@ const styles = StyleSheet.create({
     marginTop: 120,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-  },
-  commentWrap: {
-    marginTop: 50,
-    marginTop: 15,
-    width: 350,
-    height: 400,
-    backgroundColor: '#ffffff',
-    borderRadius: 15,
-    borderStyle: 'solid', 
-    borderColor: '#dadada',
-    borderWidth: 1,
-    shadowColor: "#000000",
-    shadowOffset: {
-	    width: 1,
-	    height: 1
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
-    elevation: 20,
   },
   
   tasteClockWrap: {
@@ -287,4 +223,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default individualBeer  
+export default IndividualBeerFromProfile

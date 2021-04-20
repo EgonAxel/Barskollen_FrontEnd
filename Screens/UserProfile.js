@@ -4,6 +4,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialIcons } from '@expo/vector-icons'; 
 import RNPickerSelect from 'react-native-picker-select';
 
 // Installera dessa: 
@@ -22,7 +23,6 @@ async function getValueFor(key) {
    }
  }
 
-
 class UserProfile extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -31,17 +31,17 @@ class UserProfile extends React.PureComponent {
       offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
       orderingValue: "",
       error: null,
+      username: ""
     };
   }
   handleFilterAction = () => {
     this.setState({
       offset: 0,
       reviews: []})
-    this.fetchReview(0, this.state.orderingValue)
+    this.fetchReview(this.state.username, 0, this.state.orderingValue)
   }
-  fetchReview = (offset, orderingValue) => {
+  fetchReview = (username, offset, orderingValue) => {
     getValueFor("Token").then((token) => {
-      getValueFor("Username").then((username) => {
         axios
         .get(`http://127.0.0.1:8000/review/?limit=20&user=${username}&offset=${offset}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
         .then(response => {
@@ -52,7 +52,6 @@ class UserProfile extends React.PureComponent {
         .catch(error => {
           this.setState({error: error.message});
         });
-      });
     })
   }
   fetchMoreReviews = () => {
@@ -62,20 +61,23 @@ class UserProfile extends React.PureComponent {
           offset: prevState.offset + 20,
         }),
         () => {
-          this.fetchReview(this.state.offset, this.state.orderingValue);
+          this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue);
         },
       );
     };
   }
   componentDidMount() {
-    this.fetchReview(this.state.offset, this.state.orderingValue);
+    getValueFor("Username").then((username) => {
+      this.setState({username: username})
+      this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue);
+    })
   }
   _renderListItem(item) {
     return(
       // Bortkommenderad från <Card>: pointerEvents="none">
       <View style = {styles.viewStyle}>
         {/* <Card style = {styles.cardStyle}> */}
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer})}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeerFromProfile', {beer_ID: item.beer, rating: item.rating})}>
               <View style = {styles.beerInstance}>
                 <Image style = {styles.beerImage} source = {{uri: "https://product-cdn.systembolaget.se/productimages/" + item.beer + "/" + item.beer + '_100.png' }}/>
                 <View style = {styles.ratingStars}>
@@ -96,13 +98,18 @@ class UserProfile extends React.PureComponent {
 
   renderListHeader = () => {
     return (
-      <View style={{height: 100}}>
-        <View style={{flexDirection:"row", justifyContent:"space-evenly"}} 
-        style={
-              Platform.OS === 'ios'
-                ? pickerSelectStyles.inputIOS
-                : pickerSelectStyles.inputAndroid
-            }>  
+      <View>
+        <View style={{flexDirection:"row"}}>
+          <MaterialIcons name="person-outline" size={25} color={'#009688'} />
+          <Text style={styles.userNameText}>{this.state.username}</Text>
+        </View> 
+        <View style={ Platform.OS === 'ios'
+              ? pickerSelectStyles.inputIOS
+              : pickerSelectStyles.inputAndroid, 
+              { flexDirection:"row", 
+                justifyContent:"space-evenly",
+              }}> 
+            <Text style={styles.myBeersText}>Mina öl</Text>
             <RNPickerSelect style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
               placeholder={{
@@ -147,10 +154,32 @@ class UserProfile extends React.PureComponent {
           ListHeaderComponent={this.renderListHeader}/>
       </View>
     );
-
   }
-  
 }
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: { //
+    fontSize: 14,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 2,
+    borderColor: '#009688',
+    borderRadius: 10,
+    color: 'black',
+    // paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 14,
+    paddingVertical: 5,
+    paddingHorizontal: 30,
+    borderWidth: 2,
+    borderColor: '#009688',
+    borderRadius: 10,
+    color: 'black',
+    //paddingRight: 30, // to ensure the text is never behind the icon
+  },
+});
+
 const styles = StyleSheet.create({
 
     viewStyle: {
@@ -172,28 +201,24 @@ const styles = StyleSheet.create({
       elevation: 20,
     },
 
-    textInputFields: {
-      // fontFamily: 'Avenir',
-      padding: 10,
-      marginTop: 10,
-      marginBottom: 5,
-      marginRight: 5,
-      height: 40,
-      width: "70%",
-      borderColor: '#009688',
-      borderWidth: 2,
-      borderRadius: 10,
-      backgroundColor: 'white'
+    userNameText: {
+    // fontFamily: 'Avenir',
+      fontSize: 18,
+      color: 'black',
+      fontWeight: "bold",
+      alignSelf: "center",
+      textTransform: "uppercase"
     },
-    searchButton: {
-      // fontFamily: 'Avenir',
-       backgroundColor: '#009688',
-       padding: 10,
-       marginTop: 10,
-       marginBottom: 5,
-       height: 40,
-       borderRadius: 10,
+
+     myBeersText: {
+    // fontFamily: 'Avenir',
+      fontSize: 18,
+      color: 'black',
+      fontWeight: "bold",
+      alignSelf: "center",
+      textTransform: "uppercase"
     },
+
     searchButtonText: {
       // fontFamily: 'Avenir',
        fontWeight: '700',
@@ -267,28 +292,5 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
     },
 })
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-  inputAndroid: {
-    fontSize: 16,
-    //paddingHorizontal: 10,
-    //paddingVertical: 8,
-    borderWidth: 0.5,
-    //borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-});
 
 export default UserProfile;

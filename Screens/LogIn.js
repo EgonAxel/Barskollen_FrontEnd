@@ -29,7 +29,7 @@ class LogIn extends Component {
          return
       }
       axios
-         .post(`http://192.168.56.1:80/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+         .post(`http://127.0.0.1:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
          .then(response => {
             if (response.request.status === 200) { //Status 200 är 'Success'
                save("Token", response.data.token);
