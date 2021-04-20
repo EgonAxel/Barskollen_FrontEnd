@@ -35,6 +35,7 @@ class Beers extends React.PureComponent {
     };
   }
   handleSearchText = (text) => {
+    this.setState({searchText: text})         //----För att söka medans man skriver
     this.handleFilterAction(text)          
   }
   handleFilterAction = (text) => {
@@ -135,7 +136,7 @@ class Beers extends React.PureComponent {
               label: 'Filtrering',
               value: null,
               }}
-              onValueChange={(value) => this.setState({filterValue: value}, console.log(value))}
+              onValueChange={(value) => {console.log(value)}}
               // this.setState({offset: 0})
               // this.fetchBeer(this.state.offset)
               items={[
