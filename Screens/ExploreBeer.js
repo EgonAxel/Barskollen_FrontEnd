@@ -35,19 +35,18 @@ class Beers extends React.PureComponent {
     };
   }
   handleSearchText = (text) => {
-    this.state.searchText = text         //----För att söka medans man skriver
-    this.handleFilterAction()          
+    this.handleFilterAction(text)          
   }
-  handleFilterAction = () => {
+  handleFilterAction = (text) => {
     this.setState({
       offset: 0,
       beers: []})
-    this.fetchBeer(0, this.state.searchText, this.state.orderingValue)
+    this.fetchBeer(0, text, this.state.orderingValue)
   }
   fetchBeer = (offset, searchText, orderingValue) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -124,12 +123,12 @@ class Beers extends React.PureComponent {
             <Text style = {styles.searchButtonText}> Sök </Text>
           </TouchableOpacity>
         </View>
-        <View style={{flexDirection:"row", justifyContent:"space-evenly"}} 
-        style={
-              Platform.OS === 'ios'
-                ? pickerSelectStyles.inputIOS
-                : pickerSelectStyles.inputAndroid
-            }>  
+        <View style={ Platform.OS === 'ios'
+              ? pickerSelectStyles.inputIOS
+              : pickerSelectStyles.inputAndroid, 
+              { flexDirection:"row", 
+                justifyContent:"space-evenly",
+              }}>  
           <RNPickerSelect style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
               placeholder={{
@@ -151,15 +150,14 @@ class Beers extends React.PureComponent {
               label: 'Sortering',
               value: null,
               }}
-              onValueChange={(value) => this.setState({orderingValue: value}, )}
+              onValueChange={(value) => this.setState({orderingValue: value})}
               // this.setState({offset: 0})
               // this.fetchBeer(this.state.offset)
               items={[
-                { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: '' },
-                { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: '' },
-                // { label: 'Sortera på öltyp', value: 'type', inputLabel: '' },
-                { label: 'Sortera alfabetiskt (a-ö)', value: 'name', inputLabel: '' },
-                { label: 'Sortera alfabetiskt (ö-a)', value: '-name', inputLabel: '' },
+                { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
+                { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
+                { label: 'Sortera alfabetiskt (a-ö)', value: 'name', inputLabel: 'Alfabetiskt (a-ö)' },
+                { label: 'Sortera alfabetiskt (ö-a)', value: '-name', inputLabel: 'Alfabetiskt (ö-a)' },
               ]}
             />
         </View>
@@ -194,6 +192,29 @@ class Beers extends React.PureComponent {
   }
   
 }
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: { //
+    fontSize: 14,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 2,
+    borderColor: '#009688',
+    borderRadius: 10,
+    color: 'black',
+    // paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 14,
+    //paddingHorizontal: 10,
+    //paddingVertical: 8,
+    borderWidth: 0.5,
+    //borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+});
+
 const styles = StyleSheet.create({
 
     viewStyle: {
@@ -309,28 +330,5 @@ const styles = StyleSheet.create({
       marginLeft: 15,
     },
 })
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-  inputAndroid: {
-    fontSize: 16,
-    //paddingHorizontal: 10,
-    //paddingVertical: 8,
-    borderWidth: 0.5,
-    //borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-});
 
 export default Beers;
