@@ -43,10 +43,10 @@ class individualBeer extends React.PureComponent {
   fetchReview = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://192.168.56.1:80/review/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1:80/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
-          reviews: this.state.reviews.concat(response.data),
+          reviews: this.state.reviews.concat(response.data.results),
         });
      
       })
@@ -78,7 +78,7 @@ _renderListItem(item){
           <View style = {styles.ratingStars}>
           <Text style = {styles.productNameBold}>{item.user}</Text>
             <Stars
-              display= {Number(item.rating).toFixed(1)}
+              display= {Number(item.rating)}
               half={true}
               fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
               emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
@@ -132,10 +132,10 @@ renderListHeader = () => {
 
 render() {
 return (
-  <View style={{flex: 1}}>
+  
 
     <FlatList
-    
+      style={{flex: 1}}
     
       contentContainerStyle={{
         backgroundColor: '#ffffff',
@@ -153,7 +153,7 @@ return (
       ListHeaderComponent={this.renderListHeader()}
       //horizontal={true}
        />
-       </View>
+       
     );
   }
 }
