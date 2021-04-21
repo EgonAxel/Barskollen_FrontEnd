@@ -54,7 +54,7 @@ class UserProfile extends React.PureComponent {
   fetchReview = (username, offset, orderingValue) => {
     getValueFor("Token").then((token) => {
         axios
-        .get(`http://127.0.0.1:8000/review/?limit=20&user=${username}&offset=${offset}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+        .get(`http://192.168.56.1:80/review/?limit=20&user=${username}&offset=${offset}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
         .then(response => {
           this.setState({
             reviews: this.state.reviews.concat(response.data.results),

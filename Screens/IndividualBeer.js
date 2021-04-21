@@ -44,7 +44,7 @@ class individualBeer extends React.PureComponent {
   fetchReview = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1:80/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           reviews: this.state.reviews.concat(response.data.results),
@@ -78,6 +78,7 @@ _renderListItem(item){
          
           <View style = {styles.ratingStars}>
           <Text style = {styles.productNameBold}>{item.user}</Text>
+          <Text style = {styles.reviewText}>{item.review_text} </Text>
             <Stars
               display= {Number(item.rating)}
               half={true}
@@ -183,6 +184,12 @@ const styles = StyleSheet.create({
   productNameBold: {
     fontSize: 25,
     fontWeight: '700',
+    marginTop: 25,
+    textAlign: 'center',
+  },
+  reviewText: {
+    fontSize: 18,
+    fontWeight: '500',
     marginTop: 25,
     textAlign: 'center',
   },

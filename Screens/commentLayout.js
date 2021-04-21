@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, View, Text, FlatList, Image, StyleSheet,TouchableOpacity} from 'react-native';
+import { View, Text, Image, StyleSheet,TouchableOpacity, TextInput,SafeAreaView, ScrollView} from 'react-native';
 import Stars from 'react-native-stars';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,16 +26,21 @@ class commentLayout extends React.PureComponent {
           beer_bitterness: this.props.route.params.beer_bitterness,
           beer_fullness: this.props.route.params.beer_fullness,
           beer_sweetness: this.props.route.params.beer_sweetness,
-          recommendations: []
+          recommendations: [],
+          review: ''
       };
     }
+    reviewText = (text) => {
+      this.setState({ review: text })
+     }
 
-   postRatingComment(beer_ID, beer_name, starValue) {
+   postRatingComment(beer_ID, beer_name, starValue, review) {
       getValueFor("Username").then((username) => {
         console.log(username)
+        console.log(review)
         getValueFor("Token").then((token) => {
           axios
-            .post(`http://127.0.0.1:8000/review/`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+            .post(`http://192.168.56.1:80/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text:review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
             .catch(error => {
             this.setState({error: error.message});
             });
@@ -47,7 +52,7 @@ class commentLayout extends React.PureComponent {
       getValueFor("Token").then((token) => {
         console.log(token);
         axios
-          .get(`http://127.0.0.1:8000/beer/?beer_type=${beer_type}&min_bitterness=${beer_bitterness - 1}&max_bitterness=${beer_bitterness + 1}&min_fullness=${beer_fullness - 1}&max_fullness=${beer_fullness + 1}&min_sweetness=${beer_sweetness - 1}&max_sweetness=${beer_sweetness + 1}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .get(`http://192.168.56.1:80/beer/?beer_type=${beer_type}&min_bitterness=${beer_bitterness - 1}&max_bitterness=${beer_bitterness + 1}&min_fullness=${beer_fullness - 1}&max_fullness=${beer_fullness + 1}&min_sweetness=${beer_sweetness - 1}&max_sweetness=${beer_sweetness + 1}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .then(response => {
             this.setState({
               recommendations: response.data.results,
@@ -59,20 +64,18 @@ class commentLayout extends React.PureComponent {
         });
     }
 
-  commentLayout() {
-    
-  }
+  
 
   render() {
   
   return (
-      
-    <View style = {styles.viewStyle}>
+    
+    <SafeAreaView style = {styles.viewStyle}>
       <Text style = {styles.productNameBold}>{this.state.beer_name}</Text>
       <View style = {styles.imageWrap}>
       <Image source={{uri: this.state.beer_pic + '_100.png' }} style={styles.beerImage} /> 
       <TouchableOpacity onPress={() => {
-        this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars),
+        this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
         this.getRecommendations(this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
         console.log(this.state.recommendations.length)}}>
            <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
@@ -88,12 +91,24 @@ class commentLayout extends React.PureComponent {
             halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
             />
             <Text>{this.state.stars}</Text>
-        </View>
-    </View> 
-      
-         
+            <View style = {styles.container}>
+            <TextInput style = {styles.textInputFields}
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Skriv gärna vad du tyckte om ölen"
+                  placeholderTextColor = "grey"
+                  returnKeyType="next"
+                  onChangeText = {this.reviewText}
+                  blurOnSubmit={false}/>
+                  </View>
+        
+        
+        
+        
           
-         
+                 
+    
+    </View>
+        </SafeAreaView> 
         
       );
       
@@ -121,6 +136,19 @@ class commentLayout extends React.PureComponent {
       elevation: 20,
       alignSelf: 'center'
     },
+    textInputFields: {
+       paddingLeft: 15,
+       paddingRight: 15,
+       marginTop: 80,
+       marginRight: 40,
+       marginBottom: 5,
+       marginLeft: 40,
+       height: 100,
+       borderColor: '#009688',
+       borderWidth: 2,
+       borderRadius: 10,
+       backgroundColor: 'white'
+    },
   
     productNameBold: {
       fontSize: 25,
@@ -129,6 +157,11 @@ class commentLayout extends React.PureComponent {
       textAlign: 'center',
       marginBottom: 15
     },
+    container: {
+      flex: 1,
+      flexDirection: "column",
+      justifyContent: 'center',
+     },
   
     productNameThin: {
       fontSize: 18,
@@ -138,21 +171,21 @@ class commentLayout extends React.PureComponent {
     },
   
     beerImage: {
-        width: 200,
-        height: 300,
+        width: 150,
+        height: 200,
         marginBottom: 20,
         resizeMode: 'contain',
         alignSelf: 'center'
     },
     capImage: {
-      width: 150,
-      height: 200,
+      width: 200,
+      height: 250,
       resizeMode: 'contain',
       alignSelf: 'center'
   },
     imageWrap: {
       flex: 3,
-      marginTop: 80,
+      marginTop: 20,
       flexDirection: 'row',
       justifyContent: 'space-evenly',
       marginBottom: 20
