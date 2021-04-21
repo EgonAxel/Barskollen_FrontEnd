@@ -19,7 +19,7 @@ async function getValueFor(key) {
 }
 
 
-class individualBeer extends React.PureComponent {
+class IndividualBeer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,6 +30,7 @@ class individualBeer extends React.PureComponent {
       beer_ID: this.props.route.params.beer_ID,
       beer_name: this.props.route.params.beer_name,
       beer_pic: this.props.route.params.beer_pic,
+      beer_type: this.props.route.params.beer_type,
       beer_percentage: this.props.route.params.beer_percentage,
       beer_volume:this.props.route.params.beer_volume,
       beer_container_type:this.props.route.params.beer_container_type,
@@ -77,6 +78,7 @@ _renderListItem(item){
          
           <View style = {styles.ratingStars}>
           <Text style = {styles.productNameBold}>{item.user}</Text>
+          <Text style = {styles.reviewText}>{item.review_text} </Text>
             <Stars
               display= {Number(item.rating)}
               half={true}
@@ -102,7 +104,7 @@ renderListHeader = () => {
           <Text style = {styles.productNameThin}>{this.state.beer_type}</Text>
           <View style = {styles.imageWrap}>
           <Image source={{uri: this.state.beer_pic + '_200.png' }} style={styles.beerImage} />
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('commentLayout', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic})}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness})}>
            <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
            </TouchableOpacity>
           </View>
@@ -117,14 +119,14 @@ renderListHeader = () => {
           </View>
           <View style = {styles.ratingStars}>
             <Stars
-              display= {Number(this.state.beer_avgrating).toFixed(1)}
+              display= {Number(this.state.beer_avgrating)}
               half={true}
               fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
               emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
               halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
             />
           </View>
-          <Text style = {styles.rating}>{'Rating: ' + Number(this.state.beer_avgrating).toFixed(1) + ' av 5'}</Text> 
+          <Text style = {styles.rating}>{'Rating: ' + Number(this.state.beer_avgrating) + ' av 5'}</Text> 
           {/* </Card> */}
     </View>
     </View>
@@ -182,6 +184,12 @@ const styles = StyleSheet.create({
   productNameBold: {
     fontSize: 25,
     fontWeight: '700',
+    marginTop: 25,
+    textAlign: 'center',
+  },
+  reviewText: {
+    fontSize: 18,
+    fontWeight: '500',
     marginTop: 25,
     textAlign: 'center',
   },
@@ -287,4 +295,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default individualBeer  
+export default IndividualBeer  

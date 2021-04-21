@@ -57,7 +57,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1:80/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -88,7 +88,7 @@ class Beers extends React.PureComponent {
       // Bortkommenderad från <Card>: pointerEvents="none">
       <View style = {styles.viewStyle}>
         {/* <Card style = {styles.cardStyle}> */}
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}>
               <View style = {styles.beerInstance}>
                 <Image style = {styles.beerImage} source = {{uri: item.picture_url + '_100.png' }}/>
                   <View style = {styles.beerInformation}>
