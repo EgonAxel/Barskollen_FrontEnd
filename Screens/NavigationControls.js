@@ -7,7 +7,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { Ionicons } from '@expo/vector-icons'; 
 import { RectButton, BorderlessButton } from "react-native-gesture-handler";
-import SearchLayout from "react-navigation-addon-search-layout";
 
 import Home from './Home';
 import ExploreBeer from './ExploreBeer';
@@ -15,8 +14,6 @@ import UserProfile from './UserProfile';
 import IndividualBeerFromProfile from './IndividualBeerFromProfile';
 import IndividualBeer from './IndividualBeer';
 import commentLayout from './commentLayout';
-
-// ------- npm install react-navigation-addon-search-layout
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -75,21 +72,6 @@ function ExploreBeerStackScreen() {
           name="Utforska" 
           component={ExploreBeer} 
           options={{ 
-             headerRight: (props) => {
-                return (
-                  <BorderlessButton
-                    onPress={() => console.log('Klicka på sök') }
-                    style={{ marginRight: 25 }}
-                  >
-                    <Ionicons
-                      name="md-search"
-                      size={Platform.OS === "ios" ? 22 : 25}
-                      color={SearchLayout.DefaultTintColor}
-                    />
-                  </BorderlessButton>
-                );
-              },
-
             title: 'Utforska',
             headerTitleStyle: { alignSelf: 'center' },
             headerStyle: {
