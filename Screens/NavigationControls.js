@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createStackNavigator, } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons'; 
-import { Ionicons } from '@expo/vector-icons'; 
-import { RectButton, BorderlessButton } from "react-native-gesture-handler";
+import { MaterialCommunityIcons, MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { BorderlessButton } from "react-native-gesture-handler";
 import SearchLayout from "react-navigation-addon-search-layout";
 
 import Home from './Home';
@@ -112,7 +109,7 @@ function ExploreBeerStackScreen() {
           name="ReviewBeer" 
           component={ReviewBeer}
           options={{ 
-            title: 'Ge betyg' ,
+            title: 'Betygssätt öl' ,
             headerTitleStyle: { alignSelf: 'flex-start' },
             headerStyle: {
               backgroundColor: '#fff', 
@@ -138,18 +135,18 @@ function UserProfileStackScreen() {
             backgroundColor: '#fff',
             }}
           } 
-        />
-        <UserProfileStack.Screen 
-          name="IndividualBeerFromProfile" 
-          component={IndividualBeerFromProfile}
-          options={{ 
-            title: 'Info' ,
-            headerTitleStyle: { alignSelf: 'flex-start' },
-            headerStyle: {
-              backgroundColor: '#fff',
-              }}
-            } 
-         />
+      />
+      <UserProfileStack.Screen 
+        name="IndividualBeerFromProfile" 
+        component={IndividualBeerFromProfile}
+        options={{ 
+          title: 'Info' ,
+          headerTitleStyle: { alignSelf: 'flex-start' },
+          headerStyle: {
+            backgroundColor: '#fff',
+          }
+        }}
+      />
     </UserProfileStack.Navigator>
   );
 }

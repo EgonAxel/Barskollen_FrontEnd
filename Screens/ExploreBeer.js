@@ -1,11 +1,10 @@
 import React from 'react';
-import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, SectionList} from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, Dimensions} from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNPickerSelect from 'react-native-picker-select';
-import { Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -57,7 +56,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.56.1:80/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -177,7 +176,6 @@ class Beers extends React.PureComponent {
     )}
 
   render() {
-
     return (
       <View style={{flex: 1}}>
         <FlatList
