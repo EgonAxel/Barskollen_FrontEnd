@@ -21,16 +21,19 @@ class commentLayout extends React.PureComponent {
           stars: 0,
           beer_ID: this.props.route.params.beer_ID,
           beer_pic: this.props.route.params.beer_pic,
-          beer_name: this.props.route.params.beer_name
-       
+          beer_name: this.props.route.params.beer_name,
+          beer_type: this.props.route.params.beer_type,
+          beer_bitterness: this.props.route.params.beer_bitterness,
+          beer_fullness: this.props.route.params.beer_fullness,
+          beer_sweetness: this.props.route.params.beer_sweetness,
+          recommendations: []
       };
     }
-    
+
    postRatingComment(beer_ID, beer_name, starValue) {
       getValueFor("Username").then((username) => {
         console.log(username)
         getValueFor("Token").then((token) => {
-          console.log(token);
           axios
             .post(`http://127.0.0.1:8000/review/`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
             .catch(error => {
@@ -40,10 +43,24 @@ class commentLayout extends React.PureComponent {
       });
     }
 
+    getRecommendations(starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
+      getValueFor("Token").then((token) => {
+        console.log(token);
+        axios
+          .get(`http://127.0.0.1:8000/beer/?beer_type=${beer_type}&min_bitterness=${beer_bitterness - 1}&max_bitterness=${beer_bitterness + 1}&min_fullness=${beer_fullness - 1}&max_fullness=${beer_fullness + 1}&min_sweetness=${beer_sweetness - 1}&max_sweetness=${beer_sweetness + 1}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .then(response => {
+            this.setState({
+              recommendations: response.data.results,
+            });
+          })
+          .catch(error => {
+          this.setState({error: error.message});
+          });
+        });
+    }
+
   commentLayout() {
     
-  
-  
   }
 
   render() {
@@ -54,7 +71,10 @@ class commentLayout extends React.PureComponent {
       <Text style = {styles.productNameBold}>{this.state.beer_name}</Text>
       <View style = {styles.imageWrap}>
       <Image source={{uri: this.state.beer_pic + '_100.png' }} style={styles.beerImage} /> 
-      <TouchableOpacity onPress={() => this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars)}>
+      <TouchableOpacity onPress={() => {
+        this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars),
+        this.getRecommendations(this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
+        console.log(this.state.recommendations.length)}}>
            <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
            </TouchableOpacity>
            </View>

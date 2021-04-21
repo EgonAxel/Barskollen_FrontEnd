@@ -30,6 +30,10 @@ async function getValueFor(key) {
    }
  }
 
+async function deleteValueFor(key) {
+  let result = await SecureStore.deleteItemAsync(key);
+}
+
 class UserProfile extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -110,7 +114,11 @@ class UserProfile extends React.PureComponent {
         <AppButton
           title="Logga ut"
           onPress={() =>
-            this.props.navigation.navigate('Auth')
+            deleteValueFor("Username").then(() => {
+              deleteValueFor("Token").then(() => {
+                this.props.navigation.navigate('Auth')
+              })
+            })
           }
         />
       </View>
