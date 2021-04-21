@@ -14,7 +14,7 @@ import ExploreBeer from './ExploreBeer';
 import UserProfile from './UserProfile';
 import IndividualBeerFromProfile from './IndividualBeerFromProfile';
 import IndividualBeer from './IndividualBeer';
-import commentLayout from './commentLayout';
+import ReviewBeer from './ReviewBeer';
 
 // ------- npm install react-navigation-addon-search-layout
 
@@ -109,8 +109,8 @@ function ExploreBeerStackScreen() {
             } 
          />
         <ExploreBeerStack.Screen 
-          name="commentLayout" 
-          component={commentLayout}
+          name="ReviewBeer" 
+          component={ReviewBeer}
           options={{ 
             title: 'Ge betyg' ,
             headerTitleStyle: { alignSelf: 'flex-start' },

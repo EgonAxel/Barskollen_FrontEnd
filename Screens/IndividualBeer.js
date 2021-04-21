@@ -19,7 +19,7 @@ async function getValueFor(key) {
 }
 
 
-class individualBeer extends React.PureComponent {
+class IndividualBeer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -44,7 +44,7 @@ class individualBeer extends React.PureComponent {
   fetchReview = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://192.168.56.1:80/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           reviews: this.state.reviews.concat(response.data.results),
@@ -104,7 +104,7 @@ renderListHeader = () => {
           <Text style = {styles.productNameThin}>{this.state.beer_type}</Text>
           <View style = {styles.imageWrap}>
           <Image source={{uri: this.state.beer_pic + '_200.png' }} style={styles.beerImage} />
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('commentLayout', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness})}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness})}>
            <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
            </TouchableOpacity>
           </View>
@@ -295,4 +295,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default individualBeer  
+export default IndividualBeer  

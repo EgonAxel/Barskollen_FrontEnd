@@ -14,57 +14,58 @@ async function getValueFor(key) {
    }
  }
 
-class commentLayout extends React.PureComponent {
-    constructor(props) {
-      super(props);
-      this.state = {
-          stars: 0,
-          beer_ID: this.props.route.params.beer_ID,
-          beer_pic: this.props.route.params.beer_pic,
-          beer_name: this.props.route.params.beer_name,
-          beer_type: this.props.route.params.beer_type,
-          beer_bitterness: this.props.route.params.beer_bitterness,
-          beer_fullness: this.props.route.params.beer_fullness,
-          beer_sweetness: this.props.route.params.beer_sweetness,
-          recommendations: [],
-          review: ''
-      };
-    }
-    reviewText = (text) => {
-      this.setState({ review: text })
-     }
-
-   postRatingComment(beer_ID, beer_name, starValue, review) {
-      getValueFor("Username").then((username) => {
-        console.log(username)
-        console.log(review)
-        getValueFor("Token").then((token) => {
-          axios
-            .post(`http://192.168.56.1:80/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text:review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
-            .catch(error => {
-            this.setState({error: error.message});
-            });
-        });
-      });
+class ReviewBeer extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+        stars: 0,
+        beer_ID: this.props.route.params.beer_ID,
+        beer_pic: this.props.route.params.beer_pic,
+        beer_name: this.props.route.params.beer_name,
+        beer_type: this.props.route.params.beer_type,
+        beer_bitterness: this.props.route.params.beer_bitterness,
+        beer_fullness: this.props.route.params.beer_fullness,
+        beer_sweetness: this.props.route.params.beer_sweetness,
+        recommendations: [],
+        review: ''
+    };
+  }
+  reviewText = (text) => {
+    this.setState({ review: text })
     }
 
-    getRecommendations(starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
+  postRatingComment(beer_ID, beer_name, starValue, review) {
+    getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
-        console.log(token);
         axios
-          .get(`http://192.168.56.1:80/beer/?beer_type=${beer_type}&min_bitterness=${beer_bitterness - 1}&max_bitterness=${beer_bitterness + 1}&min_fullness=${beer_fullness - 1}&max_fullness=${beer_fullness + 1}&min_sweetness=${beer_sweetness - 1}&max_sweetness=${beer_sweetness + 1}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
-          .then(response => {
-            this.setState({
-              recommendations: response.data.results,
-            });
-          })
+          .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text:review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .catch(error => {
           this.setState({error: error.message});
           });
-        });
-    }
+      });
+    });
+  }
 
-  
+  getRecommendations(starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
+    getValueFor("Token").then((token) => {
+      console.log(token);
+      axios
+        .get(`http://192.168.56.1:80/beer/?beer_type=${beer_type}&min_bitterness=${beer_bitterness - 1}&max_bitterness=${beer_bitterness + 1}&min_fullness=${beer_fullness - 1}&max_fullness=${beer_fullness + 1}&min_sweetness=${beer_sweetness - 1}&max_sweetness=${beer_sweetness + 1}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+        .then(response => {
+          this.setState({
+            recommendations: response.data.results,
+          });
+        })
+        .catch(error => {
+        this.setState({error: error.message});
+        });
+      });
+  }
+
+  componentDidMount() {
+    this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.rating, this.state.review),
+    this.getRecommendations(this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
+  }
 
   render() {
   
@@ -99,15 +100,8 @@ class commentLayout extends React.PureComponent {
                   returnKeyType="next"
                   onChangeText = {this.reviewText}
                   blurOnSubmit={false}/>
-                  </View>
-        
-        
-        
-        
-          
-                 
-    
-    </View>
+                </View>
+          </View>
         </SafeAreaView> 
         
       );
@@ -240,4 +234,4 @@ class commentLayout extends React.PureComponent {
     },
   })
   
-  export default commentLayout  
+  export default ReviewBeer
