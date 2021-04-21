@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, SectionList} from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, Button, SectionList} from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
@@ -13,6 +13,13 @@ import RNPickerSelect from 'react-native-picker-select';
 // npm i --save react-native-vector-icons // required by react-native-elements
 
 // npm install react-native-stars --save  //För stärnor
+
+const AppButton = ({ onPress, title }) => (
+  <TouchableOpacity
+   onPress={onPress}>                 
+    <Text style={styles.logoutText}>{title}</Text>
+  </TouchableOpacity>
+);
 
 async function getValueFor(key) {
   let result = await SecureStore.getItemAsync(key);
@@ -98,17 +105,27 @@ class UserProfile extends React.PureComponent {
 
   renderListHeader = () => {
     return (
+    <View>
+      <View style = {styles.logoutButton}>
+        <AppButton
+          title="Logga ut"
+          onPress={() =>
+            this.props.navigation.navigate('Auth')
+          }
+        />
+      </View>
       <View>
-        <View style={{flexDirection:"row"}}>
-          <MaterialIcons name="person-outline" size={25} color={'#009688'} />
-          <Text style={styles.userNameText}>{this.state.username}</Text>
-        </View> 
         <View style={ Platform.OS === 'ios'
               ? pickerSelectStyles.inputIOS
               : pickerSelectStyles.inputAndroid, 
               { flexDirection:"row", 
                 justifyContent:"space-evenly",
               }}> 
+            <View style = {styles.usernameMyBeerAndSorting}>
+              <View style={{flexDirection:"row", alignSelf:'center'}}>
+                <MaterialIcons name="person-outline" size={25} color={'#009688'} />
+                <Text style={styles.userNameText}>{this.state.username}</Text>
+              </View> 
             <Text style={styles.myBeersText}>Mina öl</Text>
             <RNPickerSelect style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
@@ -120,14 +137,16 @@ class UserProfile extends React.PureComponent {
                 orderingValue: value},
                 this.handleFilterAction)}
               items={[
-                { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: '' },
-                { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: '' },
-                { label: 'Sortera datum (nyast först)', value: '-review_date', inputLabel: '' },
-                { label: 'Sortera datum (äldst först)', value: 'review_date', inputLabel: '' },
+                { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
+                { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
+                { label: 'Sortera datum (nyast först)', value: '-review_date', inputLabel: 'Datum (nyast först)' },
+                { label: 'Sortera datum (äldst först)', value: 'review_date', inputLabel: 'Datum (äldst först' },
               ]}
             />
+          </View>
         </View>
       </View>
+    </View>
     )}
 
   render() {
@@ -166,6 +185,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: '#009688',
     borderRadius: 10,
     color: 'black',
+    alignSelf: 'center',
     // paddingRight: 30, // to ensure the text is never behind the icon
   },
   inputAndroid: {
@@ -182,115 +202,125 @@ const pickerSelectStyles = StyleSheet.create({
 
 const styles = StyleSheet.create({
 
-    viewStyle: {
-      marginTop: 15,
-      width: 350,
-      height: 150,
-      backgroundColor: '#ffffff',
-      borderRadius: 15,
-      borderStyle: 'solid', 
-      borderColor: '#dadada',
-      borderWidth: 1,
-      shadowColor: "#000000",
-      shadowOffset: {
-	      width: 1,
-	      height: 1
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 3,
-      elevation: 20,
+  viewStyle: {
+    marginTop: 15,
+    width: 350,
+    height: 150,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    borderStyle: 'solid', 
+    borderColor: '#dadada',
+    borderWidth: 1,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 1,
+      height: 1
     },
-
-    userNameText: {
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 20,
+  },
+  logoutButton: {
+    alignSelf: 'center',
+    marginVertical: 10,
+    width: 100,
+    padding: 5,
+    borderWidth: 2,
+    borderColor: '#009688',
+    borderRadius: 10,
+  },
+  logoutText: {
+    fontSize: 14,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  userNameText: {
+  // fontFamily: 'Avenir',
+    fontSize: 18,
+    color: 'black',
+    fontWeight: "bold",
+    alignSelf: "center",
+    textTransform: "uppercase",
+    marginBottom: 10,
+  },
+  usernameMyBeerAndSorting: {
+    flexDirection: 'column',
+    alignSelf: 'center',
+  },
+  myBeersText: {
+  // fontFamily: 'Avenir',
+    fontSize: 16,
+    color: 'black',
+    fontWeight: "700",
+    alignSelf: "center",
+    textTransform: "uppercase",
+    marginBottom: 5,
+  },
+  searchButtonText: {
+  // fontFamily: 'Avenir',
+    fontWeight: '700',
+    alignSelf: 'center',
+    color: 'white'
+  },
+  beerImage: {
+    width: 100,
+    height: 120,
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 10,
+    resizeMode: 'contain',
+    left: 0,
+  },
+  productNameBold: {
     // fontFamily: 'Avenir',
-      fontSize: 18,
-      color: 'black',
-      fontWeight: "bold",
-      alignSelf: "center",
-      textTransform: "uppercase"
-    },
-
-     myBeersText: {
+    fontSize: 14,
+    marginBottom: 5,
+    fontWeight: '500',
+    textAlign: 'left',
+  },
+  productNameThin: {
     // fontFamily: 'Avenir',
-      fontSize: 18,
-      color: 'black',
-      fontWeight: "bold",
-      alignSelf: "center",
-      textTransform: "uppercase"
-    },
-
-    searchButtonText: {
-      // fontFamily: 'Avenir',
-       fontWeight: '700',
-       alignSelf: 'center',
-       color: 'white'
-    },
-    beerImage: {
-        width: 100,
-        height: 120,
-        marginTop: 10,
-        marginBottom: 10,
-        marginLeft: 10,
-        resizeMode: 'contain',
-        left: 0,
-    },
-
-    productNameBold: {
-     // fontFamily: 'Avenir',
-      fontSize: 14,
-      marginBottom: 5,
-      fontWeight: '500',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'left',
+    marginBottom: 5,
+  },
+  beerInstance: {
+    textAlign: 'left',
+    flexDirection: 'row',
+    maxWidth: 265,
+  },
+  beerInformation: {
+    marginTop: 15,
+    paddingBottom: 5,
+    flexDirection: 'column',
+    left: 15,
+  },
+  attributeStyle: {
+      fontSize: 20,
       textAlign: 'left',
     },
-
-    productNameThin: {
-     // fontFamily: 'Avenir',
-      fontSize: 14,
-      fontWeight: '400',
-      textAlign: 'left',
-      marginBottom: 5,
-    },
-
-    beerInstance: {
-      textAlign: 'left',
-      flexDirection: 'row',
-      maxWidth: 265,
-    },
-
-    beerInformation: {
-      marginTop: 15,
-      paddingBottom: 5,
-      flexDirection: 'column',
-      left: 15,
-    },
-
-    attributeStyle: {
-        fontSize: 20,
-        textAlign: 'left',
-      },
-
-    alcohol_percentage: {
-     // fontFamily: 'Avenir',
-      fontSize: 14,
-      textAlign: 'left',
-    },
-
-    myStarStyle: {
-      color: '#009688',
-      backgroundColor: 'transparent',
-      textShadowColor: '#dadada',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 5,
-      fontSize: 35,
-    },
-    myEmptyStarStyle: {
-      color: '#009688',
-    },
-    ratingStars: {
-      alignSelf: "center",
-      marginLeft: "10%",
-      flexDirection: 'column',
-    },
+  alcohol_percentage: {
+    // fontFamily: 'Avenir',
+    fontSize: 14,
+    textAlign: 'left',
+  },
+  myStarStyle: {
+    color: '#009688',
+    backgroundColor: 'transparent',
+    textShadowColor: '#dadada',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 5,
+    fontSize: 35,
+  },
+  myEmptyStarStyle: {
+    color: '#009688',
+  },
+  ratingStars: {
+    alignSelf: "center",
+    marginLeft: "10%",
+    flexDirection: 'column',
+  },
 })
 
 export default UserProfile;
