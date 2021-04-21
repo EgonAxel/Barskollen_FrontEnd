@@ -1,8 +1,9 @@
-import React from 'react';
-import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, SectionList, Dimensions, Animated} from 'react-native';
+import React, { useState } from 'react';
+import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Dimensions, Animated} from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
+import { Ionicons } from '@expo/vector-icons'; 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -34,6 +35,7 @@ class Beers extends React.PureComponent {
       offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
       searchText: "",
       orderingValue: "",
+      toggleSearchMargin: 170,
       error: null,
     };
   }
@@ -85,7 +87,7 @@ class Beers extends React.PureComponent {
   _renderListItem(item) {
     return(
       // Bortkommenderad från <Card>: pointerEvents="none">
-      <View style = {styles.viewStyle}>
+      <View style = {styles.beerItem}>
         {/* <Card style = {styles.cardStyle}> */}
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}>
               <View style = {styles.beerInstance}>
@@ -114,76 +116,93 @@ class Beers extends React.PureComponent {
   }
 
   renderListHeader = () => {
+    const [shouldShowSearchArea, setShouldShow] = useState(true);
     return (
-      <View>
-        <View style={styles.searchBarRow}>
-          <TextInput style = {styles.searchField}
-            clearButtonMode = 'always'
-            underlineColorAndroid = "transparent"
-            placeholder = "Sök efter en öl..."
-            placeholderTextColor = "grey"
-            autoCapitalize = "none"
-            returnKeyType="search"
-            onChangeText={this.handleSearchText}
-            onSubmitEditing={this.handleFilterAction}/>
-          <TouchableOpacity
-            style = {styles.searchButton}
-            onPress = { () => {
-              this.handleFilterAction()
-            }}>
-            <Text style = {styles.searchButtonText}> Sök </Text>
+      <SafeAreaView style={styles.safeAreaView}>
+        <View style={styles.toggleSearch}>
+          <TouchableOpacity onPress={() => setShouldShow(!shouldShowSearchArea) }>
+            <Ionicons style={styles.searchIcon}
+              name="md-search"
+            />
           </TouchableOpacity>
+          <Text onPress={() => setShouldShow(!shouldShowSearchArea)}
+                style={styles.searchIconText}>
+                Sök efter din favorit-öl
+          </Text>
         </View>
-        <View style={ Platform.OS === 'ios'
-              ? pickerSelectStyles.inputIOS
-              : pickerSelectStyles.inputAndroid, 
-              { flexDirection:"row", 
-                justifyContent:"space-between",
-              }}>  
-          <RNPickerSelect style={pickerSelectStyles}
-              useNativeAndroidPickerStyle={false}
-              placeholder={{
-              label: 'Filtrering',
-              value: null,
-              }}
-              onValueChange={(value) => {console.log(value)}}
-              // this.setState({offset: 0})
-              // this.fetchBeer(this.state.offset)
-              items={[
-                { label: 'Filtrera på ljus lager', value: 'ljus_lager', inputLabel: 'Ljus lager' },
-                { label: 'Filtrera på ale', value: 'ale', inputLabel: 'Ale' },
-                // { label: 'Filtrera på volym', value: 'volume', inputLabel: 'Volym' },
-              ]}
-            />
-            <RNPickerSelect style={pickerSelectStyles}
-              useNativeAndroidPickerStyle={false}
-              placeholder={{
-              label: 'Sortering',
-              value: null,
-              }}
-              onValueChange={(value) => this.setState({orderingValue: value})}
-              // this.setState({offset: 0})
-              // this.fetchBeer(this.state.offset)
-              items={[
-                { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
-                { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
-                { label: 'Sortera alfabetiskt (a-ö)', value: 'name', inputLabel: 'Alfabetiskt (a-ö)' },
-                { label: 'Sortera alfabetiskt (ö-a)', value: '-name', inputLabel: 'Alfabetiskt (ö-a)' },
-              ]}
-            />
-        </View>
-      </View>
+        {shouldShowSearchArea ? (
+          <View style={styles.filterAndSearchArea}>
+            <View style={styles.searchBarRow}>
+              <TextInput style = {styles.searchField}
+                clearButtonMode = 'always'
+                underlineColorAndroid = "transparent"
+                placeholder = "Sök efter en öl..."
+                placeholderTextColor = "grey"
+                autoCapitalize = "none"
+                returnKeyType="search"
+                onChangeText={this.handleSearchText}
+                onSubmitEditing={this.handleFilterAction}/>
+              <TouchableOpacity
+                style = {styles.searchButton}
+                onPress = { () => {
+                  this.handleFilterAction()
+                }}>
+                <Text style = {styles.searchButtonText}> Sök </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={ Platform.OS === 'ios'
+                  ? pickerSelectStyles.inputIOS
+                  : pickerSelectStyles.inputAndroid, 
+                  { flexDirection:"row", 
+                    justifyContent:"space-between",
+                  }}>  
+              <RNPickerSelect style={pickerSelectStyles}
+                  useNativeAndroidPickerStyle={false}
+                  placeholder={{
+                  label: 'Filtrering',
+                  value: null,
+                  }}
+                  onValueChange={(value) => {console.log(value)}}
+                  // this.setState({offset: 0})
+                  // this.fetchBeer(this.state.offset)
+                  items={[
+                    { label: 'Filtrera på ljus lager', value: 'ljus_lager', inputLabel: 'Ljus lager' },
+                    { label: 'Filtrera på ale', value: 'ale', inputLabel: 'Ale' },
+                    // { label: 'Filtrera på volym', value: 'volume', inputLabel: 'Volym' },
+                  ]}
+                />
+                <RNPickerSelect style={pickerSelectStyles}
+                  useNativeAndroidPickerStyle={false}
+                  placeholder={{
+                  label: 'Sortering',
+                  value: null,
+                  }}
+                  onValueChange={(value) => this.setState({orderingValue: value})}
+                  // this.setState({offset: 0})
+                  // this.fetchBeer(this.state.offset)
+                  items={[
+                    { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
+                    { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
+                    { label: 'Sortera alfabetiskt (a-ö)', value: 'name', inputLabel: 'Alfabetiskt (a-ö)' },
+                    { label: 'Sortera alfabetiskt (ö-a)', value: '-name', inputLabel: 'Alfabetiskt (ö-a)' },
+                  ]}
+                />
+            </View>
+          </View>
+        ) : null}
+      </SafeAreaView>
     )}
 
   render() {
 
 
     const scrollY = new Animated.Value(0)
-    const diffClamp = Animated.diffClamp(scrollY, 0, 170) 
+    const diffClamp = Animated.diffClamp(scrollY, 0, 200) 
 
     const translateY = diffClamp.interpolate({
          inputRange:[0,100],
-         outputRange:[0,-100]
+         outputRange:[0,-200],
+         extrapolate: 'clamp',
     })
 
     return (
@@ -198,7 +217,7 @@ class Beers extends React.PureComponent {
               top: 0,
               left: 0,
               right: 0,
-              elevation: 40,
+              elevation: 60,
               zIndex: 100,
               backgroundColor: 'white',
             }}
@@ -212,8 +231,7 @@ class Beers extends React.PureComponent {
             backgroundColor: '#ffffff',
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 100,
-          
+            marginTop: this.state.toggleSearchMargin,
           }}
           data={this.state.beers}
           keyExtractor={(beer, index) => String(index)}
@@ -226,7 +244,8 @@ class Beers extends React.PureComponent {
           //ListHeaderComponent={this.renderListHeader}
 
           onScroll = {(e)=>{
-            scrollY.setValue(e.nativeEvent.contentOffset.y) 
+            if (e.nativeEvent.contentOffset.y > 0)
+            scrollY.setValue(e.nativeEvent.contentOffset.y);
           }}
         />
       </View>
@@ -261,8 +280,7 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-
-  viewStyle: {
+  beerItem: {
     marginTop: 15,
     width: windowWidth * 0.93,
     height: 125,
@@ -280,6 +298,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 20,
   },
+  safeAreaView: {
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    alignSelf: 'center',
+  },
   textInputFields: {
     // fontFamily: 'Avenir',
     padding: 10,
@@ -293,10 +316,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'white'
   },
-  searchBarRow: {
+  toggleSearch: {
+    alignSelf: 'center',
+    flexDirection: 'column',
+    backgroundColor: 'white',
+    borderRadius: 15,
+    paddingBottom: 5,
+  },
+  searchIcon: {
+    fontSize: 30,
+    alignSelf: 'center',
+    color: '#009688',
     marginTop: 10,
-    width: "100%", 
-    flexDirection:"row"
+  },
+  searchIconText: {
+    color: 'grey',
+  },
+  searchBarRow: {
+    marginVertical: 5,
+    flexDirection:"row",
   },
   searchField: {
     // fontFamily: 'Avenir',
@@ -305,7 +343,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     marginRight: 5,
     height: 40,
-    width: windowWidth * 0.7,
+    width: windowWidth * 0.75,
     borderColor: '#009688',
     borderWidth: 2,
     borderRadius: 10,
@@ -313,8 +351,10 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     // fontFamily: 'Avenir',
-    backgroundColor: '#009688',
-    padding: 10,
+    // backgroundColor: '#009688',
+    borderWidth: 5,
+    borderColor: '#009688',
+    padding: 7,
     marginTop: 10,
     marginBottom: 5,
     height: 40,
@@ -322,9 +362,14 @@ const styles = StyleSheet.create({
   },
   searchButtonText: {
     // fontFamily: 'Avenir',
-    fontWeight: '700',
     alignSelf: 'center',
-    color: 'white'
+    color: '#009688',
+    textTransform: 'uppercase',
+  },
+  filterAndSearchArea: {
+    paddingBottom: 15,
+    borderRadius: 15,
+    alignSelf: 'center',
   },
   beerImage: {
     width: 100,
@@ -357,7 +402,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
-    left: 15,
+    left: 20,
   },
   attributeStyle: {
     fontSize: 20,
@@ -372,17 +417,15 @@ const styles = StyleSheet.create({
     color: '#009688',
     backgroundColor: 'transparent',
     textShadowColor: '#dadada',
-    textShadowOffset: {width: 1, height: 1},
+    textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
     fontSize: 25,
-    left: 5
   },
   myEmptyStarStyle: {
     color: '#009688',
   },
   ratingStars: {
     marginTop: -40,
-    marginLeft: 15,
   },
 })
 
