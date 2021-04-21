@@ -13,8 +13,6 @@ import IndividualBeerFromProfile from './IndividualBeerFromProfile';
 import IndividualBeer from './IndividualBeer';
 import ReviewBeer from './ReviewBeer';
 
-// ------- npm install react-navigation-addon-search-layout
-
 const Tab = createMaterialBottomTabNavigator();
 
 
@@ -72,21 +70,6 @@ function ExploreBeerStackScreen() {
           name="Utforska" 
           component={ExploreBeer} 
           options={{ 
-             headerRight: (props) => {
-                return (
-                  <BorderlessButton
-                    onPress={() => console.log('Klicka på sök') }
-                    style={{ marginRight: 25 }}
-                  >
-                    <Ionicons
-                      name="md-search"
-                      size={Platform.OS === "ios" ? 22 : 25}
-                      color={SearchLayout.DefaultTintColor}
-                    />
-                  </BorderlessButton>
-                );
-              },
-
             title: 'Utforska',
             headerTitleStyle: { alignSelf: 'center' },
             headerStyle: {

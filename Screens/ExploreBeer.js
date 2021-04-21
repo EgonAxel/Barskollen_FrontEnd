@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, Dimensions} from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, SectionList, Dimensions, Animated} from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
@@ -115,7 +115,7 @@ class Beers extends React.PureComponent {
 
   renderListHeader = () => {
     return (
-      <View style={{height: 100}}>
+      <View>
         <View style={styles.searchBarRow}>
           <TextInput style = {styles.searchField}
             clearButtonMode = 'always'
@@ -176,26 +176,59 @@ class Beers extends React.PureComponent {
     )}
 
   render() {
+
+
+    const scrollY = new Animated.Value(0)
+    const diffClamp = Animated.diffClamp(scrollY, 0, 170) 
+
+    const translateY = diffClamp.interpolate({
+         inputRange:[0,100],
+         outputRange:[0,-100]
+    })
+
     return (
       <View style={{flex: 1}}>
+
+        <Animated.View style={styles.animatedSearchHeader}
+            style={{
+              transform:[
+                {translateY:translateY}
+              ],
+              position:'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              elevation: 40,
+              zIndex: 100,
+              backgroundColor: 'white',
+            }}
+        > 
+           <this.renderListHeader/>
+        </Animated.View>
+
         <FlatList
           style={{flex: 1}}
           contentContainerStyle={{
             backgroundColor: '#ffffff',
             alignItems: 'center',
             justifyContent: 'center',
-            // marginTop: 15,
+            marginTop: 100,
           
           }}
           data={this.state.beers}
           keyExtractor={(beer, index) => String(index)}
           
           renderItem={({ item }) => this._renderListItem(item)}
-          //horizontal={true}
         
           onEndReached={this.fetchMoreBeers}
           onEndReachedThreshold={2}
-          ListHeaderComponent={this.renderListHeader}/>
+
+          //ListHeaderComponent={this.renderListHeader}
+
+          onScroll = {(e)=>{
+            scrollY.setValue(e.nativeEvent.contentOffset.y) 
+          }}
+        />
       </View>
     );
   }
