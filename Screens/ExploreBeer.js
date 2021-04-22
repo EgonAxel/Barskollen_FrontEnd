@@ -35,6 +35,7 @@ class Beers extends React.PureComponent {
       offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
       searchText: "",
       orderingValue: "",
+      beerType: "",
       toggleSearchMargin: 110,
       error: null,
     };
@@ -58,7 +59,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue, beerType) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
   //   paddingBottom: 5,
   // },
   searchIcon: {
-    fontSize: 30,
+    fontSize: 20,
     alignSelf: 'center',
     color: '#009688',
     padding: 10,
