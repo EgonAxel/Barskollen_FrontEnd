@@ -41,7 +41,7 @@ class ReviewBeer extends React.PureComponent {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
         axios
-          .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text:review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .post(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text:review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .catch(error => {
           this.setState({error: error.message});
           });
@@ -52,7 +52,7 @@ class ReviewBeer extends React.PureComponent {
   getRecommendations(starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
     getValueFor("Token").then((token) => {
       axios
-        .get(`http://127.0.0.1:8000/beer/?beer_type=${beer_type}&min_bitterness=${beer_bitterness - 1}&max_bitterness=${beer_bitterness + 1}&min_fullness=${beer_fullness - 1}&max_fullness=${beer_fullness + 1}&min_sweetness=${beer_sweetness - 1}&max_sweetness=${beer_sweetness + 1}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+        .get(`http://192.168.1.73:8000/beer/?beer_type=${beer_type}&min_bitterness=${beer_bitterness - 1}&max_bitterness=${beer_bitterness + 1}&min_fullness=${beer_fullness - 1}&max_fullness=${beer_fullness + 1}&min_sweetness=${beer_sweetness - 1}&max_sweetness=${beer_sweetness + 1}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
         .then(response => {
           this.setState({
             recommendations: response.data.results,
@@ -73,15 +73,12 @@ class ReviewBeer extends React.PureComponent {
     return(
       // Bortkommenderad från <Card>: pointerEvents="none">
       <View style = {styles.viewStyleRecommendation}>
-        {/* <Card style = {styles.cardStyle}> */}
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}>
               <View style = {styles.beerInstance}>
                 <Image style = {styles.beerImageRecommendation} source = {{uri: item.picture_url + '_100.png' }}/>
                   <View style = {styles.beerInformation}>
                     <Text style = {styles.productNameRecommendation}>{item.name}</Text>
                     <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
-                    {/* <Text style = {styles.attributeStyle}>{item.container_type}{'\n'}</Text> */}
-                    {/* <Text style = {styles.attributeStyle}>{item.volume + ' ml'}{'\n'}</Text> */}
                     <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
                   </View>
               </View> 
@@ -95,7 +92,6 @@ class ReviewBeer extends React.PureComponent {
               />
               </View>
           </TouchableOpacity>
-        {/* </Card> */}
       </View>
       )
   }

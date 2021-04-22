@@ -35,7 +35,7 @@ class Beers extends React.PureComponent {
       offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
       searchText: "",
       orderingValue: "",
-      toggleSearchMargin: 170,
+      toggleSearchMargin: 110,
       error: null,
     };
   }
@@ -58,7 +58,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -88,15 +88,12 @@ class Beers extends React.PureComponent {
     return(
       // Bortkommenderad från <Card>: pointerEvents="none">
       <View style = {styles.beerItem}>
-        {/* <Card style = {styles.cardStyle}> */}
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}>
               <View style = {styles.beerInstance}>
                 <Image style = {styles.beerImage} source = {{uri: item.picture_url + '_100.png' }}/>
                   <View style = {styles.beerInformation}>
                     <Text style = {styles.productNameBold}>{item.name}</Text>
                     <Text style = {styles.productNameThin}>{item.beer_type}</Text>
-                    {/* <Text style = {styles.attributeStyle}>{item.container_type}{'\n'}</Text> */}
-                    {/* <Text style = {styles.attributeStyle}>{item.volume + ' ml'}{'\n'}</Text> */}
                     <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
                   </View>
               </View> 
@@ -110,7 +107,6 @@ class Beers extends React.PureComponent {
               />
               </View>
           </TouchableOpacity>
-        {/* </Card> */}
       </View>
       )
   }
@@ -119,7 +115,7 @@ class Beers extends React.PureComponent {
     const [shouldShowSearchArea, setShouldShow] = useState(true);
     return (
       <SafeAreaView style={styles.safeAreaView}>
-        <View style={styles.toggleSearch}>
+        {/* <View style={styles.toggleSearch}>
           <TouchableOpacity onPress={() => setShouldShow(!shouldShowSearchArea) }>
             <Ionicons style={styles.searchIcon}
               name="md-search"
@@ -129,8 +125,8 @@ class Beers extends React.PureComponent {
                 style={styles.searchIconText}>
                 Sök efter din favorit-öl
           </Text>
-        </View>
-        {shouldShowSearchArea ? (
+        </View> */}
+        {/* {shouldShowSearchArea ? ( */}
           <View style={styles.filterAndSearchArea}>
             <View style={styles.searchBarRow}>
               <TextInput style = {styles.searchField}
@@ -147,7 +143,7 @@ class Beers extends React.PureComponent {
                 onPress = { () => {
                   this.handleFilterAction()
                 }}>
-                <Text style = {styles.searchButtonText}> Sök </Text>
+                <Text> <Ionicons style={styles.searchIcon} name="md-search" /> </Text> 
               </TouchableOpacity>
             </View>
             <View style={ Platform.OS === 'ios'
@@ -189,7 +185,7 @@ class Beers extends React.PureComponent {
                 />
             </View>
           </View>
-        ) : null}
+         {/* ) : null} */}
       </SafeAreaView>
     )}
 
@@ -197,18 +193,18 @@ class Beers extends React.PureComponent {
 
 
     const scrollY = new Animated.Value(0)
-    const diffClamp = Animated.diffClamp(scrollY, 0, 200) 
+    const diffClamp = Animated.diffClamp(scrollY, 0, 100) 
 
     const translateY = diffClamp.interpolate({
          inputRange:[0,100],
-         outputRange:[0,-200],
+         outputRange:[0,-165],
          extrapolate: 'clamp',
     })
 
     return (
       <View style={{flex: 1}}>
 
-        <Animated.View style={styles.animatedSearchHeader}
+        <Animated.View  // - Måste ha denna styling här för att komma åt 'translate' varabel.
             style={{
               transform:[
                 {translateY:translateY}
@@ -217,11 +213,11 @@ class Beers extends React.PureComponent {
               top: 0,
               left: 0,
               right: 0,
-              elevation: 60,
-              zIndex: 100,
+              // elevation: 601, // - Denna elevation ger ingen skugga runt objektet på android
+              zIndex: 1,
               backgroundColor: 'white',
-            }}
-        > 
+                          }}
+          > 
            <this.renderListHeader/>
         </Animated.View>
 
@@ -232,6 +228,8 @@ class Beers extends React.PureComponent {
             alignItems: 'center',
             justifyContent: 'center',
             marginTop: this.state.toggleSearchMargin,
+            zIndex: -10,
+            elevation: -10,
           }}
           data={this.state.beers}
           keyExtractor={(beer, index) => String(index)}
@@ -241,11 +239,9 @@ class Beers extends React.PureComponent {
           onEndReached={this.fetchMoreBeers}
           onEndReachedThreshold={2}
 
-          //ListHeaderComponent={this.renderListHeader}
-
           onScroll = {(e)=>{
             if (e.nativeEvent.contentOffset.y > 0)
-            scrollY.setValue(e.nativeEvent.contentOffset.y);
+            scrollY.setValue(0.7 * (e.nativeEvent.contentOffset.y));
           }}
         />
       </View>
@@ -263,19 +259,20 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     borderWidth: 2,
     borderColor: '#009688',
-    borderRadius: 10,
+    borderRadius: 20,
     color: '#009688',
-
   },
   inputAndroid: {
+    minWidth: windowWidth * 0.3,
+    maxWidth: windowWidth * 0.4,
+    textAlign: 'center',
     fontSize: 14,
     paddingVertical: 5,
     paddingHorizontal: 30,
     borderWidth: 2,
     borderColor: '#009688',
-    borderRadius: 10,
+    borderRadius: 20,
     color: 'black',
-    //paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
 
@@ -296,42 +293,41 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.5,
     shadowRadius: 3,
-    elevation: 20,
   },
   safeAreaView: {
     borderBottomLeftRadius: 15,
     borderBottomRightRadius: 15,
     alignSelf: 'center',
   },
-  textInputFields: {
-    // fontFamily: 'Avenir',
-    padding: 10,
-    marginTop: 10,
-    marginBottom: 5,
-    marginRight: 5,
-    height: 40,
-    width: "70%",
-    borderColor: '#009688',
-    borderWidth: 2,
-    borderRadius: 10,
-    backgroundColor: 'white'
-  },
-  toggleSearch: {
-    alignSelf: 'center',
-    flexDirection: 'column',
-    backgroundColor: 'white',
-    borderRadius: 15,
-    paddingBottom: 5,
-  },
+  // textInputFields: {
+  //   // fontFamily: 'Avenir',
+  //   padding: 10,
+  //   marginTop: 10,
+  //   marginBottom: 5,
+  //   marginRight: 5,
+  //   height: 40,
+  //   width: "70%",
+  //   borderColor: '#009688',
+  //   borderWidth: 2,
+  //   borderRadius: 10,
+  //   backgroundColor: 'white'
+  // },
+  // toggleSearch: {
+  //   alignSelf: 'center',
+  //   flexDirection: 'column',
+  //   backgroundColor: 'white',
+  //   borderRadius: 15,
+  //   paddingBottom: 5,
+  // },
   searchIcon: {
     fontSize: 30,
     alignSelf: 'center',
     color: '#009688',
     marginTop: 10,
   },
-  searchIconText: {
-    color: 'grey',
-  },
+  // searchIconText: {
+  //   color: 'grey',
+  // },
   searchBarRow: {
     marginVertical: 5,
     flexDirection:"row",
@@ -346,26 +342,27 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.75,
     borderColor: '#009688',
     borderWidth: 2,
-    borderRadius: 10,
+    borderRadius: 20,
     backgroundColor: 'white'
   },
   searchButton: {
     // fontFamily: 'Avenir',
     // backgroundColor: '#009688',
-    borderWidth: 5,
+    borderWidth: 2,
     borderColor: '#009688',
     padding: 7,
     marginTop: 10,
     marginBottom: 5,
     height: 40,
-    borderRadius: 10,
+    borderRadius: 20,
+    justifyContent: 'center',
   },
-  searchButtonText: {
-    // fontFamily: 'Avenir',
-    alignSelf: 'center',
-    color: '#009688',
-    textTransform: 'uppercase',
-  },
+  // searchButtonText: {
+  //   // fontFamily: 'Avenir',
+  //   alignSelf: 'center',
+  //   color: '#009688',
+  //   textTransform: 'uppercase',
+  // },
   filterAndSearchArea: {
     paddingBottom: 15,
     borderRadius: 15,

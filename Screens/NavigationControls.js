@@ -1,7 +1,6 @@
 import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createStackNavigator, } from '@react-navigation/stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons, MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { BorderlessButton } from "react-native-gesture-handler";
 import SearchLayout from "react-navigation-addon-search-layout";
@@ -15,10 +14,8 @@ import ReviewBeer from './ReviewBeer';
 
 const Tab = createMaterialBottomTabNavigator();
 
-
 function NavigationControls() {
-  return (
-    <SafeAreaProvider>            
+  return (          
       <Tab.Navigator
         initialRouteName="Home"
         activeColor="#fff"
@@ -57,7 +54,6 @@ function NavigationControls() {
             }}
           />
       </Tab.Navigator>
-  </SafeAreaProvider>
 );
 }
 
@@ -71,7 +67,7 @@ function ExploreBeerStackScreen() {
           component={ExploreBeer} 
           options={{ 
             title: 'Utforska',
-            headerTitleStyle: { alignSelf: 'center' },
+            headerTitleStyle: { alignSelf: 'center'},
             headerStyle: {
               backgroundColor: '#fff',
               }
@@ -81,7 +77,7 @@ function ExploreBeerStackScreen() {
           name="IndividualBeer" 
           component={IndividualBeer}
           options={{ 
-            title: 'Info' ,
+            title: 'Info',
             headerTitleStyle: { alignSelf: 'flex-start' },
             headerStyle: {
               backgroundColor: '#fff',
