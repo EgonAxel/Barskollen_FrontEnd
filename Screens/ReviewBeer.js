@@ -33,6 +33,9 @@ class ReviewBeer extends React.PureComponent {
         review: "",
     };
   }
+  reviewText = (text) => {
+    this.setState({ review: text })
+    }
   
   postRatingComment(beer_ID, beer_name, starValue, review) {
     getValueFor("Username").then((username) => {
