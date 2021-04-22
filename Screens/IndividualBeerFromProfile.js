@@ -29,7 +29,7 @@ class IndividualBeerFromProfile extends React.PureComponent {
   fetchBeer = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://192.168.56.1:80/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data),
@@ -55,10 +55,10 @@ _renderListItem(item){
           <View style = {styles.imageWrap}>
           <Image source={{uri: item.picture_url + '_200.png' }} style={styles.beerImage} />
           </View>
-          <View style = {styles.textWrap}>
-          <Text style = {styles.alcoholPercentageStyle}>{item.alcohol_percentage + '% vol'}</Text>
-          <Text style = {styles.containerAndVolumeStyle}>{item.container_type + ', ' + item.volume + ' ml'}</Text>
-          </View>
+            <View style = {styles.textWrap}>
+              <Text style = {styles.alcoholPercentageStyle}>{item.alcohol_percentage + '% vol'}</Text>
+              <Text style = {styles.containerAndVolumeStyle}>{item.container_type + ', ' + item.volume + ' ml'}</Text>
+            </View>
           {/* <Text style = {styles.volumeStyle}>{item.volume + ' ml'}</Text> */}
           <View style = {styles.tasteClockWrap}>
             <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + item.bitterness}</Text>
@@ -85,9 +85,7 @@ _renderListItem(item){
             />
           </View>
           <Text style = {styles.rating}>{'Din rating: ' + Number(this.state.rating) + ' av 5'}</Text> 
-          {/* </Card> */}
-          
-    </View>
+        </View>
     
     )
 }
@@ -115,109 +113,94 @@ return (
 
 const styles = StyleSheet.create({
 
-  viewStyle: {
-    marginTop: 15,
-    width: 350,
-    height: 600,
-    backgroundColor: '#ffffff',
-    borderRadius: 15,
-    borderStyle: 'solid', 
-    borderColor: '#dadada',
-    borderWidth: 1,
-    shadowColor: "#000000",
-    shadowOffset: {
-	    width: 1,
-	    height: 1
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
-    elevation: 20,
+viewStyle: {
+  marginTop: 15,
+  width: 350,
+  height: 650,
+  backgroundColor: '#ffffff',
+  borderRadius: 15,
+  borderStyle: 'solid', 
+  borderColor: '#dadada',
+  borderWidth: 1,
+  shadowColor: "#000000",
+  shadowOffset: {
+    width: 1,
+    height: 1
   },
-
-  productNameBold: {
-    fontSize: 25,
-    fontWeight: '700',
-    marginTop: 25,
-    textAlign: 'center',
-  },
-
-  productNameThin: {
-    fontSize: 18,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginBottom: 5,
-  },
-
-  beerImage: {
-      width: 150,
-      height: 250,
-      resizeMode: 'contain',
-      alignSelf: 'center'
-  },
-  imageWrap: {
-    flex: 3,
-    marginTop: 80,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginBottom: 20
+  shadowOpacity: 0.5,
+  shadowRadius: 3,
+  elevation: 20,
+  flexDirection: 'column',
+  justifyContent: 'center'
 },
-
-  textWrap: {
-    flex: 2,
-    marginTop: 120,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
-  
-  tasteClockWrap: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
-
-  capImage: {
-    width: 150,
-    height: 200,
-    resizeMode: 'contain',
-    alignSelf: 'center'
+productNameBold: {
+  fontSize: 25,
+  fontWeight: '700',
+  marginTop: 25,
+  textAlign: 'center',
 },
-
-  alcoholPercentageStyle: {
-    fontSize: 20,
-    textAlign: 'center',
-    fontWeight: '500',
-    marginBottom: 10,
-  },
-
-  containerAndVolumeStyle: {
-    fontSize: 20,
-    textAlign: 'center',
-  },
-
-  tasteClockStyle: {
-      fontSize: 16,
-      fontWeight: '400',
-      textAlign: 'center',
-    },
-
-  rating: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 25,
-  },
-
-  myStarStyle: {
-    color: '#009688',
-    backgroundColor: 'transparent',
-    textShadowColor: 'black',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 2,
-    fontSize: 30,
-    left: 15
-  },
-  myEmptyStarStyle: {
-    color: '#009688',
-  },
+productNameThin: {
+  fontSize: 18,
+  fontWeight: '400',
+  textAlign: 'center',
+  marginBottom: 5,
+},
+beerImage: {
+  width: 150,
+  height: 205,
+  resizeMode: 'contain',
+  alignSelf: 'center'
+},
+imageWrap: {
+  flex: 3,
+  marginTop: 80,
+  flexDirection: 'row',
+  justifyContent: 'space-evenly',
+  marginBottom: 20
+},
+textWrap: {
+  flex: 1,
+  marginTop: 50,
+  flexDirection: 'row',
+  justifyContent: 'space-evenly',
+},
+tasteClockWrap: {
+  flex: 1,
+  flexDirection: 'row',
+  justifyContent: 'space-evenly',
+},
+alcoholPercentageStyle: {
+  fontSize: 20,
+  textAlign: 'center',
+  fontWeight: '500',
+  marginBottom: 10,
+},
+containerAndVolumeStyle: {
+  fontSize: 20,
+  textAlign: 'center',
+},
+tasteClockStyle: {
+  marginVertical: 10,
+  fontSize: 16,
+  fontWeight: '400',
+  textAlign: 'center',
+},
+rating: {
+  fontSize: 18,
+  textAlign: 'center',
+  marginBottom: 25,
+},
+myStarStyle: {
+  color: '#009688',
+  backgroundColor: 'transparent',
+  textShadowColor: 'black',
+  textShadowOffset: {width: 1, height: 1},
+  textShadowRadius: 2,
+  fontSize: 30,
+},
+myEmptyStarStyle: {
+  color: '#009688',
+},
   ratingStars: {
     
   },

@@ -75,10 +75,8 @@ _renderListItem(item){
   return(
     
     <View style = {styles.commentWrap}>
-         
-          <View style = {styles.ratingStars}>
-          <Text style = {styles.productNameBold}>{item.user}</Text>
-          <Text style = {styles.reviewText}>{item.review_text} </Text>
+          <View>
+            <Text style = {styles.reviewUsername}>{item.user}</Text>
             <Stars
               display= {Number(item.rating)}
               half={true}
@@ -86,11 +84,8 @@ _renderListItem(item){
               emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
               halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
             />
+            <Text style = {styles.reviewText}>{item.review_text} </Text>
           </View>
-          {/* </Card> */}
-         
-          
-  
     </View>
     
     )
@@ -105,13 +100,16 @@ renderListHeader = () => {
           <View style = {styles.imageWrap}>
           <Image source={{uri: this.state.beer_pic + '_200.png' }} style={styles.beerImage} />
           <TouchableOpacity onPress={() => this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness})}>
-           <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
+           <Text style={styles.giveRating}>
+             Ge rating
+           </Text>
            </TouchableOpacity>
           </View>
           <View style = {styles.textWrap}>
-          <Text style = {styles.alcoholPercentageStyle}>{this.state.beer_percentage + '% vol'}</Text>
-          <Text style = {styles.containerAndVolumeStyle}>{this.state.beer_container_type + ', ' + this.state.beer_volume + ' ml'}</Text>
-          </View>
+            <View style={styles.percentageAndContainer}>
+              <Text style = {styles.alcoholPercentageStyle}>{this.state.beer_percentage + '% vol'}</Text>
+              <Text style = {styles.containerAndVolumeStyle}>{this.state.beer_container_type + ', ' + this.state.beer_volume + ' ml'}</Text>
+            </View>
           <View style = {styles.tasteClockWrap}>
             <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + this.state.beer_bitterness}</Text>
             <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + this.state.beer_fullness}</Text>
@@ -127,7 +125,7 @@ renderListHeader = () => {
             />
           </View>
           <Text style = {styles.rating}>{'Rating: ' + Number(this.state.beer_avgrating) + ' av 5'}</Text> 
-          {/* </Card> */}
+        </View>
     </View>
     </View>
   )}
@@ -187,45 +185,62 @@ const styles = StyleSheet.create({
     marginTop: 25,
     textAlign: 'center',
   },
-  reviewText: {
-    fontSize: 18,
-    fontWeight: '500',
+  reviewUsername: {
+    fontSize: 25,
+    fontWeight: '700',
     marginTop: 25,
     textAlign: 'center',
   },
-
+  reviewText: {
+    fontSize: 18,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginBottom: 25,
+  },
   productNameThin: {
     fontSize: 18,
     fontWeight: '400',
     textAlign: 'center',
-    marginBottom: 5,
+    marginBottom: 15,
   },
-
-  beerImage: {
-      width: 150,
-      height: 250,
-      resizeMode: 'contain',
-      alignSelf: 'center'
-  },
-  imageWrap: {
-    flex: 3,
-    marginTop: 80,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginBottom: 20
+beerImage: {
+    width: 150,
+    height: 200,
+    resizeMode: 'contain',
+    alignSelf: 'center',
 },
-
+imageWrap: {
+  flex: 2,
+  marginTop: 25,
+  alignItems: 'center',
+  alignSelf: 'center',
+  marginBottom: 20
+},
+giveRating: {
+  alignSelf: 'center',
+  borderWidth: 4,
+  borderColor: '#009688',
+  color: '#009688',
+  padding: 5,
+  marginTop: 15,
+  height: 40,
+  borderRadius: 15,
+},
   textWrap: {
-    flex: 2,
-    marginTop: 120,
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  percentageAndContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    width: '100%',
   },
   commentWrap: {
-    marginTop: 50,
+    marginTop: 75,
     marginTop: 15,
     width: 350,
-    height: 400,
+    minHeight: 125,
+    maxHeight: 150,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
@@ -242,17 +257,10 @@ const styles = StyleSheet.create({
   },
   
   tasteClockWrap: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    width: '100%',
   },
-
-  capImage: {
-    width: 150,
-    height: 200,
-    resizeMode: 'contain',
-    alignSelf: 'center'
-},
 
   alcoholPercentageStyle: {
     fontSize: 20,
@@ -265,19 +273,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
-
   tasteClockStyle: {
       fontSize: 16,
       fontWeight: '400',
       textAlign: 'center',
     },
-
   rating: {
     fontSize: 18,
     textAlign: 'center',
     marginBottom: 25,
   },
-
   myStarStyle: {
     color: '#009688',
     backgroundColor: 'transparent',
@@ -285,14 +290,12 @@ const styles = StyleSheet.create({
     textShadowOffset: {width: 1, height: 1},
     textShadowRadius: 2,
     fontSize: 30,
-    left: 15
+    marginTop: 10,
   },
   myEmptyStarStyle: {
     color: '#009688',
   },
-  ratingStars: {
-    
-  },
+
 })
 
 export default IndividualBeer  

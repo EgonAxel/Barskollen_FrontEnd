@@ -105,15 +105,9 @@ class ReviewBeer extends React.PureComponent {
         <View style = {styles.viewStyle}>
           <Text style = {styles.productName}>{this.state.beer_name}</Text>
           <View style = {styles.imageWrap}>
-          <Image source={{uri: this.state.beer_pic + '_100.png' }} style={styles.beerImage} /> 
-          <TouchableOpacity onPress={() => {
-            this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
-            this.getRecommendations(this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
-            console.log(this.state.recommendations.length)}}>
-            <Image source={require('../images/beerCap.png')} style={styles.capImage} /> 
-          </TouchableOpacity>
+            <Image source={{uri: this.state.beer_pic + '_100.png' }} style={styles.beerImage} /> 
         </View>
-        <View style={{alignItems:'center'}}>
+        <View style={styles.ratingStars}>
           <Stars
             update={(val)=>{this.setState({stars: val})}}
             // half={true}
@@ -123,15 +117,25 @@ class ReviewBeer extends React.PureComponent {
             halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
             />
             <Text>{this.state.stars}</Text>
-            <View style = {styles.container}>
-              <TextInput style = {styles.textInputFields}
-                    underlineColorAndroid = "transparent"
-                    placeholder = "Vad tyckte du om ölen?"
-                    placeholderTextColor = "grey"
-                    returnKeyType="next"
-                    onChangeText = {this.reviewText}
-                    blurOnSubmit={false}/>
-            </View>
+          </View>
+          <View style = {styles.container}>
+            <TextInput style = {styles.textInputFields}
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Vad tyckte du om ölen? (Tvingande textfält??)"
+                  placeholderTextColor = "grey"
+                  returnKeyType="next"
+                  onChangeText = {this.reviewText}
+                  blurOnSubmit={false}/>
+            <TouchableOpacity 
+            onPress={() => {
+              this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
+              this.getRecommendations(this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
+              console.log(this.state.recommendations.length)}}>
+              {/* <Image source={require('../images/beerCap.png')} style={styles.capImage} />  */}
+              <Text style={styles.sendReview}>
+                Skicka review
+              </Text>
+          </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -163,82 +167,81 @@ class ReviewBeer extends React.PureComponent {
   const styles = StyleSheet.create({
   
     // ÖL SOM RATEAS
-    viewStyle: {
-      marginTop: 15,
-      width: 350,
-      height: 400,
-      backgroundColor: '#ffffff',
-      borderRadius: 15,
-      borderStyle: 'solid', 
-      borderColor: '#dadada',
-      borderWidth: 1,
-      shadowColor: "#000000",
-      shadowOffset: {
-        width: 1,
-        height: 1
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 3,
-      elevation: 20,
-      alignSelf: 'center'
-    },
-    productName: {
-      fontSize: 25,
-      fontWeight: '700',
-      marginTop: 25,
-      textAlign: 'center',
-      marginBottom: 15
-    },
-    textInputFields: {
-       paddingLeft: 15,
-       paddingRight: 15,
-       marginRight: 40,
-       marginBottom: 5,
-       marginLeft: 40,
-       height: 40,
-       borderColor: '#009688',
-       borderWidth: 2,
-       borderRadius: 10,
-       backgroundColor: 'white'
-    },
-    beerImage: {
-      width: 100,
-      height: 100,
-      marginBottom: 20,
-      resizeMode: 'contain',
-      alignSelf: 'center'
+viewStyle: {
+  marginTop: 15,
+  width: 350,
+  height: 400,
+  backgroundColor: '#ffffff',
+  borderRadius: 15,
+  borderStyle: 'solid', 
+  borderColor: '#dadada',
+  borderWidth: 1,
+  shadowColor: "#000000",
+  shadowOffset: {
+    width: 1,
+    height: 1
   },
-  capImage: {
-    width: 200,
-    height: 250,
-    resizeMode: 'contain',
-    alignSelf: 'center'
+  shadowOpacity: 0.5,
+  shadowRadius: 3,
+  elevation: 20,
+  alignSelf: 'center'
 },
-  imageWrap: {
-    flex: 3,
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginBottom: 20
+productName: {
+  fontSize: 25,
+  fontWeight: '700',
+  marginTop: 25,
+  textAlign: 'center',
+  marginBottom: 15
 },
-
-  alcoholPercentageStyle: {
-    fontSize: 22,
-    textAlign: 'center',
-    fontWeight: '500',
-    marginBottom: 10,
-  },
-
-  containerAndVolumeStyle: {
-    fontSize: 20,
-    textAlign: 'center',
-
-  },
-
+textInputFields: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    marginRight: 40,
+    marginTop: 100,
+    marginBottom: 5,
+    marginLeft: 40,
+    height: 40,
+    width: 350,
+    borderColor: '#009688',
+    borderWidth: 2,
+    borderRadius: 10,
+    backgroundColor: 'white',
+    alignSelf: 'center',
+},
+sendReview: {
+  alignSelf: 'center',
+  borderWidth: 4,
+  borderColor: '#009688',
+  color: '#009688',
+  padding: 7,
+  marginTop: 10,
+  marginBottom: 5,
+  height: 40,
+  borderRadius: 15,
+},
+beerImage: {
+  width: 100,
+  height: 200,
+  marginVertical: 20,
+  resizeMode: 'contain',
+  alignSelf: 'center'
+},
+capImage: {
+  width: 100,
+  height: 150,
+  resizeMode: 'contain',
+  alignSelf: 'center'
+},
+imageWrap: {
+  flex: 3,
+  marginTop: 20,
+  flexDirection: 'row',
+  justifyContent: 'space-evenly',
+  marginBottom: 20
+},
   rating: {
     fontSize: 25,
     textAlign: 'center',
-    marginBottom: 100,
   },
 
     // REKOMMENDATIONER
@@ -263,8 +266,8 @@ class ReviewBeer extends React.PureComponent {
     },
     container: {
       flex: 1,
-      flexDirection: "column",
-      justifyContent: 'center',
+      // flexDirection: "column",
+      // justifyContent: 'center',
      },
      productNameRecommendation: {
       // fontFamily: 'Avenir',
@@ -306,7 +309,6 @@ class ReviewBeer extends React.PureComponent {
       marginBottom: 10,
       marginLeft: 10,
       resizeMode: 'contain',
-      left: 0,
     },
     myStarStyle: {
       color: '#009688',
@@ -314,15 +316,14 @@ class ReviewBeer extends React.PureComponent {
       textShadowColor: '#dadada',
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 5,
-      fontSize: 25,
-      left: 5
+      fontSize: 35,
+      marginTop: 5,
     },
     myEmptyStarStyle: {
       color: '#009688',
     },
     ratingStars: {
-      marginTop: -40,
-      marginLeft: 15,
+      alignItems: 'center',
     },
   })
   

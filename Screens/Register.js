@@ -55,7 +55,7 @@ async function save(key, value) {
          return
       }
       axios
-      .post(`http://192.168.56.1:80/user/register`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
+      .post(`http://127.0.0.1:8000/user/register`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
       .then(response => {
          if (response.request.status === 201) { 
             console.log('Genererad token: ', response.data.token);
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
    },
    alreadyHaveAnAccountText: {
      // fontFamily: 'Avenir',
-      fontWeight: '800',
+      fontWeight: '700',
       alignSelf: 'center',
       color: '#009688',
    }
