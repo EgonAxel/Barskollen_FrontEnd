@@ -163,7 +163,8 @@ const styles = StyleSheet.create({
   viewStyle: {
     marginTop: 15,
     width: 350,
-    height: 525,
+    minHeight: 550,
+    maxHeight: 1000,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
