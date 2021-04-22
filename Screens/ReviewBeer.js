@@ -30,18 +30,18 @@ class ReviewBeer extends React.PureComponent {
         beer_fullness: this.props.route.params.beer_fullness,
         beer_sweetness: this.props.route.params.beer_sweetness,
         recommendations: [],
-        review: ''
+        review: "",
     };
   }
   reviewText = (text) => {
     this.setState({ review: text })
     }
-
+  
   postRatingComment(beer_ID, beer_name, starValue, review) {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
         axios
-          .post(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text:review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .catch(error => {
           this.setState({error: error.message});
           });
@@ -65,8 +65,8 @@ class ReviewBeer extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.rating, this.state.review)
-  //  this.getRecommendations(this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
+    // this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.rating, this.state.review)
+    // this.getRecommendations(this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
   }
 
   _renderListItem(item) {
@@ -97,31 +97,31 @@ class ReviewBeer extends React.PureComponent {
   }
   renderListHeader = () => {
     return (
-      <View style={{height: 500}}>
+      <View style={styles.wholePage}>
         <View style = {styles.viewStyle}>
-          <Text style = {styles.productName}>{this.state.beer_name}</Text>
-          <View style = {styles.imageWrap}>
-            <Image source={{uri: this.state.beer_pic + '_100.png' }} style={styles.beerImage} /> 
-        </View>
-        <View style={styles.ratingStars}>
-          <Stars
-            update={(val)=>{this.setState({stars: val})}}
-            // half={true}
-            display= {Number((this.state.stars).toFixed(1))}
-            fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-            emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-            halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-            />
-            <Text>{this.state.stars}</Text>
+          <Text style = {styles.productName}>
+            {this.state.beer_name}
+          </Text>
+          <Image style={styles.beerImage} source={{uri: this.state.beer_pic + '_100.png' }}/> 
+          <View style={styles.ratingStars}>
+            <Stars
+              update={(val)=>{this.setState({stars: val})}}
+              // half={true}
+              display= {Number((this.state.stars).toFixed(1))}
+              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+              />
           </View>
-          <View style = {styles.container}>
             <TextInput style = {styles.textInputFields}
-                  underlineColorAndroid = "transparent"
-                  placeholder = "Vad tyckte du om ölen? (Tvingande textfält??)"
-                  placeholderTextColor = "grey"
-                  returnKeyType="next"
-                  onChangeText = {this.reviewText}
-                  blurOnSubmit={false}/>
+              clearButtonMode = 'always'
+              underlineColorAndroid = "transparent"
+              placeholder = "Vad tyckte du om ölen? (Tvingande textfält??)"
+              placeholderTextColor = "grey"
+              returnKeyType="next"
+              onChangeText = {this.reviewText}
+              blurOnSubmit={false}
+            />
             <TouchableOpacity 
             onPress={() => {
               this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
@@ -132,7 +132,7 @@ class ReviewBeer extends React.PureComponent {
                 Skicka review
               </Text>
           </TouchableOpacity>
-          </View>
+
         </View>
       </View>
     )}
@@ -163,10 +163,14 @@ class ReviewBeer extends React.PureComponent {
   const styles = StyleSheet.create({
   
     // ÖL SOM RATEAS
+wholePage: {
+  height: windowHeight,
+},
 viewStyle: {
   marginTop: 15,
   width: 350,
-  height: 400,
+  minHeight: 500,
+  maxHeight: 1000,
   backgroundColor: '#ffffff',
   borderRadius: 15,
   borderStyle: 'solid', 
@@ -193,11 +197,11 @@ textInputFields: {
     paddingLeft: 15,
     paddingRight: 15,
     marginRight: 40,
-    marginTop: 100,
+    marginTop: 10,
     marginBottom: 5,
     marginLeft: 40,
     height: 40,
-    width: 350,
+    width: windowWidth * 0.7,
     borderColor: '#009688',
     borderWidth: 2,
     borderRadius: 10,
@@ -216,111 +220,92 @@ sendReview: {
   borderRadius: 15,
 },
 beerImage: {
-  width: 100,
-  height: 200,
+  width: 125,
+  height: 300,
   marginVertical: 20,
   resizeMode: 'contain',
   alignSelf: 'center'
 },
-capImage: {
-  width: 100,
-  height: 150,
-  resizeMode: 'contain',
-  alignSelf: 'center'
+rating: {
+  fontSize: 25,
+  textAlign: 'center',
 },
-imageWrap: {
-  flex: 3,
-  marginTop: 20,
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
-  marginBottom: 20
-},
-  rating: {
-    fontSize: 25,
-    textAlign: 'center',
-  },
 
     // REKOMMENDATIONER
-
-    viewStyleRecommendation: {
-      marginTop: 15,
-      width: windowWidth * 0.93,
-      height: 125,
-      backgroundColor: '#ffffff',
-      borderRadius: 15,
-      borderStyle: 'solid', 
-      borderColor: '#dadada',
-      borderWidth: 1,
-      shadowColor: "#000000",
-      shadowOffset: {
-        width: 1,
-        height: 1
-      },
-      shadowOpacity: 0.5,
-      shadowRadius: 3,
-      elevation: 20,
+  viewStyleRecommendation: {
+    marginTop: 15,
+    width: windowWidth * 0.93,
+    height: 125,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    borderStyle: 'solid', 
+    borderColor: '#dadada',
+    borderWidth: 1,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 1,
+      height: 1
     },
-    container: {
-      flex: 1,
-      // flexDirection: "column",
-      // justifyContent: 'center',
-     },
-     productNameRecommendation: {
-      // fontFamily: 'Avenir',
-      fontSize: 14,
-      fontWeight: '500',
-      textAlign: 'left',
-    },
-    productTypeRecommendation: {
-      // fontFamily: 'Avenir',
-      fontSize: 14,
-      fontWeight: '400',
-      textAlign: 'left',
-      marginBottom: 5,
-    },
-    beerInstance: {
-      textAlign: 'left',
-      flexDirection: 'row',
-      maxWidth: 265,
-    },
-    beerInformation: {
-      marginTop: 15,
-      paddingBottom: 5,
-      flexDirection: 'column',
-      left: 15,
-    },
-    attributeStyle: {
-      fontSize: 20,
-      textAlign: 'left',
-    },
-    alcohol_percentage: {
-      // fontFamily: 'Avenir',
-      fontSize: 14,
-      textAlign: 'left',
-    },
-    beerImageRecommendation: {
-      width: 100,
-      height: 100,
-      marginTop: 10,
-      marginBottom: 10,
-      marginLeft: 10,
-      resizeMode: 'contain',
-    },
-    myStarStyle: {
-      color: '#009688',
-      backgroundColor: 'transparent',
-      textShadowColor: '#dadada',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 5,
-      fontSize: 35,
-      marginTop: 5,
-    },
-    myEmptyStarStyle: {
-      color: '#009688',
-    },
-    ratingStars: {
-      alignItems: 'center',
-    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 20,
+  },
+  productNameRecommendation: {
+    // fontFamily: 'Avenir',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'left',
+  },
+  productTypeRecommendation: {
+    // fontFamily: 'Avenir',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'left',
+    marginBottom: 5,
+  },
+  beerInstance: {
+    textAlign: 'left',
+    flexDirection: 'row',
+    maxWidth: 265,
+  },
+  beerInformation: {
+    marginTop: 15,
+    paddingBottom: 5,
+    flexDirection: 'column',
+    left: 15,
+  },
+  attributeStyle: {
+    fontSize: 20,
+    textAlign: 'left',
+  },
+  alcohol_percentage: {
+    // fontFamily: 'Avenir',
+    fontSize: 14,
+    textAlign: 'left',
+  },
+  beerImageRecommendation: {
+    width: 100,
+    height: 100,
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 10,
+    resizeMode: 'contain',
+  },
+  myStarStyle: {
+    color: '#009688',
+    backgroundColor: 'transparent',
+    textShadowColor: '#dadada',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 5,
+    fontSize: 35,
+    marginTop: 5,
+  },
+  myEmptyStarStyle: {
+    color: '#009688',
+  },
+  ratingStars: {
+    alignItems: 'center',
+  },
   })
   
   export default ReviewBeer

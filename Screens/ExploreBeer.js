@@ -49,13 +49,13 @@ class Beers extends React.PureComponent {
       offset: 0,
       beers: []})
     if (typeof text != "undefined") {
-      this.fetchBeer(0, text, this.state.orderingValue)
+      this.fetchBeer(0, text, this.state.orderingValue, this.state.beerType)
     }
     else {
-      this.fetchBeer(0, "", this.state.orderingValue)
+      this.fetchBeer(0, "", this.state.orderingValue, this.state.beerType)
     }
   }
-  fetchBeer = (offset, searchText, orderingValue) => {
+  fetchBeer = (offset, searchText, orderingValue, beerType) => {
     getValueFor("Token").then((token) => {
       axios
       .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
@@ -76,13 +76,13 @@ class Beers extends React.PureComponent {
           offset: prevState.offset + 20,
         }),
         () => {
-          this.fetchBeer(this.state.offset, this.state.searchText, this.state.orderingValue);
+          this.fetchBeer(this.state.offset, this.state.searchText, this.state.orderingValue, this.state.beerType);
         },
       );
     };
   }
   componentDidMount() {
-    this.fetchBeer(this.state.offset, this.state.searchText, this.state.orderingValue);
+    this.fetchBeer(this.state.offset, this.state.searchText, this.state.orderingValue, this.state.beerType);
   }
   _renderListItem(item) {
     return(
@@ -123,7 +123,7 @@ class Beers extends React.PureComponent {
           </TouchableOpacity>
           <Text onPress={() => setShouldShow(!shouldShowSearchArea)}
                 style={styles.searchIconText}>
-                Sök efter din favorit-öl
+                Hitta din favoritbärs
           </Text>
         </View> */}
         {/* {shouldShowSearchArea ? ( */}
@@ -132,7 +132,7 @@ class Beers extends React.PureComponent {
               <TextInput style = {styles.searchField}
                 clearButtonMode = 'always'
                 underlineColorAndroid = "transparent"
-                placeholder = "Sök efter en öl..."
+                placeholder = "Sök efter bärs..."
                 placeholderTextColor = "grey"
                 autoCapitalize = "none"
                 returnKeyType="search"
@@ -155,27 +155,31 @@ class Beers extends React.PureComponent {
               <RNPickerSelect style={pickerSelectStyles}
                   useNativeAndroidPickerStyle={false}
                   placeholder={{
-                  label: 'Filtrering',
-                  value: null,
+                  label: 'Ölsort',
+                  value: "",
                   }}
-                  onValueChange={(value) => {console.log(value)}}
-                  // this.setState({offset: 0})
-                  // this.fetchBeer(this.state.offset)
+                  onValueChange={(value) => this.setState({
+                    beerType: value},
+                    this.handleFilterAction)}
                   items={[
-                    { label: 'Filtrera på ljus lager', value: 'ljus_lager', inputLabel: 'Ljus lager' },
-                    { label: 'Filtrera på ale', value: 'ale', inputLabel: 'Ale' },
-                    // { label: 'Filtrera på volym', value: 'volume', inputLabel: 'Volym' },
+                    { label: 'Ljus lager', value: 'Ljus lager', inputLabel: 'Ljus lager' },
+                    { label: 'Ale', value: 'Ale', inputLabel: 'Ale' },
+                    { label: 'Porter & Stout', value: 'Porter+%26+Stout', inputLabel: 'Porter & Stout' },
+                    { label: 'Veteöl', value: 'Veteöl', inputLabel: 'Veteöl' },
+                    { label: "Mellanmörk & Mörk lager", value: "Mellanm%C3%B6rk+%26+M%C3%B6rk+lager", inputLabel: "Mellanmörk & Mörk lager" },
+                    { label: 'Syrlig öl', value: 'Syrlig öl', inputLabel: 'Syrlig öl' },
+                    { label: 'Annan öl', value: 'Annan öl', inputLabel: 'Annan öl' },
                   ]}
                 />
                 <RNPickerSelect style={pickerSelectStyles}
                   useNativeAndroidPickerStyle={false}
                   placeholder={{
                   label: 'Sortering',
-                  value: null,
+                  value: "",
                   }}
-                  onValueChange={(value) => this.setState({orderingValue: value})}
-                  // this.setState({offset: 0})
-                  // this.fetchBeer(this.state.offset)
+                  onValueChange={(value) => this.setState({
+                    orderingValue: value},
+                    this.handleFilterAction)}
                   items={[
                     { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
                     { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
@@ -190,7 +194,6 @@ class Beers extends React.PureComponent {
     )}
 
   render() {
-
 
     const scrollY = new Animated.Value(0)
     const diffClamp = Animated.diffClamp(scrollY, 0, 100) 
@@ -252,7 +255,7 @@ class Beers extends React.PureComponent {
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: { //
     minWidth: windowWidth * 0.3,
-    maxWidth: windowWidth * 0.4,
+    maxWidth: windowWidth * 0.5,
     textAlign: 'center',
     fontSize: 14,
     paddingVertical: 5,
@@ -323,7 +326,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     alignSelf: 'center',
     color: '#009688',
-    marginTop: 10,
+    padding: 10,
   },
   // searchIconText: {
   //   color: 'grey',
@@ -335,7 +338,6 @@ const styles = StyleSheet.create({
   searchField: {
     // fontFamily: 'Avenir',
     padding: 10,
-    marginTop: 10,
     marginBottom: 5,
     marginRight: 5,
     height: 40,
@@ -351,7 +353,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#009688',
     padding: 7,
-    marginTop: 10,
     marginBottom: 5,
     height: 40,
     borderRadius: 20,
