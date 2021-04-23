@@ -96,17 +96,18 @@ class Beers extends React.PureComponent {
                     <Text style = {styles.productNameBold}>{item.name}</Text>
                     <Text style = {styles.productNameThin}>{item.beer_type}</Text>
                     <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                    <Stars
+                      display= {Number((item.avg_rating).toFixed(1))}
+                      half={true}
+                      fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                      emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                      halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                    />
                   </View>
               </View> 
-              <View style = {styles.ratingStars}>
-              <Stars
-                  display= {Number((item.avg_rating).toFixed(1))}
-                  half={true}
-                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-              />
-              </View>
+              {/* <View style = {styles.ratingStars}> */}
+              
+              {/* </View> */}
           </TouchableOpacity>
       </View>
       )
@@ -243,6 +244,7 @@ class Beers extends React.PureComponent {
           onEndReached={this.fetchMoreBeers}
           onEndReachedThreshold={2}
 
+          scrollEventThrottle="16"
           onScroll = {(e)=>{
             if (e.nativeEvent.contentOffset.y > 0)
             scrollY.setValue(0.7 * (e.nativeEvent.contentOffset.y));
@@ -284,7 +286,8 @@ const styles = StyleSheet.create({
   beerItem: {
     marginTop: 15,
     width: windowWidth * 0.93,
-    height: 125,
+    minHeight: 125,
+    maxHeight: 150,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
@@ -401,6 +404,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
+    alignItems: 'flex-start',
     left: 20,
   },
   attributeStyle: {
@@ -423,9 +427,9 @@ const styles = StyleSheet.create({
   myEmptyStarStyle: {
     color: '#009688',
   },
-  ratingStars: {
-    marginTop: -40,
-  },
+  // ratingStars: {
+  //   marginTop: -40,
+  // },
 })
 
 export default Beers;
