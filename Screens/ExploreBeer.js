@@ -7,8 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNPickerSelect from 'react-native-picker-select';
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 
 // Installera dessa: 
 // npm i --save axios 
@@ -36,7 +34,7 @@ class Beers extends React.PureComponent {
       searchText: "",
       orderingValue: "",
       beerType: "",
-      toggleSearchMargin: 110,
+      toggleSearchMargin: 120,
       error: null,
     };
   }
@@ -208,7 +206,6 @@ class Beers extends React.PureComponent {
 
     return (
       <View style={{flex: 1}}>
-
         <Animated.View  // - Måste ha denna styling här för att komma åt 'translate' varabel.
             style={{
               transform:[
@@ -218,6 +215,8 @@ class Beers extends React.PureComponent {
               top: 0,
               left: 0,
               right: 0,
+              borderBottomLeftRadius: 15,
+              borderBottomRightRadius: 15,
               // elevation: 601, // - Denna elevation ger ingen skugga runt objektet på android
               zIndex: 1,
               backgroundColor: 'white',
@@ -255,29 +254,33 @@ class Beers extends React.PureComponent {
   }
 }
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+const usedBorderRadius = 23;
+
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: { //
-    minWidth: windowWidth * 0.3,
+    minWidth: windowWidth * 0.22,
     maxWidth: windowWidth * 0.5,
     textAlign: 'center',
     fontSize: 14,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 17,
+    paddingVertical: 10,
     borderWidth: 2,
     borderColor: '#009688',
-    borderRadius: 20,
+    borderRadius: usedBorderRadius,
     color: '#009688',
   },
   inputAndroid: {
-    minWidth: windowWidth * 0.3,
+    minWidth: windowWidth * 0.22,
     maxWidth: windowWidth * 0.4,
     textAlign: 'center',
     fontSize: 14,
-    paddingVertical: 5,
-    paddingHorizontal: 30,
+    paddingHorizontal: 17,
+    paddingVertical: 10,
     borderWidth: 2,
     borderColor: '#009688',
-    borderRadius: 20,
+    borderRadius: usedBorderRadius,
     color: 'black',
   },
 });
@@ -292,63 +295,40 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
-    borderWidth: 1,
+    borderWidth: 0.5,
     shadowColor: "#000000",
     shadowOffset: {
-      width: 1,
-      height: 1
+      width: 3,
+      height: 3
     },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.3,
     shadowRadius: 3,
   },
   safeAreaView: {
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
     alignSelf: 'center',
   },
-  // textInputFields: {
-  //   // fontFamily: 'Avenir',
-  //   padding: 10,
-  //   marginTop: 10,
-  //   marginBottom: 5,
-  //   marginRight: 5,
-  //   height: 40,
-  //   width: "70%",
-  //   borderColor: '#009688',
-  //   borderWidth: 2,
-  //   borderRadius: 10,
-  //   backgroundColor: 'white'
-  // },
-  // toggleSearch: {
-  //   alignSelf: 'center',
-  //   flexDirection: 'column',
-  //   backgroundColor: 'white',
-  //   borderRadius: 15,
-  //   paddingBottom: 5,
-  // },
+
   searchIcon: {
     fontSize: 20,
     alignSelf: 'center',
     color: '#009688',
     padding: 10,
   },
-  // searchIconText: {
-  //   color: 'grey',
-  // },
+
   searchBarRow: {
-    marginVertical: 5,
+    marginTop: 15,
+    marginBottom: 5,
     flexDirection:"row",
   },
   searchField: {
     // fontFamily: 'Avenir',
-    padding: 10,
+    paddingHorizontal: 20,
     marginBottom: 5,
     marginRight: 5,
-    height: 40,
     width: windowWidth * 0.75,
     borderColor: '#009688',
     borderWidth: 2,
-    borderRadius: 20,
+    borderRadius: usedBorderRadius,
     backgroundColor: 'white'
   },
   searchButton: {
@@ -356,21 +336,14 @@ const styles = StyleSheet.create({
     // backgroundColor: '#009688',
     borderWidth: 2,
     borderColor: '#009688',
-    padding: 7,
+    padding: 10,
     marginBottom: 5,
-    height: 40,
-    borderRadius: 20,
+    borderRadius: usedBorderRadius,
     justifyContent: 'center',
   },
-  // searchButtonText: {
-  //   // fontFamily: 'Avenir',
-  //   alignSelf: 'center',
-  //   color: '#009688',
-  //   textTransform: 'uppercase',
-  // },
   filterAndSearchArea: {
     paddingBottom: 15,
-    borderRadius: 15,
+    borderRadius: usedBorderRadius,
     alignSelf: 'center',
   },
   beerImage: {
@@ -427,9 +400,7 @@ const styles = StyleSheet.create({
   myEmptyStarStyle: {
     color: '#009688',
   },
-  // ratingStars: {
-  //   marginTop: -40,
-  // },
+
 })
 
 export default Beers;
