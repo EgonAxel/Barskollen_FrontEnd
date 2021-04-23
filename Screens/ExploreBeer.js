@@ -7,8 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNPickerSelect from 'react-native-picker-select';
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 
 // Installera dessa: 
 // npm i --save axios 
@@ -36,7 +34,7 @@ class Beers extends React.PureComponent {
       searchText: "",
       orderingValue: "",
       beerType: "",
-      toggleSearchMargin: 110,
+      toggleSearchMargin: 120,
       error: null,
     };
   }
@@ -96,17 +94,18 @@ class Beers extends React.PureComponent {
                     <Text style = {styles.productNameBold}>{item.name}</Text>
                     <Text style = {styles.productNameThin}>{item.beer_type}</Text>
                     <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                    <Stars
+                      display= {Number((item.avg_rating).toFixed(1))}
+                      half={true}
+                      fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                      emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                      halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                    />
                   </View>
               </View> 
-              <View style = {styles.ratingStars}>
-              <Stars
-                  display= {Number((item.avg_rating).toFixed(1))}
-                  half={true}
-                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-              />
-              </View>
+              {/* <View style = {styles.ratingStars}> */}
+              
+              {/* </View> */}
           </TouchableOpacity>
       </View>
       )
@@ -207,7 +206,6 @@ class Beers extends React.PureComponent {
 
     return (
       <View style={{flex: 1}}>
-
         <Animated.View  // - Måste ha denna styling här för att komma åt 'translate' varabel.
             style={{
               transform:[
@@ -217,6 +215,8 @@ class Beers extends React.PureComponent {
               top: 0,
               left: 0,
               right: 0,
+              borderBottomLeftRadius: 15,
+              borderBottomRightRadius: 15,
               // elevation: 601, // - Denna elevation ger ingen skugga runt objektet på android
               zIndex: 1,
               backgroundColor: 'white',
@@ -243,6 +243,7 @@ class Beers extends React.PureComponent {
           onEndReached={this.fetchMoreBeers}
           onEndReachedThreshold={2}
 
+          scrollEventThrottle="16"
           onScroll = {(e)=>{
             if (e.nativeEvent.contentOffset.y > 0)
             scrollY.setValue(0.7 * (e.nativeEvent.contentOffset.y));
@@ -253,29 +254,33 @@ class Beers extends React.PureComponent {
   }
 }
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+const usedBorderRadius = 23;
+
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: { //
-    minWidth: windowWidth * 0.3,
+    minWidth: windowWidth * 0.22,
     maxWidth: windowWidth * 0.5,
     textAlign: 'center',
     fontSize: 14,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 17,
+    paddingVertical: 10,
     borderWidth: 2,
     borderColor: '#009688',
-    borderRadius: 20,
+    borderRadius: usedBorderRadius,
     color: '#009688',
   },
   inputAndroid: {
-    minWidth: windowWidth * 0.3,
+    minWidth: windowWidth * 0.22,
     maxWidth: windowWidth * 0.4,
     textAlign: 'center',
     fontSize: 14,
-    paddingVertical: 5,
-    paddingHorizontal: 30,
+    paddingHorizontal: 17,
+    paddingVertical: 10,
     borderWidth: 2,
     borderColor: '#009688',
-    borderRadius: 20,
+    borderRadius: usedBorderRadius,
     color: 'black',
   },
 });
@@ -284,68 +289,46 @@ const styles = StyleSheet.create({
   beerItem: {
     marginTop: 15,
     width: windowWidth * 0.93,
-    height: 125,
+    minHeight: 125,
+    maxHeight: 150,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
-    borderWidth: 1,
+    borderWidth: 0.5,
     shadowColor: "#000000",
     shadowOffset: {
-      width: 1,
-      height: 1
+      width: 3,
+      height: 3
     },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.3,
     shadowRadius: 3,
   },
   safeAreaView: {
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
     alignSelf: 'center',
   },
-  // textInputFields: {
-  //   // fontFamily: 'Avenir',
-  //   padding: 10,
-  //   marginTop: 10,
-  //   marginBottom: 5,
-  //   marginRight: 5,
-  //   height: 40,
-  //   width: "70%",
-  //   borderColor: '#009688',
-  //   borderWidth: 2,
-  //   borderRadius: 10,
-  //   backgroundColor: 'white'
-  // },
-  // toggleSearch: {
-  //   alignSelf: 'center',
-  //   flexDirection: 'column',
-  //   backgroundColor: 'white',
-  //   borderRadius: 15,
-  //   paddingBottom: 5,
-  // },
+
   searchIcon: {
     fontSize: 20,
     alignSelf: 'center',
     color: '#009688',
     padding: 10,
   },
-  // searchIconText: {
-  //   color: 'grey',
-  // },
+
   searchBarRow: {
-    marginVertical: 5,
+    marginTop: 15,
+    marginBottom: 5,
     flexDirection:"row",
   },
   searchField: {
     // fontFamily: 'Avenir',
-    padding: 10,
+    paddingHorizontal: 20,
     marginBottom: 5,
     marginRight: 5,
-    height: 40,
     width: windowWidth * 0.75,
     borderColor: '#009688',
     borderWidth: 2,
-    borderRadius: 20,
+    borderRadius: usedBorderRadius,
     backgroundColor: 'white'
   },
   searchButton: {
@@ -353,21 +336,14 @@ const styles = StyleSheet.create({
     // backgroundColor: '#009688',
     borderWidth: 2,
     borderColor: '#009688',
-    padding: 7,
+    padding: 10,
     marginBottom: 5,
-    height: 40,
-    borderRadius: 20,
+    borderRadius: usedBorderRadius,
     justifyContent: 'center',
   },
-  // searchButtonText: {
-  //   // fontFamily: 'Avenir',
-  //   alignSelf: 'center',
-  //   color: '#009688',
-  //   textTransform: 'uppercase',
-  // },
   filterAndSearchArea: {
     paddingBottom: 15,
-    borderRadius: 15,
+    borderRadius: usedBorderRadius,
     alignSelf: 'center',
   },
   beerImage: {
@@ -401,6 +377,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
+    alignItems: 'flex-start',
     left: 20,
   },
   attributeStyle: {
@@ -423,9 +400,7 @@ const styles = StyleSheet.create({
   myEmptyStarStyle: {
     color: '#009688',
   },
-  ratingStars: {
-    marginTop: -40,
-  },
+
 })
 
 export default Beers;
