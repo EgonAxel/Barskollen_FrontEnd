@@ -40,19 +40,30 @@ class ReviewBeer extends React.PureComponent {
   postRatingComment(beer_ID, beer_name, starValue, review) {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
-        axios
-          .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
-          .catch(error => {
-          this.setState({error: error.message});
+        if (review == "") {
+          axios
+            .post(`http://192.168.10.131:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+            .catch(error => {
+            this.setState({error: error.message});
           });
+        }
+        else {
+          axios
+            .post(`http://192.168.10.131:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+            .catch(error => {
+            this.setState({error: error.message});
+          });
+        }
       });
     });
   }
 
   getRecommendations(starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
+    const beer_type_encoded = encodeURIComponent(beer_type)
     getValueFor("Token").then((token) => {
+      const interval = 6 - starValue
       axios
-        .get(`http://192.168.1.73:8000/beer/?beer_type=${beer_type}&min_bitterness=${beer_bitterness - 1}&max_bitterness=${beer_bitterness + 1}&min_fullness=${beer_fullness - 1}&max_fullness=${beer_fullness + 1}&min_sweetness=${beer_sweetness - 1}&max_sweetness=${beer_sweetness + 1}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+        .get(`http://192.168.10.131:8000/beer/?beer_type=${beer_type_encoded}&min_bitterness=${beer_bitterness - interval}&max_bitterness=${beer_bitterness + interval}&min_fullness=${beer_fullness - interval}&max_fullness=${beer_fullness + interval}&min_sweetness=${beer_sweetness - interval}&max_sweetness=${beer_sweetness + interval}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
         .then(response => {
           this.setState({
             recommendations: response.data.results,
@@ -116,7 +127,7 @@ class ReviewBeer extends React.PureComponent {
             <TextInput style = {styles.textInputFields}
               clearButtonMode = 'always'
               underlineColorAndroid = "transparent"
-              placeholder = "Vad tyckte du om ölen? (Tvingande textfält??)"
+              placeholder = "Vad tyckte du om ölen?"
               placeholderTextColor = "grey"
               returnKeyType="next"
               onChangeText = {this.reviewText}
@@ -125,11 +136,10 @@ class ReviewBeer extends React.PureComponent {
             <TouchableOpacity 
             onPress={() => {
               this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
-              this.getRecommendations(this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
-              console.log(this.state.recommendations.length)}}>
+              this.getRecommendations(this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)}}>
               {/* <Image source={require('../images/beerCap.png')} style={styles.capImage} />  */}
               <Text style={styles.sendReview}>
-                Skicka review
+                Betygssätt
               </Text>
           </TouchableOpacity>
 
