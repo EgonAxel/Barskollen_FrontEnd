@@ -38,9 +38,12 @@ class Beers extends React.PureComponent {
       error: null,
     };
   }
+  
   handleSearchText = (text) => {
-      this.setState({searchText: text})         //----För att söka medans man skriver
+      this.setState({searchText: text})    
+          //----För att söka medans man skriver
       this.handleFilterAction(text)
+      
   }
   handleFilterAction = (text) => {
     console.log(text)
@@ -53,11 +56,12 @@ class Beers extends React.PureComponent {
     else {
       this.fetchBeer(0, "", this.state.orderingValue, this.state.beerType)
     }
-  }
+
+}
   fetchBeer = (offset, searchText, orderingValue, beerType) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.56.1:80/beer/?limit=20&offset=${offset}&search=${searchText.replace(' ','& ')}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -134,17 +138,19 @@ class Beers extends React.PureComponent {
                 underlineColorAndroid = "transparent"
                 placeholder = "Sök efter bärs..."
                 placeholderTextColor = "grey"
-                autoCapitalize = "none"
+                //autoCapitalize = "words"
+
                 returnKeyType="search"
                 onChangeText={this.handleSearchText}
-                onSubmitEditing={this.handleFilterAction}/>
-              <TouchableOpacity
+               // onSubmitEditing={this.handleFilterAction}
+                />
+              {/* <TouchableOpacity
                 style = {styles.searchButton}
                 onPress = { () => {
                   this.handleFilterAction()
                 }}>
                 <Text> <Ionicons style={styles.searchIcon} name="md-search" /> </Text> 
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             <View style={ Platform.OS === 'ios'
                   ? pickerSelectStyles.inputIOS
