@@ -42,6 +42,7 @@ class ReviewBeer extends React.PureComponent {
   postRatingComment(beer_ID, beer_name, starValue, review) {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
+      if (review == "") { 
         axios
           .post(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .catch(error => {
@@ -50,7 +51,7 @@ class ReviewBeer extends React.PureComponent {
         }
         else {
           axios
-            .post(`http://192.168.10.131:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+            .post(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
             .catch(error => {
             this.setState({error: error.message});
           });
