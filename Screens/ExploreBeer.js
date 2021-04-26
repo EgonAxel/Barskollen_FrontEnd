@@ -57,7 +57,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue, beerType) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -200,7 +200,7 @@ class Beers extends React.PureComponent {
 
     const translateY = diffClamp.interpolate({
          inputRange:[0,100],
-         outputRange:[0,-165],
+         outputRange:[0,-180],
          extrapolate: 'clamp',
     })
 

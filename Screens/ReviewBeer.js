@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Image, FlatList, StyleSheet,TouchableOpacity, TextInput, Dimensions} from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet,TouchableOpacity,
+         TextInput, Dimensions, Modal, Alert, Pressable, KeyboardAvoidingView } from 'react-native';
 import Stars from 'react-native-stars';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,6 +32,7 @@ class ReviewBeer extends React.PureComponent {
         beer_sweetness: this.props.route.params.beer_sweetness,
         recommendations: [],
         review: "",
+        modalVisible: false,
     };
   }
   reviewText = (text) => {
@@ -41,7 +43,7 @@ class ReviewBeer extends React.PureComponent {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
         axios
-          .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .post(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .catch(error => {
           this.setState({error: error.message});
           });
@@ -49,10 +51,12 @@ class ReviewBeer extends React.PureComponent {
     });
   }
 
-  getRecommendations(starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
+  getRecommendations(beer_ID, starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
+    const beer_type_encoded = encodeURIComponent(beer_type)
     getValueFor("Token").then((token) => {
+      const interval = 6 - starValue
       axios
-        .get(`http://192.168.1.73:8000/beer/?beer_type=${beer_type}&min_bitterness=${beer_bitterness - 1}&max_bitterness=${beer_bitterness + 1}&min_fullness=${beer_fullness - 1}&max_fullness=${beer_fullness + 1}&min_sweetness=${beer_sweetness - 1}&max_sweetness=${beer_sweetness + 1}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+        .get(`http://192.168.1.73:8000/beer/?beer_type=${beer_type_encoded}&min_bitterness=${beer_bitterness - interval}&max_bitterness=${beer_bitterness + interval}&min_fullness=${beer_fullness - interval}&max_fullness=${beer_fullness + interval}&min_sweetness=${beer_sweetness - interval}&max_sweetness=${beer_sweetness + interval}&beer_ID_exclude=${beer_ID}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
         .then(response => {
           this.setState({
             recommendations: response.data.results,
@@ -69,15 +73,18 @@ class ReviewBeer extends React.PureComponent {
     // this.getRecommendations(this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
   }
 
+  setModalVisible = (visible) => {
+    this.setState({ modalVisible: visible });
+  }
+
   _renderListItem(item) {
     return(
-      // Bortkommenderad från <Card>: pointerEvents="none">
-      <View style = {styles.viewStyleRecommendation}>
+        <View style = {styles.modalStyleRecommendation}>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}>
               <View style = {styles.beerInstance}>
                 <Image style = {styles.beerImageRecommendation} source = {{uri: item.picture_url + '_100.png' }}/>
                   <View style = {styles.beerInformation}>
-                    <Text style = {styles.productNameRecommendation}>{item.name}</Text>
+                    <Text style = {styles.productNameRecommendation}>{item.name}  </Text>
                     <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
                     <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
                   </View>
@@ -90,75 +97,98 @@ class ReviewBeer extends React.PureComponent {
                   emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
                   halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
               />
-              </View>
+            </View>
           </TouchableOpacity>
-      </View>
+         </View>        
       )
   }
-  renderListHeader = () => {
+  renderIndividualBeerRatingScreen = () => {
+    const { modalVisible } = this.state;
     return (
-      <View style={styles.wholePage}>
+    
+       <View style={styles.wholePage}>  
+         <KeyboardAvoidingView 
+          behavior="position"
+          style={{ flex: 1 }}
+          >  
         <View style = {styles.viewStyle}>
           <Text style = {styles.productName}>
             {this.state.beer_name}
           </Text>
           <Image style={styles.beerImage} source={{uri: this.state.beer_pic + '_100.png' }}/> 
-          <View style={styles.ratingStars}>
-            <Stars
-              update={(val)=>{this.setState({stars: val})}}
-              // half={true}
-              display= {Number((this.state.stars).toFixed(1))}
-              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-              />
-          </View>
-            <TextInput style = {styles.textInputFields}
-              clearButtonMode = 'always'
-              underlineColorAndroid = "transparent"
-              placeholder = "Vad tyckte du om ölen? (Tvingande textfält??)"
-              placeholderTextColor = "grey"
-              returnKeyType="next"
-              onChangeText = {this.reviewText}
-              blurOnSubmit={false}
-            />
-            <TouchableOpacity 
-            onPress={() => {
-              this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
-              this.getRecommendations(this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
-              console.log(this.state.recommendations.length)}}>
-              {/* <Image source={require('../images/beerCap.png')} style={styles.capImage} />  */}
-              <Text style={styles.sendReview}>
-                Skicka review
-              </Text>
-          </TouchableOpacity>
-
-        </View>
-      </View>
+              <View style={styles.ratingStars}>
+                <Stars
+                  update={(val)=>{this.setState({stars: val})}}
+                  // half={true}
+                  display= {Number((this.state.stars).toFixed(1))}
+                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                  />
+              </View>
+                <TextInput style = {styles.textInputFields}
+                  clearButtonMode = 'always'
+                  underlineColorAndroid = "transparent"
+                  placeholder = "Vad tyckte du om ölen? (Tvingande textfält??)"
+                  placeholderTextColor = "grey"
+                  returnKeyType="next"
+                  onChangeText = {this.reviewText}
+                  blurOnSubmit={false}
+                  multiline={true}
+                />
+              <TouchableOpacity 
+                onPress={() => {
+                  this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
+                  this.getRecommendations(this.state.beer_ID, this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
+                  this.setModalVisible(true),
+                  console.log(this.state.recommendations.length)}}>
+                  <Text style={styles.sendReview}>
+                    Skicka review
+                  </Text>
+              </TouchableOpacity>
+            </View>
+          <View style={{ flex : 1 }} />
+        </KeyboardAvoidingView>
+       </View> 
     )}
 
   render() {
+    const { modalVisible } = this.state;
     return (
+  <View> 
+      <this.renderIndividualBeerRatingScreen/>
+    <Modal 
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          this.setModalVisible(!modalVisible);
+        }}
+      >
+      <Text style = {styles.textRecommendationHeader}>Rekomenderade öler!</Text>
       <FlatList
         style={{flex: 1}}
         contentContainerStyle={{
           backgroundColor: '#ffffff',
           alignItems: 'center',
           justifyContent: 'center',
-          // marginTop: 15,
+          marginTop: 15,
         }}
-      
         data={this.state.recommendations}
-       
-        keyExtractor={(beer, index) => String(index)}
-        renderItem={({ item }) => this._renderListItem(item)}
-        ListHeaderComponent={this.renderListHeader()}
-        //horizontal={true}
-         />
-         
-      );
-    }
+          keyExtractor={(beer, index) => String(index)}
+          renderItem={({ item }) => this._renderListItem(item)}
+      /> 
+      <Pressable
+         style={[styles.button, styles.buttonClose]}
+          onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.beer_ID, beer_name:this.name, beer_pic: this.picture_url, beer_type: this.beer_type, beer_percentage: this.alcohol_percentage, beer_volume:this.volume, beer_container_type:this.container_type, beer_bitterness:this.bitterness, beer_sweetness: this.sweetness, beer_fullness:this.fullness, beer_avgrating:this.avg_rating})}
+        >
+          <Text style={styles.textStyle}>Stäng</Text>
+        </Pressable>
+      </Modal>    
+    </View>
+    );
   }
+}
   
   const styles = StyleSheet.create({
   
@@ -194,19 +224,19 @@ productName: {
   marginBottom: 15
 },
 textInputFields: {
-    paddingLeft: 15,
-    paddingRight: 15,
-    marginRight: 40,
-    marginTop: 10,
-    marginBottom: 5,
-    marginLeft: 40,
-    height: 40,
-    width: windowWidth * 0.7,
-    borderColor: '#009688',
-    borderWidth: 2,
-    borderRadius: 10,
-    backgroundColor: 'white',
-    alignSelf: 'center',
+  paddingLeft: 15,
+  paddingRight: 15,
+  marginRight: 40,
+  marginTop: 10,
+  marginBottom: 5,
+  marginLeft: 40,
+  height: 40,
+  width: windowWidth * 0.7,
+  borderColor: '#009688',
+  borderWidth: 2,
+  borderRadius: 10,
+  backgroundColor: 'white',
+  alignSelf: 'center',
 },
 sendReview: {
   alignSelf: 'center',
@@ -231,24 +261,30 @@ rating: {
   textAlign: 'center',
 },
 
-    // REKOMMENDATIONER
-  viewStyleRecommendation: {
-    marginTop: 15,
-    width: windowWidth * 0.93,
-    height: 125,
-    backgroundColor: '#ffffff',
+// ---------- REKOMMENDATIONER ------------  
+  modalStyleRecommendation: {
+    margin: 15,
+    width: windowWidth * 0.85,
+    backgroundColor: "white",
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 1,
-    shadowColor: "#000000",
+    padding: 35,
+    shadowColor: "#000",
     shadowOffset: {
-      width: 1,
-      height: 1
+      width: 0,
+      height: 2
     },
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
-    elevation: 20,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  textRecommendationHeader: {
+    fontSize: 25,
+    fontWeight: '700',
+    marginTop: 10,
+    textAlign: 'center',
   },
   productNameRecommendation: {
     // fontFamily: 'Avenir',
@@ -305,6 +341,24 @@ rating: {
   },
   ratingStars: {
     alignItems: 'center',
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    marginLeft: 100,
+    marginRight: 100,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#009688",
+  },
+  buttonClose: {
+    backgroundColor: "#009688",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
   },
   })
   
