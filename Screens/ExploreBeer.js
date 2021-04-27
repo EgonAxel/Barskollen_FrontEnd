@@ -39,14 +39,33 @@ class Beers extends React.PureComponent {
     };
   }
   
-  // För att uppdatera sökresultaten i realtid
+  // Updating the search results in real time. Since SQLite3 doesn't support collation of åäö chars,
+  // a manual check is done to see whether the first character is an å, ä or ö before capitalizing
+  // it. Since setState() is asynchronous, the text is both passed to the state variable (for
+  // the fetchMoreBeers() calls), as well as the initial API call.
   handleSearchText = (text) => {
-      this.setState({searchText: text})    
+    if (text.codePointAt(0) == 229) {
+      let newText = "Å" + text.substr(1)
+      this.setState({searchText: newText})
+      this.handleFilterAction(newText)
+    }
+    else if (text.codePointAt(0) == 228) {
+      let newText = "Ä" + text.substr(1)
+      this.setState({searchText: newText})
+      this.handleFilterAction(newText)
+    }
+    else if (text.codePointAt(0) == 246) {
+      let newText = "Ö" + text.substr(1)
+      this.setState({searchText: newText})
+      this.handleFilterAction(newText)
+    }
+    else {
+      this.setState({searchText: text})
       this.handleFilterAction(text)
-      
+    }
   }
+
   handleFilterAction = (text) => {
-    console.log(text)
     this.setState({
       offset: 0,
       beers: []})
@@ -137,19 +156,10 @@ class Beers extends React.PureComponent {
                 underlineColorAndroid = "transparent"
                 placeholder = "Sök efter bärs..."
                 placeholderTextColor = "grey"
-                //autoCapitalize = "words"
+                autoCapitalize = "none"
 
                 returnKeyType="search"
-                onChangeText={this.handleSearchText}
-               // onSubmitEditing={this.handleFilterAction}
-                />
-              {/* <TouchableOpacity
-                style = {styles.searchButton}
-                onPress = { () => {
-                  this.handleFilterAction()
-                }}>
-                <Text> <Ionicons style={styles.searchIcon} name="md-search" /> </Text> 
-              </TouchableOpacity> */}
+                onChangeText={this.handleSearchText}/>
             <View style={ Platform.OS === 'ios'
                   ? pickerSelectStyles.inputIOS
                   : pickerSelectStyles.inputAndroid, 

@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
 import axios from 'axios';
@@ -17,7 +15,6 @@ async function getValueFor(key) {
   }
 }
 
-
 class IndividualBeer extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -31,13 +28,14 @@ class IndividualBeer extends React.PureComponent {
       beer_pic: this.props.route.params.beer_pic,
       beer_type: this.props.route.params.beer_type,
       beer_percentage: this.props.route.params.beer_percentage,
-      beer_volume:this.props.route.params.beer_volume,
-      beer_container_type:this.props.route.params.beer_container_type,
-      beer_bitterness:this.props.route.params.beer_bitterness,
+      beer_volume: this.props.route.params.beer_volume,
+      beer_container_type: this.props.route.params.beer_container_type,
+      beer_bitterness: this.props.route.params.beer_bitterness,
       beer_sweetness: this.props.route.params.beer_sweetness,
-      beer_fullness:this.props.route.params.beer_fullness,
-      beer_avgrating:this.props.route.params.beer_avgrating,
+      beer_fullness: this.props.route.params.beer_fullness,
+      beer_avgrating: this.props.route.params.beer_avgrating,
       hasReviewed: false,
+      userRating: null,
     };
   }
   
@@ -48,8 +46,11 @@ class IndividualBeer extends React.PureComponent {
           .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}&user=${username}`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .then(response => {
             if (response.data.results.length > 0) {
-              this.setState({ hasReviewed: true });
-              console.log("Användare har recenserat, hasReviewed sätts till true.")
+              console.log(response.data.results.rating)
+              this.setState({
+                hasReviewed: true,
+                userRating: response.data.results[0].rating
+              });
             }
           })
           .catch(error => {
@@ -111,8 +112,26 @@ _renderListItem(item){
   )
 }
 
-renderListHeader = () => {
+renderUserRating = () => {
   const { hasReviewed } = this.state;
+    if (hasReviewed) {
+      return (
+        <View>
+          <View style = {styles.ratingStars}>
+            <Stars
+              display= {Number(this.state.userRating)}
+              half={true}
+              fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
+              emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
+              halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
+            />
+          </View>
+          <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
+        </View>
+    )}
+}
+
+renderListHeader = () => {
   return (
     <View style={styles.individualBeerScreen}>
       <View style = {styles.viewStyle}>
@@ -142,7 +161,8 @@ renderListHeader = () => {
               halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
             />
           </View>
-          <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer_avgrating) + ' av 5'}</Text> 
+          <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer_avgrating) + ' av 5'}</Text>
+          {this.renderUserRating()}
           <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, modalVisible: false})}}>
             <Text style={styles.giveRating}>
               Ge rating
@@ -171,9 +191,8 @@ render() {
         // marginTop: 15,
       
       }}
-    
-      
-    data={this.state.reviews}
+
+      data={this.state.reviews}
      
       keyExtractor={(beer, index) => String(index)}
       renderItem={({ item }) => this._renderListItem(item)}
