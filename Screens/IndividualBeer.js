@@ -36,10 +36,29 @@ class IndividualBeer extends React.PureComponent {
       beer_bitterness:this.props.route.params.beer_bitterness,
       beer_sweetness: this.props.route.params.beer_sweetness,
       beer_fullness:this.props.route.params.beer_fullness,
-      beer_avgrating:this.props.route.params.beer_avgrating
+      beer_avgrating:this.props.route.params.beer_avgrating,
+      hasReviewed: false,
     };
   }
   
+  checkHasReviewed = () => {
+    getValueFor("Username").then((username) => {
+      getValueFor("Token").then((token) => {
+        axios
+          .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}&user=${username}`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .then(response => {
+            if (response.data.results.length > 0) {
+              this.setState({ hasReviewed: true });
+              console.log("Användare har recenserat, hasReviewed sätts till true.")
+            }
+          })
+          .catch(error => {
+          console.log(error.message);
+          });
+        })
+      })
+    }
+
   fetchReview = () => {
     getValueFor("Token").then((token) => {
     axios
@@ -66,6 +85,7 @@ class IndividualBeer extends React.PureComponent {
     );
   };
   componentDidMount() {
+    this.checkHasReviewed();
     this.fetchReview(this.state.offset, this.state.reviews);
   }
 
@@ -92,6 +112,7 @@ _renderListItem(item){
 }
 
 renderListHeader = () => {
+  const { hasReviewed } = this.state;
   return (
     <View style={styles.individualBeerScreen}>
       <View style = {styles.viewStyle}>
@@ -140,12 +161,9 @@ renderListHeader = () => {
 
 
 render() {
-return (
-  
-
+  return (
     <FlatList
       style={{flex: 1}}
-    
       contentContainerStyle={{
         backgroundColor: '#ffffff',
         alignItems: 'center',

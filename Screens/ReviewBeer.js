@@ -48,14 +48,14 @@ class ReviewBeer extends React.PureComponent {
         axios
           .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .catch(error => {
-          this.setState({error: error.message});
+          console.log(error.message);
           });
         }
         else {
           axios
             .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
             .catch(error => {
-            this.setState({error: error.message});
+              console.log(error.message);
           });
         }
       });
