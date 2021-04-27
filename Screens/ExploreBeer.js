@@ -34,14 +34,14 @@ class Beers extends React.PureComponent {
       searchText: "",
       orderingValue: "",
       beerType: "",
-      toggleSearchMargin: 120,
+      toggleSearchMargin: 130,
       error: null,
     };
   }
   
+  // För att uppdatera sökresultaten i realtid
   handleSearchText = (text) => {
       this.setState({searchText: text})    
-          //----För att söka medans man skriver
       this.handleFilterAction(text)
       
   }
@@ -61,7 +61,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue, beerType) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.56.1:80/beer/?limit=20&offset=${offset}&search=${searchText.replace(' ','& ')}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText.replace(' ','& ')}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -99,7 +99,7 @@ class Beers extends React.PureComponent {
                     <Text style = {styles.productNameThin}>{item.beer_type}</Text>
                     <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
                     <Stars
-                      display= {Number((item.avg_rating).toFixed(1))}
+                      display= {Number((item.avg_rating))}
                       half={true}
                       fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
                       emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
@@ -112,11 +112,11 @@ class Beers extends React.PureComponent {
               {/* </View> */}
           </TouchableOpacity>
       </View>
-      )
+    )
   }
 
   renderListHeader = () => {
-    const [shouldShowSearchArea, setShouldShow] = useState(true);
+    // const [shouldShowSearchArea, setShouldShow] = useState(true);
     return (
       <SafeAreaView style={styles.safeAreaView}>
         {/* <View style={styles.toggleSearch}>
@@ -132,7 +132,6 @@ class Beers extends React.PureComponent {
         </View> */}
         {/* {shouldShowSearchArea ? ( */}
           <View style={styles.filterAndSearchArea}>
-            <View style={styles.searchBarRow}>
               <TextInput style = {styles.searchField}
                 clearButtonMode = 'always'
                 underlineColorAndroid = "transparent"
@@ -151,7 +150,6 @@ class Beers extends React.PureComponent {
                 }}>
                 <Text> <Ionicons style={styles.searchIcon} name="md-search" /> </Text> 
               </TouchableOpacity> */}
-            </View>
             <View style={ Platform.OS === 'ios'
                   ? pickerSelectStyles.inputIOS
                   : pickerSelectStyles.inputAndroid, 
@@ -206,7 +204,7 @@ class Beers extends React.PureComponent {
 
     const translateY = diffClamp.interpolate({
          inputRange:[0,100],
-         outputRange:[0,-180],
+         outputRange:[0,-165],
          extrapolate: 'clamp',
     })
 
@@ -223,9 +221,16 @@ class Beers extends React.PureComponent {
               right: 0,
               borderBottomLeftRadius: 15,
               borderBottomRightRadius: 15,
+              shadowColor: "#000000",
+              shadowOffset: {
+                width: 3,
+                height: 5
+              },
+              shadowOpacity: 0.4,
+              shadowRadius: 5,
               // elevation: 601, // - Denna elevation ger ingen skugga runt objektet på android
               zIndex: 1,
-              backgroundColor: 'white',
+              backgroundColor: '#ffffff',
                           }}
           > 
            <this.renderListHeader/>
@@ -238,6 +243,7 @@ class Beers extends React.PureComponent {
             alignItems: 'center',
             justifyContent: 'center',
             marginTop: this.state.toggleSearchMargin,
+            paddingBottom: 125 + beerItemMarginTop,
             zIndex: -10,
             elevation: -10,
           }}
@@ -262,7 +268,8 @@ class Beers extends React.PureComponent {
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const usedBorderRadius = 23;
+const beerItemMarginTop = 15;
+const searchBarBorderRadius = 23;
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: { //
@@ -270,11 +277,11 @@ const pickerSelectStyles = StyleSheet.create({
     maxWidth: windowWidth * 0.5,
     textAlign: 'center',
     fontSize: 14,
-    paddingHorizontal: 17,
+    paddingHorizontal: 15,
     paddingVertical: 10,
-    borderWidth: 2,
+    borderWidth: 2.5,
     borderColor: '#009688',
-    borderRadius: usedBorderRadius,
+    borderRadius: searchBarBorderRadius,
     color: '#009688',
   },
   inputAndroid: {
@@ -282,26 +289,27 @@ const pickerSelectStyles = StyleSheet.create({
     maxWidth: windowWidth * 0.4,
     textAlign: 'center',
     fontSize: 14,
-    paddingHorizontal: 17,
+    paddingHorizontal: 15,
     paddingVertical: 10,
-    borderWidth: 2,
+    borderWidth: 2.5,
     borderColor: '#009688',
-    borderRadius: usedBorderRadius,
-    color: 'black',
+    borderRadius: searchBarBorderRadius,
+    color: '#009688',
   },
 });
 
 const styles = StyleSheet.create({
+
   beerItem: {
-    marginTop: 15,
+    marginTop: beerItemMarginTop,
     width: windowWidth * 0.93,
     minHeight: 125,
-    maxHeight: 150,
+    maxHeight: 175,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
-    borderWidth: 0.5,
+    borderWidth: 1,
     shadowColor: "#000000",
     shadowOffset: {
       width: 3,
@@ -313,43 +321,20 @@ const styles = StyleSheet.create({
   safeAreaView: {
     alignSelf: 'center',
   },
-
-  searchIcon: {
-    fontSize: 20,
-    alignSelf: 'center',
-    color: '#009688',
-    padding: 10,
-  },
-
-  searchBarRow: {
-    marginTop: 15,
-    marginBottom: 5,
-    flexDirection:"row",
-  },
   searchField: {
-    // fontFamily: 'Avenir',
-    paddingHorizontal: 20,
-    marginBottom: 5,
-    marginRight: 5,
-    width: windowWidth * 0.75,
+    marginTop: 25,
+    paddingHorizontal: 17,
+    paddingVertical: 10,
+    marginBottom: 10,
+    width: windowWidth * 0.85,
     borderColor: '#009688',
-    borderWidth: 2,
-    borderRadius: usedBorderRadius,
+    borderWidth: 2.5,
+    borderRadius: searchBarBorderRadius,
     backgroundColor: 'white'
-  },
-  searchButton: {
-    // fontFamily: 'Avenir',
-    // backgroundColor: '#009688',
-    borderWidth: 2,
-    borderColor: '#009688',
-    padding: 10,
-    marginBottom: 5,
-    borderRadius: usedBorderRadius,
-    justifyContent: 'center',
   },
   filterAndSearchArea: {
     paddingBottom: 15,
-    borderRadius: usedBorderRadius,
+    borderRadius: searchBarBorderRadius,
     alignSelf: 'center',
   },
   beerImage: {
@@ -380,8 +365,9 @@ const styles = StyleSheet.create({
     maxWidth: 265,
   },
   beerInformation: {
+    maxWidth : windowWidth * 0.55,
     marginTop: 15,
-    paddingBottom: 5,
+    paddingBottom: 15,
     flexDirection: 'column',
     alignItems: 'flex-start',
     left: 20,

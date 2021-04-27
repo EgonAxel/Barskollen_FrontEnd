@@ -1,9 +1,10 @@
 
 
 import React from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
 import axios from 'axios';
 import Stars from 'react-native-stars';
+import { Ionicons } from '@expo/vector-icons'; 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SecureStore from 'expo-secure-store';
 
@@ -70,45 +71,42 @@ class IndividualBeer extends React.PureComponent {
 
 
 _renderListItem(item){
-
   return(
-    
-    <View style = {styles.commentWrap}>
-          <View>
-            <Text style = {styles.reviewUsername}>{item.user}</Text>
-            <Stars
-              display= {Number(item.rating)}
-              half={true}
-              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-            />
-            <Text style = {styles.reviewText}>{item.review_text} </Text>
-          </View>
-    </View>
-    
-    )
+      <View style = {styles.commentWrap}>
+        <View>
+        <View style={{flexDirection:"row", alignSelf:'center', justifyContent: 'flex-end'}}>
+              <Ionicons name="person" size={23} style={styles.usernameIcon}/>
+              <Text style = {styles.reviewUsername}>{item.user}</Text>
+          </View> 
+          <Stars
+            display= {Number(item.rating)}
+            half={true}
+            fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
+            emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
+            halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}
+          />
+          <Text style = {styles.reviewText}>{item.review_text} </Text>
+        </View>
+      </View>
+  )
 }
+
 renderListHeader = () => {
   return (
-    <View style={{height: 600}}>
+    <View style={styles.individualBeerScreen}>
       <View style = {styles.viewStyle}>
-          {/* <Card pointerEvents="none"> */} 
+        <View style={styles.beerTitles}>
           <Text style = {styles.productNameBold}>{this.state.beer_name}</Text>
           <Text style = {styles.productNameThin}>{this.state.beer_type}</Text>
-          <View style = {styles.imageWrap}>
+        </View>
+        <View style = {styles.imageWrap}>
           <Image source={{uri: this.state.beer_pic + '_200.png' }} style={styles.beerImage} />
-          <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, modalVisible: false})}}>
-           <Text style={styles.giveRating}>
-             Ge rating
-           </Text>
-           </TouchableOpacity>
+        </View>
+        <View style = {styles.textWrap}>
+          <View style={styles.percentageAndContainer}>
+            <Text style = {styles.alcoholPercentageStyle}>{this.state.beer_percentage + '% vol'}</Text>
+            <Text style = {styles.containerAndVolumeStyle}>{this.state.beer_container_type + ', ' + this.state.beer_volume + ' ml'}</Text>
           </View>
-          <View style = {styles.textWrap}>
-            <View style={styles.percentageAndContainer}>
-              <Text style = {styles.alcoholPercentageStyle}>{this.state.beer_percentage + '% vol'}</Text>
-              <Text style = {styles.containerAndVolumeStyle}>{this.state.beer_container_type + ', ' + this.state.beer_volume + ' ml'}</Text>
-            </View>
           <View style = {styles.tasteClockWrap}>
             <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + this.state.beer_bitterness}</Text>
             <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + this.state.beer_fullness}</Text>
@@ -118,16 +116,28 @@ renderListHeader = () => {
             <Stars
               display= {Number(this.state.beer_avgrating)}
               half={true}
-              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+              fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
+              emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
+              halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
             />
           </View>
-          <Text style = {styles.rating}>{'Rating: ' + Number(this.state.beer_avgrating) + ' av 5'}</Text> 
+          <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer_avgrating) + ' av 5'}</Text> 
+          <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, modalVisible: false})}}>
+            <Text style={styles.giveRating}>
+              Ge rating
+            </Text>
+          </TouchableOpacity>
         </View>
+      </View>
+      <View>
+        <Text style= {styles.ratingTitle}> Ratings </Text>
+      </View>
     </View>
-    </View>
-  )}
+    
+  )
+}
+
+
 
 render() {
 return (
@@ -157,45 +167,45 @@ return (
   }
 }
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+const reviewUsernameMarginTop = 15;
+const usedBorderRadius = 15;
+const beerInformationFontSize = 18;
+
 const styles = StyleSheet.create({
 
+  individualBeerScreen: {
+    minHeight: 650,
+    maxHeight: windowHeight,
+  },
   viewStyle: {
-    marginTop: 15,
     width: 350,
-    minHeight: 550,
-    maxHeight: 1000,
+    minHeight: 575,
+    maxHeight: windowHeight,
+    marginTop: 25,
     backgroundColor: '#ffffff',
-    borderRadius: 15,
+    borderRadius: usedBorderRadius,
     borderStyle: 'solid', 
     borderColor: '#dadada',
-    borderWidth: 1,
+    borderWidth: 2,
     shadowColor: "#000000",
     shadowOffset: {
-	    width: 1,
-	    height: 1
+      width: 3,
+      height: 3
     },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.3,
     shadowRadius: 3,
-    elevation: 20,
   },
-
+  beerTitles: {
+    maxWidth: windowWidth * 0.75,
+    alignSelf: 'center',
+  },
   productNameBold: {
     fontSize: 25,
-    fontWeight: '700',
+    fontWeight: '600',
     marginTop: 25,
     textAlign: 'center',
-  },
-  reviewUsername: {
-    fontSize: 25,
-    fontWeight: '700',
-    marginTop: 25,
-    textAlign: 'center',
-  },
-  reviewText: {
-    fontSize: 18,
-    fontWeight: '500',
-    textAlign: 'center',
-    marginBottom: 25,
   },
   productNameThin: {
     fontSize: 18,
@@ -203,41 +213,97 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 15,
   },
+  reviewUsername: {
+    marginTop: reviewUsernameMarginTop,
+    fontSize: 22,
+    color: 'black',
+    fontWeight: "700",
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  usernameIcon: {
+    color: '#009688',
+    marginTop: reviewUsernameMarginTop + 3,
+    paddingRight: 5,
+
+  },
+  reviewText: {
+    fontSize: 18,
+    fontWeight: '500',
+    textAlign: 'center',
+    paddingTop: 15,
+    marginBottom: 25,
+  },
 beerImage: {
-    width: 150,
-    height: 200,
+    width: 100,
+    height: 225,
     resizeMode: 'contain',
     alignSelf: 'center',
 },
 imageWrap: {
-  flex: 2,
-  marginTop: 25,
+  marginTop: 15,
   alignItems: 'center',
   alignSelf: 'center',
-  marginBottom: 20
 },
 giveRating: {
   alignSelf: 'center',
-  borderWidth: 4,
-  borderColor: '#009688',
-  color: '#009688',
-  padding: 5,
-  marginTop: 15,
-  height: 40,
-  borderRadius: 15,
+  fontSize: 16,
+  fontWeight: '600',
+  backgroundColor: '#009688',
+  color: '#ffffff',
+  overflow: 'hidden',
+  paddingHorizontal: 35,
+  paddingVertical: 15,
+  marginTop: 10,
+  marginBottom: 25,
+  borderRadius: usedBorderRadius,
 },
-  textWrap: {
-    alignItems: 'center',
-    alignSelf: 'center',
+textWrap: {
+  alignItems: 'center',
+  alignSelf: 'center',
+},
+  alcoholPercentageStyle: {
+    fontSize: beerInformationFontSize,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  containerAndVolumeStyle: {
+    fontSize: beerInformationFontSize,
+    textAlign: 'center',
   },
   percentageAndContainer: {
+    marginTop: 25,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     width: '100%',
   },
-  commentWrap: {
-    marginTop: 75,
+  tasteClockWrap: {
     marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+  },
+  tasteClockStyle: {
+      fontSize: beerInformationFontSize,
+      fontWeight: '400',
+      textAlign: 'center',
+    },
+  averageRatingText: {
+    fontSize: beerInformationFontSize,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  ratingTitle: {
+    // textDecorationLine: 'underline',
+    alignSelf: 'center',
+    fontSize: 25,
+    fontWeight: '700',
+    color: '#000000',
+    marginTop: 40,
+  },
+  commentWrap: {
+    marginTop: 15,
+    marginBottom: 25,
     width: 350,
     minHeight: 125,
     maxHeight: 150,
@@ -248,52 +314,36 @@ giveRating: {
     borderWidth: 1,
     shadowColor: "#000000",
     shadowOffset: {
-	    width: 1,
-	    height: 1
+      width: 1,
+      height: 1
     },
     shadowOpacity: 0.5,
     shadowRadius: 3,
     elevation: 20,
   },
-  
-  tasteClockWrap: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: '100%',
-  },
+  ratingStars: {
+    paddingVertical: 10,
 
-  alcoholPercentageStyle: {
-    fontSize: 20,
-    textAlign: 'center',
-    fontWeight: '500',
-    marginBottom: 10,
   },
-
-  containerAndVolumeStyle: {
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  tasteClockStyle: {
-      fontSize: 16,
-      fontWeight: '400',
-      textAlign: 'center',
-    },
-  rating: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 25,
-  },
-  myStarStyle: {
+  averageStarStyle: {
     color: '#009688',
     backgroundColor: 'transparent',
-    textShadowColor: 'black',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 2,
-    fontSize: 30,
+    textShadowColor: '#dadada',
+    textShadowOffset: 
+    {width: 1, height: 1},
+    textShadowRadius: 5,
+    fontSize: 35,
     marginTop: 10,
   },
-  myEmptyStarStyle: {
+  reviewStarStyle: {
     color: '#009688',
+    backgroundColor: 'transparent',
+    textShadowColor: '#dadada',
+    textShadowOffset: 
+    {width: 1, height: 1},
+    textShadowRadius: 5,
+    fontSize: 30,
+    marginTop: 10,
   },
 
 })

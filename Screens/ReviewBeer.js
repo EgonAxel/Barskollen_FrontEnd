@@ -31,6 +31,7 @@ class ReviewBeer extends React.PureComponent {
         beer_fullness: this.props.route.params.beer_fullness,
         beer_sweetness: this.props.route.params.beer_sweetness,
         modalVisible: this.props.route.params.modalVisible,
+        error: null,
         recommendations: [],
         review: "",
     };
@@ -42,6 +43,7 @@ class ReviewBeer extends React.PureComponent {
   postRatingComment(beer_ID, beer_name, starValue, review) {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
+        console.log(beer_ID, beer_name, starValue, review)
       if (review == "") { 
         axios
           .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
@@ -129,7 +131,7 @@ class ReviewBeer extends React.PureComponent {
             <View style={styles.ratingStars}>
               <Stars
                 update={(val)=>{this.setState({stars: val})}}
-                // half={true}
+                half={true}
                 display= {Number((this.state.stars).toFixed(1))}
                 fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
                 emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
@@ -162,6 +164,7 @@ class ReviewBeer extends React.PureComponent {
         <Modal 
           visible={modalVisible}
           animationType="slide"
+          useNativeDriver={true} 
           onRequestClose={() => {
             Alert.alert("Modal has been closed.");
             this.setModalVisible(!modalVisible);
@@ -183,8 +186,7 @@ class ReviewBeer extends React.PureComponent {
         />
           <Pressable
           style={[styles.button, styles.buttonClose]}
-            onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.beer_ID, beer_name:this.name, beer_pic: this.picture_url, beer_type: this.beer_type, beer_percentage: this.alcohol_percentage, beer_volume:this.volume, beer_container_type:this.container_type, beer_bitterness:this.bitterness, beer_sweetness: this.sweetness, beer_fullness:this.fullness, beer_avgrating:this.avg_rating})}
-          >
+            onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.beer_ID, beer_name:this.name, beer_pic: this.picture_url, beer_type: this.beer_type, beer_percentage: this.alcohol_percentage, beer_volume:this.volume, beer_container_type:this.container_type, beer_bitterness:this.bitterness, beer_sweetness: this.sweetness, beer_fullness:this.fullness, beer_avgrating:this.avg_rating})}>
             <Text style={styles.textStyle}>Stäng</Text>
           </Pressable>
         </Modal>    
@@ -193,12 +195,13 @@ class ReviewBeer extends React.PureComponent {
     );
   }
 }
+const usedBorderRadius = 15;
+const styles = StyleSheet.create({
   
-  const styles = StyleSheet.create({
-  
-    // ÖL SOM RATEAS
+// ÖL SOM RATEAS
 wholePage: {
   height: windowHeight,
+  backgroundColor: '#ffffff',
 },
 viewStyle: {
   marginTop: 15,
@@ -230,11 +233,13 @@ productName: {
 textInputFields: {
   paddingLeft: 15,
   paddingRight: 15,
+  paddingTop: 10,
+  paddingBottom: 10,
   marginRight: 40,
   marginTop: 10,
   marginBottom: 5,
   marginLeft: 40,
-  height: 40,
+  height: 75,
   width: windowWidth * 0.7,
   borderColor: '#009688',
   borderWidth: 2,
@@ -244,18 +249,20 @@ textInputFields: {
 },
 sendReview: {
   alignSelf: 'center',
-  borderWidth: 4,
-  borderColor: '#009688',
-  color: '#009688',
-  padding: 7,
+  fontSize: 16,
+  fontWeight: '600',
+  backgroundColor: '#009688',
+  color: '#ffffff',
+  overflow: 'hidden',
+  paddingHorizontal: 35,
+  paddingVertical: 15,
   marginTop: 10,
-  marginBottom: 5,
-  height: 40,
-  borderRadius: 15,
+  marginBottom: 25,
+  borderRadius: usedBorderRadius,
 },
 beerImage: {
   width: 125,
-  height: 300,
+  height: windowHeight * 0.3,
   marginVertical: 20,
   resizeMode: 'contain',
   alignSelf: 'center'
