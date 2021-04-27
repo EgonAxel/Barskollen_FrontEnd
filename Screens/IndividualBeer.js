@@ -6,8 +6,6 @@ import axios from 'axios';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SecureStore from 'expo-secure-store';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
 
 async function getValueFor(key) {
  let result = await SecureStore.getItemAsync(key);
@@ -70,6 +68,7 @@ class IndividualBeer extends React.PureComponent {
     this.fetchReview(this.state.offset, this.state.reviews);
   }
 
+
 _renderListItem(item){
 
   return(
@@ -99,7 +98,7 @@ renderListHeader = () => {
           <Text style = {styles.productNameThin}>{this.state.beer_type}</Text>
           <View style = {styles.imageWrap}>
           <Image source={{uri: this.state.beer_pic + '_200.png' }} style={styles.beerImage} />
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness})}>
+          <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, modalVisible: false})}}>
            <Text style={styles.giveRating}>
              Ge rating
            </Text>

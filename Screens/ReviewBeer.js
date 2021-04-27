@@ -30,9 +30,9 @@ class ReviewBeer extends React.PureComponent {
         beer_bitterness: this.props.route.params.beer_bitterness,
         beer_fullness: this.props.route.params.beer_fullness,
         beer_sweetness: this.props.route.params.beer_sweetness,
+        modalVisible: this.props.route.params.modalVisible,
         recommendations: [],
         review: "",
-        modalVisible: false,
     };
   }
   reviewText = (text) => {
@@ -44,14 +44,14 @@ class ReviewBeer extends React.PureComponent {
       getValueFor("Token").then((token) => {
       if (review == "") { 
         axios
-          .post(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .catch(error => {
           this.setState({error: error.message});
           });
         }
         else {
           axios
-            .post(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+            .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
             .catch(error => {
             this.setState({error: error.message});
           });
@@ -65,7 +65,7 @@ class ReviewBeer extends React.PureComponent {
     getValueFor("Token").then((token) => {
       const interval = 6 - starValue
       axios
-        .get(`http://192.168.1.73:8000/beer/?beer_type=${beer_type_encoded}&min_bitterness=${beer_bitterness - interval}&max_bitterness=${beer_bitterness + interval}&min_fullness=${beer_fullness - interval}&max_fullness=${beer_fullness + interval}&min_sweetness=${beer_sweetness - interval}&max_sweetness=${beer_sweetness + interval}&beer_ID_exclude=${beer_ID}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+        .get(`http://127.0.0.1:8000/beer/?beer_type=${beer_type_encoded}&min_bitterness=${beer_bitterness - interval}&max_bitterness=${beer_bitterness + interval}&min_fullness=${beer_fullness - interval}&max_fullness=${beer_fullness + interval}&min_sweetness=${beer_sweetness - interval}&max_sweetness=${beer_sweetness + interval}&beer_ID_exclude=${beer_ID}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
         .then(response => {
           this.setState({
             recommendations: response.data.results,
@@ -89,34 +89,35 @@ class ReviewBeer extends React.PureComponent {
   _renderListItem(item) {
     return(
         <View style = {styles.modalStyleRecommendation}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}>
-              <View style = {styles.beerInstance}>
-                <Image style = {styles.beerImageRecommendation} source = {{uri: item.picture_url + '_100.png' }}/>
-                  <View style = {styles.beerInformation}>
-                    <Text style = {styles.productNameRecommendation}>{item.name}  </Text>
-                    <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
-                    <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                  </View>
-              </View> 
-              <View style = {styles.ratingStars}>
-              <Stars
+          <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}}>
+            <View style = {styles.beerInstance}>
+              <Image style = {styles.beerImageRecommendation} source = {{uri: item.picture_url + '_100.png' }}/>
+              <View style = {styles.beerInformation}>
+                <Text style = {styles.productNameRecommendation}>{item.name}  </Text>
+                <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
+                <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                <Stars
                   display= {Number((item.avg_rating).toFixed(1))}
                   half={true}
                   fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
                   emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
                   halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-              />
+                />
+              </View>
+            </View> 
+            <View style = {styles.ratingStars}>
             </View>
           </TouchableOpacity>
          </View>        
       )
   }
-  renderIndividualBeerRatingScreen = () => {
+
+  render() {
     const { modalVisible } = this.state;
     return (
-    
-       <View style={styles.wholePage}>  
-         <KeyboardAvoidingView 
+    <View>
+      <View style={styles.wholePage}>  
+        <KeyboardAvoidingView 
           behavior="position"
           style={{ flex: 1 }}
           >  
@@ -125,75 +126,69 @@ class ReviewBeer extends React.PureComponent {
             {this.state.beer_name}
           </Text>
           <Image style={styles.beerImage} source={{uri: this.state.beer_pic + '_100.png' }}/> 
-              <View style={styles.ratingStars}>
-                <Stars
-                  update={(val)=>{this.setState({stars: val})}}
-                  // half={true}
-                  display= {Number((this.state.stars).toFixed(1))}
-                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                  />
-              </View>
-                <TextInput style = {styles.textInputFields}
-                  clearButtonMode = 'always'
-                  underlineColorAndroid = "transparent"
-                  placeholder = "Vad tyckte du om ölen? (Tvingande textfält??)"
-                  placeholderTextColor = "grey"
-                  returnKeyType="next"
-                  onChangeText = {this.reviewText}
-                  blurOnSubmit={false}
-                  multiline={true}
+            <View style={styles.ratingStars}>
+              <Stars
+                update={(val)=>{this.setState({stars: val})}}
+                // half={true}
+                display= {Number((this.state.stars).toFixed(1))}
+                fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
                 />
-              <TouchableOpacity 
-                onPress={() => {
-                  this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
-                  this.getRecommendations(this.state.beer_ID, this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
-                  this.setModalVisible(true),
-                  console.log(this.state.recommendations.length)}}>
-                  <Text style={styles.sendReview}>
-                    Skicka review
-                  </Text>
-              </TouchableOpacity>
             </View>
-          <View style={{ flex : 1 }} />
+            <TextInput style = {styles.textInputFields}
+              clearButtonMode = 'always'
+              underlineColorAndroid = "transparent"
+              placeholder = "Vad tyckte du om ölen?"
+              placeholderTextColor = "grey"
+              returnKeyType="go"
+              onChangeText = {this.reviewText}
+              onSubmitEditing={() => { this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review) }}
+              blurOnSubmit={false}
+              multiline={true}
+            />
+            <TouchableOpacity 
+              onPress={() => {
+                this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
+                this.getRecommendations(this.state.beer_ID, this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
+                this.setModalVisible(true),
+                console.log(this.state.recommendations.length)}}>
+                <Text style={styles.sendReview}>Skicka review</Text>
+            </TouchableOpacity>
+          </View>
         </KeyboardAvoidingView>
-       </View> 
-    )}
-
-  render() {
-    const { modalVisible } = this.state;
-    return (
-  <View> 
-      <this.renderIndividualBeerRatingScreen/>
-    <Modal 
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          this.setModalVisible(!modalVisible);
-        }}
-      >
-      <Text style = {styles.textRecommendationHeader}>Rekomenderade öler!</Text>
-      <FlatList
-        style={{flex: 1}}
-        contentContainerStyle={{
-          backgroundColor: '#ffffff',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginTop: 15,
-        }}
-        data={this.state.recommendations}
-          keyExtractor={(beer, index) => String(index)}
-          renderItem={({ item }) => this._renderListItem(item)}
-      /> 
-        <Pressable
-         style={[styles.button, styles.buttonClose]}
-          onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.beer_ID, beer_name:this.name, beer_pic: this.picture_url, beer_type: this.beer_type, beer_percentage: this.alcohol_percentage, beer_volume:this.volume, beer_container_type:this.container_type, beer_bitterness:this.bitterness, beer_sweetness: this.sweetness, beer_fullness:this.fullness, beer_avgrating:this.avg_rating})}
+      </View>
+      <View>
+        <Modal 
+          visible={modalVisible}
+          animationType="slide"
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            this.setModalVisible(!modalVisible);
+          }}
         >
-          <Text style={styles.textStyle}>Stäng</Text>
-        </Pressable>
-      </Modal>    
+        <Text style = {styles.recommendationHeader}>Tack för din rating!</Text>
+        <Text style = {styles.recommendationText}>Här är några öl du kanske gillar baserat på ditt betyg.</Text>
+        <FlatList
+          style={{flex: 1}}
+          contentContainerStyle={{
+            backgroundColor: '#ffffff',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 15,
+          }}
+          data={this.state.recommendations}
+            keyExtractor={(beer, index) => String(index)}
+            renderItem={({ item }) => this._renderListItem(item)}
+        />
+          <Pressable
+          style={[styles.button, styles.buttonClose]}
+            onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.beer_ID, beer_name:this.name, beer_pic: this.picture_url, beer_type: this.beer_type, beer_percentage: this.alcohol_percentage, beer_volume:this.volume, beer_container_type:this.container_type, beer_bitterness:this.bitterness, beer_sweetness: this.sweetness, beer_fullness:this.fullness, beer_avgrating:this.avg_rating})}
+          >
+            <Text style={styles.textStyle}>Stäng</Text>
+          </Pressable>
+        </Modal>    
+      </View>
     </View>
     );
   }
@@ -272,14 +267,14 @@ rating: {
 
 // ---------- REKOMMENDATIONER ------------  
   modalStyleRecommendation: {
-    margin: 15,
-    width: windowWidth * 0.85,
+    margin: 10,
+    width: windowWidth * 0.93,
     backgroundColor: "white",
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 1,
-    padding: 35,
+    padding: 5,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -289,10 +284,16 @@ rating: {
     shadowRadius: 4,
     elevation: 5
   },
-  textRecommendationHeader: {
+  recommendationHeader: {
     fontSize: 25,
     fontWeight: '700',
-    marginTop: 10,
+    marginTop: windowHeight * 0.15,
+    textAlign: 'center',
+  },
+  recommendationText: {
+    fontSize: 14,
+    marginTop: 20,
+    fontWeight: '400',
     textAlign: 'center',
   },
   productNameRecommendation: {
@@ -311,13 +312,12 @@ rating: {
   beerInstance: {
     textAlign: 'left',
     flexDirection: 'row',
-    maxWidth: 265,
   },
   beerInformation: {
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
-    left: 15,
+    justifyContent: 'flex-start',
   },
   attributeStyle: {
     fontSize: 20,
@@ -343,7 +343,6 @@ rating: {
     textShadowOffset: {width: 1, height: 1},
     textShadowRadius: 5,
     fontSize: 35,
-    marginTop: 5,
   },
   myEmptyStarStyle: {
     color: '#009688',
@@ -354,9 +353,10 @@ rating: {
   button: {
     borderRadius: 20,
     padding: 10,
-    marginLeft: 100,
-    marginRight: 100,
-    elevation: 2
+    marginBottom: windowHeight * 0.05,
+    width: windowWidth * 0.2,
+    elevation: 2,
+    alignSelf: 'center',
   },
   buttonOpen: {
     backgroundColor: "#009688",
