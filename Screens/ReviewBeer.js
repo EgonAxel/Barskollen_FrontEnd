@@ -44,7 +44,7 @@ class ReviewBeer extends React.PureComponent {
       getValueFor("Token").then((token) => {
       if (review == "") { 
         axios
-          .post(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .post(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .catch(error => {
           this.setState({error: error.message});
           });
@@ -187,7 +187,7 @@ class ReviewBeer extends React.PureComponent {
           keyExtractor={(beer, index) => String(index)}
           renderItem={({ item }) => this._renderListItem(item)}
       /> 
-      <Pressable
+        <Pressable
          style={[styles.button, styles.buttonClose]}
           onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.beer_ID, beer_name:this.name, beer_pic: this.picture_url, beer_type: this.beer_type, beer_percentage: this.alcohol_percentage, beer_volume:this.volume, beer_container_type:this.container_type, beer_bitterness:this.bitterness, beer_sweetness: this.sweetness, beer_fullness:this.fullness, beer_avgrating:this.avg_rating})}
         >
