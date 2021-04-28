@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, Button, SectionList} from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, Button, Dimensions, ImageBackground} from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Ionicons } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -92,7 +93,7 @@ class UserProfile extends React.PureComponent {
               <View style = {styles.beerInstance}>
                 <Image style = {styles.beerImage} source = {{uri: "https://product-cdn.systembolaget.se/productimages/" + item.beer + "/" + item.beer + '_100.png' }}/>
                 <View style = {styles.ratingStars}>
-                  <Text style = {styles.productNameBold} > {item.beer_name} </Text>
+                  <Text style = {styles.productNameBold}> {item.beer_name} </Text>
                   <Stars
                       display= {Number((item.rating).toFixed(1))}
                       fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
@@ -102,7 +103,6 @@ class UserProfile extends React.PureComponent {
                 </View>
               </View>
           </TouchableOpacity>
-        {/* </Card> */}
       </View>
       )
   }
@@ -110,9 +110,9 @@ class UserProfile extends React.PureComponent {
   renderListHeader = () => {
     return (
     <View>
-      <View style = {styles.logoutButton}>
-        <AppButton
-          title="Logga ut"
+      <View>
+      {/* <ImageBackground source={require('../images/blurry.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}> */}
+      <TouchableOpacity style = {styles.logoutButton}
           onPress={() =>
             deleteValueFor("Username").then(() => {
               deleteValueFor("Token").then(() => {
@@ -123,8 +123,10 @@ class UserProfile extends React.PureComponent {
 
               })
             })
-          }
-        />
+          }>
+        <Text style = {styles.logoutText}>Logga ut</Text>
+        <Ionicons name="log-out-outline" size={23}/>
+      </TouchableOpacity>
       </View>
       <View>
         <View style={ Platform.OS === 'ios'
@@ -135,31 +137,35 @@ class UserProfile extends React.PureComponent {
               }}> 
             <View style = {styles.usernameMyBeerAndSorting}>
               <View style={{flexDirection:"row", alignSelf:'center'}}>
-                <MaterialIcons name="person-outline" size={25} color={'#009688'} />
+                <MaterialIcons name="person-outline" size={26} color={'#009688'} />
                 <Text style={styles.userNameText}>{this.state.username}</Text>
               </View> 
-            <Text style={styles.myBeersText}>Mina öl</Text>
-            <RNPickerSelect style={pickerSelectStyles}
-              useNativeAndroidPickerStyle={false}
-              placeholder={{
-              label: 'Sortering',
-              value: null,
-              }}
-              onValueChange={(value) => this.setState({
-                orderingValue: value},
-                this.handleFilterAction)}
-              items={[
-                { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
-                { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
-                { label: 'Sortera datum (nyast först)', value: '-review_date', inputLabel: 'Datum (nyast först)' },
-                { label: 'Sortera datum (äldst först)', value: 'review_date', inputLabel: 'Datum (äldst först' },
-              ]}
-            />
+              <View style = {styles.myBeersSorting}>
+                <Text style={styles.myBeersText}>Mina recensioner:</Text>
+                <RNPickerSelect style={pickerSelectStyles}
+                  useNativeAndroidPickerStyle={false}
+                  placeholder={{
+                  label: 'Sortering',
+                  value: null,
+                  }}
+                  onValueChange={(value) => this.setState({
+                    orderingValue: value},
+                    this.handleFilterAction)}
+                  items={[
+                    { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
+                    { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
+                    { label: 'Sortera datum (nyast först)', value: '-review_date', inputLabel: 'Datum (nyast först)' },
+                    { label: 'Sortera datum (äldst först)', value: 'review_date', inputLabel: 'Datum (äldst först)' },
+                  ]}
+                />
+            </View>
           </View>
         </View>
       </View>
+      {/* </ImageBackground> */}
     </View>
-    )}
+    )
+  }
 
   render() {
 
@@ -187,28 +193,30 @@ class UserProfile extends React.PureComponent {
     );
   }
 }
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: { //
-    fontSize: 14,
+    backgroundColor: '#ffffff',
+    fontSize: 16,
     paddingVertical: 5,
     paddingHorizontal: 10,
+    marginLeft: 10,
     borderWidth: 2,
     borderColor: '#009688',
     borderRadius: 10,
     color: 'black',
     alignSelf: 'center',
-    // paddingRight: 30, // to ensure the text is never behind the icon
   },
   inputAndroid: {
-    fontSize: 14,
+    fontSize: 16,
     paddingVertical: 5,
     paddingHorizontal: 30,
     borderWidth: 2,
     borderColor: '#009688',
     borderRadius: 10,
     color: 'black',
-    //paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
 
@@ -232,27 +240,41 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 20,
   },
+  backgroundImage: {
+    resizeMode: "cover",
+    justifyContent: "center",
+    width: windowWidth,
+    height: 150,
+  },
+  myBeersSorting: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between'
+
+  },
   logoutButton: {
+    backgroundColor: '#ffffff',
+    flexDirection: 'row',
     alignSelf: 'center',
+    alignItems: 'center',
     marginVertical: 10,
-    width: 100,
-    padding: 5,
+    width: windowWidth * 0.3,
     borderWidth: 2,
     borderColor: '#009688',
     borderRadius: 10,
   },
   logoutText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '700',
     textAlign: 'center',
+    padding: 10,
   },
   userNameText: {
-  // fontFamily: 'Avenir',
-    fontSize: 18,
+    fontSize: 22,
     color: 'black',
     fontWeight: "bold",
     alignSelf: "center",
-    textTransform: "uppercase",
+    textTransform: "lowercase",
     marginBottom: 10,
   },
   usernameMyBeerAndSorting: {
@@ -260,16 +282,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   myBeersText: {
-  // fontFamily: 'Avenir',
-    fontSize: 16,
+    fontSize: 18,
     color: 'black',
     fontWeight: "700",
     alignSelf: "center",
-    textTransform: "uppercase",
     marginBottom: 5,
   },
   searchButtonText: {
-  // fontFamily: 'Avenir',
     fontWeight: '700',
     alignSelf: 'center',
     color: 'white'
@@ -284,36 +303,33 @@ const styles = StyleSheet.create({
     left: 0,
   },
   productNameBold: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     marginBottom: 5,
     fontWeight: '500',
     textAlign: 'left',
   },
   productNameThin: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     fontWeight: '400',
     textAlign: 'left',
     marginBottom: 5,
   },
   beerInstance: {
+    maxWidth: windowWidth * 0.5,
     textAlign: 'left',
     flexDirection: 'row',
-    maxWidth: 265,
+    justifyContent: 'flex-start',
   },
   beerInformation: {
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
-    left: 15,
   },
   attributeStyle: {
       fontSize: 20,
       textAlign: 'left',
     },
   alcohol_percentage: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     textAlign: 'left',
   },
