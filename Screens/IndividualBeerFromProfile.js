@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
 import axios from 'axios';
 import Stars from 'react-native-stars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -50,8 +50,10 @@ _renderListItem(item){
     
     <View style = {styles.viewStyle}>
           {/* <Card pointerEvents="none"> */} 
-          <Text style = {styles.productNameBold}>{item.name}</Text>
-          <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+          <View style={styles.beerTitles}>
+            <Text style = {styles.productNameBold}>{item.name}</Text>
+            <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+          </View>
           <View style = {styles.imageWrap}>
           <Image source={{uri: item.picture_url + '_200.png' }} style={styles.beerImage} />
           </View>
@@ -111,6 +113,9 @@ return (
   }
 }
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
 
 viewStyle: {
@@ -133,6 +138,10 @@ viewStyle: {
   flexDirection: 'column',
   justifyContent: 'center'
 },
+beerTitles: {
+  maxWidth: windowWidth * 0.75,
+  alignSelf: 'center',
+},
 productNameBold: {
   fontSize: 25,
   fontWeight: '700',
@@ -143,6 +152,7 @@ productNameThin: {
   fontSize: 18,
   fontWeight: '400',
   textAlign: 'center',
+  marginTop: 10,
   marginBottom: 5,
 },
 beerImage: {

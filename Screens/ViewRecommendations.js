@@ -18,11 +18,10 @@ async function getValueFor(key) {
    }
  }
 
-class ReviewBeer extends React.PureComponent {
+class ViewRecommendations extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-        stars: 0,
         beer_ID: this.props.route.params.beer_ID,
         beer_pic: this.props.route.params.beer_pic,
         beer_name: this.props.route.params.beer_name,
@@ -30,37 +29,15 @@ class ReviewBeer extends React.PureComponent {
         beer_bitterness: this.props.route.params.beer_bitterness,
         beer_fullness: this.props.route.params.beer_fullness,
         beer_sweetness: this.props.route.params.beer_sweetness,
-        review_date: this.props.route.params.review_date,
-        modalVisible: this.props.route.params.modalVisible,
+        modalVisible: true,
         error: null,
         recommendations: [],
-        review: "",
+        rating: this.props.route.params.rating,
     };
   }
   reviewText = (text) => {
     this.setState({ review: text })
     }
-  
-  postRatingComment(beer_ID, beer_name, starValue, review) {
-    getValueFor("Username").then((username) => {
-      getValueFor("Token").then((token) => {
-      if (review == "") { 
-        axios
-          .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
-          .catch(error => {
-          console.log(error.message);
-          });
-        }
-        else {
-          axios
-            .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
-            .catch(error => {
-              console.log(error.message);
-          });
-        }
-      });
-    });
-  }
 
   getRecommendations(beer_ID, starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
     const beer_type_encoded = encodeURIComponent(beer_type)
@@ -80,8 +57,7 @@ class ReviewBeer extends React.PureComponent {
   }
 
   componentDidMount() {
-    // this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.rating, this.state.review)
-    // this.getRecommendations(this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
+    this.getRecommendations(this.state.beer_ID, this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
   }
 
   setModalVisible = (visible) => {
@@ -90,25 +66,27 @@ class ReviewBeer extends React.PureComponent {
 
   _renderListItem(item) {
     return(
-        <View style = {styles.beerItem}>
+        <View style = {styles.modalStyleRecommendation}>
           <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}}>
-              <View style = {styles.beerInstance}>
-                <Image style = {styles.beerImageRecommendation} source = {{uri: item.picture_url + '_100.png' }}/>
-                  <View style = {styles.beerInformation}>
-                    <Text style = {styles.productNameRecommendation}>{item.name}</Text>
-                    <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
-                    <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                    <Stars
-                      display= {Number((item.avg_rating))}
-                      half={true}
-                      fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                      emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                      halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                    />
-                  </View>
-              </View> 
+            <View style = {styles.beerInstance}>
+              <Image style = {styles.beerImageRecommendation} source = {{uri: item.picture_url + '_100.png' }}/>
+              <View style = {styles.beerInformation}>
+                <Text style = {styles.productNameRecommendation}>{item.name}  </Text>
+                <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
+                <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                <Stars
+                  display= {Number((item.avg_rating).toFixed(1))}
+                  half={true}
+                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                />
+              </View>
+            </View> 
+            <View style = {styles.ratingStars}>
+            </View>
           </TouchableOpacity>
-      </View>
+         </View>        
       )
   }
 
@@ -126,34 +104,7 @@ class ReviewBeer extends React.PureComponent {
             {this.state.beer_name}
           </Text>
           <Image style={styles.beerImage} source={{uri: this.state.beer_pic + '_100.png' }}/> 
-            <View style={styles.ratingStars}>
-              <Stars
-                update={(val)=>{this.setState({stars: val})}}
-                half={true}
-                display= {Number((this.state.stars).toFixed(1))}
-                fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                />
-            </View>
-            <TextInput style = {styles.textInputFields}
-              clearButtonMode = 'always'
-              underlineColorAndroid = "transparent"
-              placeholder = "Vad tyckte du om ölen?"
-              placeholderTextColor = "grey"
-              returnKeyType="go"
-              onChangeText = {this.reviewText}
-              onSubmitEditing={() => { this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review) }}
-              blurOnSubmit={false}
-              multiline={true}
-            />
-            <TouchableOpacity 
-              onPress={() => {
-                this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
-                this.getRecommendations(this.state.beer_ID, this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
-                this.setModalVisible(true)}}>
-                <Text style={styles.sendReview}>Skicka review</Text>
-            </TouchableOpacity>
+            <Text>Laddar rekommendationer...</Text>
           </View>
         </KeyboardAvoidingView>
       </View>
@@ -167,8 +118,8 @@ class ReviewBeer extends React.PureComponent {
             this.setModalVisible(!modalVisible);
           }}
         >
-        <Text style = {styles.recommendationHeader}>Tack för din rating!</Text>
-        <Text style = {styles.recommendationText}>Här är några öl du kanske gillar {"\n"} baserat på ditt betyg.</Text>
+        <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
+        <Text style = {styles.recommendationText}>Här är några öl du kanske gillar baserat på ditt betyg.</Text>
         <FlatList
           style={{flex: 1}}
           contentContainerStyle={{
@@ -195,7 +146,6 @@ class ReviewBeer extends React.PureComponent {
   }
 }
 const usedBorderRadius = 15;
-const beerItemMarginTop = 15;
 const styles = StyleSheet.create({
   
 // ÖL SOM RATEAS
@@ -273,36 +223,33 @@ rating: {
 },
 
 // ---------- REKOMMENDATIONER ------------  
-
-  beerItem: {
-    marginTop: beerItemMarginTop,
+  modalStyleRecommendation: {
+    margin: 10,
     width: windowWidth * 0.93,
-    minHeight: 125,
-    maxHeight: 175,
-    backgroundColor: '#ffffff',
+    backgroundColor: "white",
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 1,
-    shadowColor: "#000000",
+    padding: 5,
+    shadowColor: "#000",
     shadowOffset: {
-      width: 3,
-      height: 3
+      width: 0,
+      height: 2
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
   },
   recommendationHeader: {
-    fontSize: 32,
+    fontSize: 25,
     fontWeight: '700',
     marginTop: windowHeight * 0.15,
     textAlign: 'center',
   },
   recommendationText: {
-    fontSize: 18,
+    fontSize: 14,
     marginTop: 20,
-    paddingBottom: 25,
     fontWeight: '400',
     textAlign: 'center',
   },
@@ -324,19 +271,10 @@ rating: {
     flexDirection: 'row',
   },
   beerInformation: {
-    maxWidth: windowWidth * 0.55,
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
     justifyContent: 'flex-start',
-
-    maxWidth: windowWidth * 0.55,
-    marginTop: 15,
-    paddingBottom: 15,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    left: 20,
-
   },
   attributeStyle: {
     fontSize: 20,
@@ -370,13 +308,6 @@ rating: {
     alignItems: 'center',
   },
   button: {
-    // backgroundColor: "#009688",
-    // fontSize: 16,
-    // borderRadius: 20,
-    // paddingVertical: 12,
-    // marginBottom: windowHeight * 0.05,
-    // width: windowWidth * 0.3,
-    // elevation: 2,
     alignSelf: 'center',
     fontSize: 16,
     fontWeight: '600',
@@ -389,6 +320,12 @@ rating: {
     marginBottom: 25,
     borderRadius: usedBorderRadius,
   },
+  buttonOpen: {
+    backgroundColor: "#009688",
+  },
+  buttonClose: {
+    backgroundColor: "#009688",
+  },
   textStyle: {
     color: "white",
     fontWeight: "bold",
@@ -396,4 +333,4 @@ rating: {
   },
   })
   
-  export default ReviewBeer
+  export default ViewRecommendations

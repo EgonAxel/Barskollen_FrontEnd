@@ -86,14 +86,16 @@ class UserProfile extends React.PureComponent {
   }
   _renderListItem(item) {
     return(
-      // Bortkommenderad från <Card>: pointerEvents="none">
       <View style = {styles.viewStyle}>
-        {/* <Card style = {styles.cardStyle}> */}
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeerFromProfile', {beer_ID: item.beer, rating: item.rating})}>
+            <View style = {styles.reviewDateBar}>
+              <Ionicons name="calendar-outline" size={18}></Ionicons>
+              <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
+            </View>
               <View style = {styles.beerInstance}>
                 <Image style = {styles.beerImage} source = {{uri: "https://product-cdn.systembolaget.se/productimages/" + item.beer + "/" + item.beer + '_100.png' }}/>
                 <View style = {styles.ratingStars}>
-                  <Text style = {styles.productNameBold}> {item.beer_name} </Text>
+                  <Text style = {styles.productNameBold}>{item.beer_name}</Text>
                   <Stars
                       display= {Number((item.rating).toFixed(1))}
                       fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
@@ -110,23 +112,26 @@ class UserProfile extends React.PureComponent {
   renderListHeader = () => {
     return (
     <View>
-      <View>
+      <View style = {styles.userNameAndLogout}>
       {/* <ImageBackground source={require('../images/blurry.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}> */}
-      <TouchableOpacity style = {styles.logoutButton}
-          onPress={() =>
-            deleteValueFor("Username").then(() => {
-              deleteValueFor("Token").then(() => {
-                this.props.navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Auth' }]
+        <TouchableOpacity style = {styles.logoutIcon}
+            onPress={() =>
+              deleteValueFor("Username").then(() => {
+                deleteValueFor("Token").then(() => {
+                  this.props.navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Auth' }]
+                  })
                 })
-
               })
-            })
-          }>
-        <Text style = {styles.logoutText}>Logga ut</Text>
-        <Ionicons name="log-out-outline" size={23}/>
-      </TouchableOpacity>
+            }>
+          {/* <Text style = {styles.logoutText}>Logga ut</Text> */}
+          <Ionicons name="log-out-outline" size={30}/>
+        </TouchableOpacity>
+        <View style={styles.userNameAndIcon}>
+          <MaterialIcons name="person-outline" size={26} color={'#009688'} />
+          <Text style={styles.userNameText}>{this.state.username}</Text>
+        </View> 
       </View>
       <View>
         <View style={ Platform.OS === 'ios'
@@ -136,10 +141,6 @@ class UserProfile extends React.PureComponent {
                 justifyContent:"space-evenly",
               }}> 
             <View style = {styles.usernameMyBeerAndSorting}>
-              <View style={{flexDirection:"row", alignSelf:'center'}}>
-                <MaterialIcons name="person-outline" size={26} color={'#009688'} />
-                <Text style={styles.userNameText}>{this.state.username}</Text>
-              </View> 
               <View style = {styles.myBeersSorting}>
                 <Text style={styles.myBeersText}>Mina recensioner:</Text>
                 <RNPickerSelect style={pickerSelectStyles}
@@ -225,7 +226,6 @@ const styles = StyleSheet.create({
   viewStyle: {
     marginTop: 15,
     width: 350,
-    height: 150,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
@@ -240,6 +240,17 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 20,
   },
+  userNameAndIcon: {
+    flexDirection:"row", 
+    alignSelf:'center',
+    paddingTop: 10,
+    paddingRight: 10,
+  },
+  userNameAndLogout: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    width: windowWidth * 0.9,
+  },
   backgroundImage: {
     resizeMode: "cover",
     justifyContent: "center",
@@ -252,22 +263,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
 
   },
-  logoutButton: {
+  logoutIcon: {
     backgroundColor: '#ffffff',
     flexDirection: 'row',
-    alignSelf: 'center',
-    alignItems: 'center',
     marginVertical: 10,
-    width: windowWidth * 0.3,
-    borderWidth: 2,
-    borderColor: '#009688',
+    padding: 10,
+    // borderWidth: 2,
+    // borderColor: '#009688',
     borderRadius: 10,
   },
   logoutText: {
     fontSize: 16,
     fontWeight: '700',
     textAlign: 'center',
-    padding: 10,
+    padding: 2,
   },
   userNameText: {
     fontSize: 22,
@@ -300,23 +309,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 10,
     resizeMode: 'contain',
-    left: 0,
   },
   productNameBold: {
     fontSize: 14,
+    marginTop: 10,
     marginBottom: 5,
     fontWeight: '500',
     textAlign: 'left',
   },
-  productNameThin: {
+  reviewDateBar: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    position: 'absolute',
+    alignItems: 'baseline',
+    marginTop: 20,
+    paddingBottom: 20,
     fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'left',
-    marginBottom: 5,
+    color: 'black',
+  },
+  dateOfReview: {
+    paddingLeft: 5,
   },
   beerInstance: {
     maxWidth: windowWidth * 0.5,
-    textAlign: 'left',
+    marginTop: 10,
     flexDirection: 'row',
     justifyContent: 'flex-start',
   },
@@ -346,8 +362,9 @@ const styles = StyleSheet.create({
   },
   ratingStars: {
     alignSelf: "center",
-    marginLeft: "10%",
+    marginLeft: "6%",
     flexDirection: 'column',
+    justifyContent: 'flex-start',
   },
 })
 

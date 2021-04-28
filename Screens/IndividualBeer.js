@@ -34,7 +34,7 @@ class IndividualBeer extends React.PureComponent {
       beer_sweetness: this.props.route.params.beer_sweetness,
       beer_fullness: this.props.route.params.beer_fullness,
       beer_avgrating: this.props.route.params.beer_avgrating,
-      hasReviewed: false,
+      hasReviewed: this.props.route.params.hasReviewed,
       userRating: null,
     };
   }
@@ -46,7 +46,6 @@ class IndividualBeer extends React.PureComponent {
           .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}&user=${username}`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .then(response => {
             if (response.data.results.length > 0) {
-              console.log(response.data.results.rating)
               this.setState({
                 hasReviewed: true,
                 userRating: response.data.results[0].rating
@@ -85,19 +84,29 @@ class IndividualBeer extends React.PureComponent {
       },
     );
   };
+  
   componentDidMount() {
     this.checkHasReviewed();
     this.fetchReview(this.state.offset, this.state.reviews);
   }
 
+  componentDidUpdate(prevProps) {
+    if(this.props.route.params.hasReviewed!==prevProps.route.params.hasReviewed){
+      this.checkHasReviewed()
+     }
+ }
 
-_renderListItem(item){
+
+ _renderListItem(item){
   return(
       <View style = {styles.commentWrap}>
-        <View>
-        <View style={{flexDirection:"row", alignSelf:'center', justifyContent: 'flex-end'}}>
-              <Ionicons name="person" size={23} style={styles.usernameIcon}/>
-              <Text style = {styles.reviewUsername}>{item.user}</Text>
+        <View style = {styles.reviewDateBar}>
+              <Ionicons name="calendar-outline" size={18}></Ionicons>
+              <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
+            </View>
+          <View style={styles.reviewUsernameAndIcon}>
+            <Ionicons name="person" size={23} style={styles.usernameIcon}/>
+            <Text style = {styles.reviewUsername}>{item.user}</Text>
           </View> 
           <Stars
             display= {Number(item.rating)}
@@ -107,12 +116,11 @@ _renderListItem(item){
             halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}
           />
           <Text style = {styles.reviewText}>{item.review_text} </Text>
-        </View>
       </View>
   )
 }
 
-renderUserRating = () => {
+renderUserRelated = () => {
   const { hasReviewed } = this.state;
     if (hasReviewed) {
       return (
@@ -127,8 +135,27 @@ renderUserRating = () => {
             />
           </View>
           <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
+          <View>
+            <TouchableOpacity onPress={() => {this.props.navigation.navigate('ViewRecommendations', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, rating: this.state.userRating})}}>
+              <Text style={styles.giveRating}>
+                Visa rekommendationer
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-    )}
+      )
+    }
+    else {
+      return (
+        <View>
+          <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, modalVisible: false})}}>
+            <Text style={styles.giveRating}>
+              Ge rating
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }
 }
 
 renderListHeader = () => {
@@ -162,12 +189,7 @@ renderListHeader = () => {
             />
           </View>
           <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer_avgrating) + ' av 5'}</Text>
-          {this.renderUserRating()}
-          <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, modalVisible: false})}}>
-            <Text style={styles.giveRating}>
-              Ge rating
-            </Text>
-          </TouchableOpacity>
+          {this.renderUserRelated()}
         </View>
       </View>
       <View>
@@ -206,7 +228,7 @@ render() {
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const reviewUsernameMarginTop = 15;
+const reviewUsernameMarginTop = 7;
 const usedBorderRadius = 15;
 const beerInformationFontSize = 18;
 
@@ -250,26 +272,64 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 15,
   },
+  reviewUsernameAndIcon: {
+    flexDirection: 'row',
+    alignSelf: 'center', 
+  },
+
+  reviewUsernameAndIcon: {
+    flexDirection:"row",
+    alignSelf: 'center', 
+  },
   reviewUsername: {
     marginTop: reviewUsernameMarginTop,
     fontSize: 22,
     color: 'black',
     fontWeight: "700",
-    alignSelf: "center",
-    marginBottom: 10,
+    marginBottom: 5,
+    paddingRight: 5,
   },
   usernameIcon: {
     color: '#009688',
     marginTop: reviewUsernameMarginTop + 3,
     paddingRight: 5,
-
   },
   reviewText: {
     fontSize: 18,
     fontWeight: '500',
+    width: windowWidth * 0.75,
+    alignSelf: 'center',
     textAlign: 'center',
     paddingTop: 15,
-    marginBottom: 25,
+    paddingBottom: 15,
+    marginBottom: 5,
+  },
+  usernameIcon: {
+    color: '#009688',
+    marginTop: reviewUsernameMarginTop + 3,
+    paddingRight: 5,
+  },
+  reviewDateBar: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    alignItems: 'baseline',
+    marginTop: 15,
+    paddingBottom: 10,
+    fontSize: 14,
+    color: 'black',
+  },
+  dateOfReview: {
+    paddingLeft: 5,
+  },
+  reviewText: {
+    fontSize: 18,
+    fontWeight: '500',
+    width: windowWidth * 0.75,
+    alignSelf: 'center',
+    textAlign: 'center',
+    paddingTop: 15,
+    paddingBottom: 15,
+    marginBottom: 5,
   },
 beerImage: {
     width: 100,
@@ -331,7 +391,6 @@ textWrap: {
     marginBottom: 10,
   },
   ratingTitle: {
-    // textDecorationLine: 'underline',
     alignSelf: 'center',
     fontSize: 25,
     fontWeight: '700',
@@ -342,8 +401,6 @@ textWrap: {
     marginTop: 15,
     marginBottom: 25,
     width: 350,
-    minHeight: 125,
-    maxHeight: 150,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
@@ -359,8 +416,7 @@ textWrap: {
     elevation: 20,
   },
   ratingStars: {
-    paddingVertical: 10,
-
+    paddingBottom: 10,
   },
   averageStarStyle: {
     color: '#009688',
