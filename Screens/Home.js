@@ -1,11 +1,10 @@
-
-
 import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { Header } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons'; 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 
 
 //const AppButton istället för vanlig button för att få en redigerbar knapp som funkar på både ios o andriod.
@@ -69,7 +68,8 @@ return (
               navigation.navigate('Mitt konto')
             }
           />
-      </View> 
+      </View>
+      <StatusBar style="dark" />
     </View>
   </SafeAreaProvider> 
     )

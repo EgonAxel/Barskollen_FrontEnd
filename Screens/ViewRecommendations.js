@@ -115,30 +115,25 @@ class ViewRecommendations extends React.PureComponent {
           useNativeDriver={true} 
           onRequestClose={() => {
             Alert.alert("Modal has been closed.");
-            this.setModalVisible(!modalVisible);
-          }}
-        >
-        <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
-        <Text style = {styles.recommendationText}>Här är några öl du kanske gillar baserat på ditt betyg.</Text>
-        <FlatList
-          style={{flex: 1}}
-          contentContainerStyle={{
-            backgroundColor: '#ffffff',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 15,
-          }}
-          data={this.state.recommendations}
-            keyExtractor={(beer, index) => String(index)}
-            renderItem={({ item }) => this._renderListItem(item)}
-        />
-        <View style={styles.button}>
+            this.setModalVisible(!modalVisible);}}>
+          <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
+          <Text style = {styles.recommendationText}>Här är några öl du kanske gillar baserat på ditt betyg.</Text>
+          <FlatList
+            style={{flex: 1}}
+            contentContainerStyle={{
+              backgroundColor: '#ffffff',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 15,
+            }}
+            data={this.state.recommendations}
+              keyExtractor={(beer, index) => String(index)}
+              renderItem={({ item }) => this._renderListItem(item)}/>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.state.beer_ID, beer_name: this.state.name, beer_pic: this.state.picture_url, beer_type: this.state.beer_type, beer_percentage: this.state.alcohol_percentage, beer_volume: this.state.volume, beer_container_type: this.state.container_type, beer_bitterness: this.state.bitterness, beer_sweetness: this.state.sweetness, beer_fullness: this.state.fullness, beer_avgrating: this.state.avg_rating, hasReviewed: true})}>
-            <Text style={styles.textStyle}>
-              Stäng
-            </Text>
+            <View style={styles.button}>
+              <Text style={styles.textStyle}>Stäng</Text>
+            </View>
           </TouchableOpacity>
-        </View>
         </Modal>    
       </View>
     </View>

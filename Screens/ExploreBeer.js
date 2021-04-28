@@ -80,7 +80,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue, beerType) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText.replace(' ','& ')}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText.replace(' ','+')}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),

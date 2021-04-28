@@ -8,13 +8,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import RNPickerSelect from 'react-native-picker-select';
 
-// Installera dessa: 
-// npm i --save axios 
-// npm i react-native-elements --save
-// npm i --save react-native-vector-icons // required by react-native-elements
-
-// npm install react-native-stars --save  //För stärnor
-
 const AppButton = ({ onPress, title }) => (
   <TouchableOpacity
    onPress={onPress}>                 
@@ -169,7 +162,6 @@ class UserProfile extends React.PureComponent {
   }
 
   render() {
-
     return (
       <View style={{flex: 1}}>
         <FlatList
