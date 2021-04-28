@@ -97,13 +97,16 @@ class IndividualBeer extends React.PureComponent {
  }
 
 
-_renderListItem(item){
+ _renderListItem(item){
   return(
       <View style = {styles.commentWrap}>
-        <View>
-        <View style={{flexDirection:"row", alignSelf:'center', justifyContent: 'flex-end'}}>
-              <Ionicons name="person" size={23} style={styles.usernameIcon}/>
-              <Text style = {styles.reviewUsername}>{item.user}</Text>
+        <View style = {styles.reviewDateBar}>
+              <Ionicons name="calendar-outline" size={18}></Ionicons>
+              <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
+            </View>
+          <View style={styles.reviewUsernameAndIcon}>
+            <Ionicons name="person" size={23} style={styles.usernameIcon}/>
+            <Text style = {styles.reviewUsername}>{item.user}</Text>
           </View> 
           <Stars
             display= {Number(item.rating)}
@@ -113,7 +116,6 @@ _renderListItem(item){
             halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}
           />
           <Text style = {styles.reviewText}>{item.review_text} </Text>
-        </View>
       </View>
   )
 }
@@ -226,7 +228,7 @@ render() {
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const reviewUsernameMarginTop = 15;
+const reviewUsernameMarginTop = 7;
 const usedBorderRadius = 15;
 const beerInformationFontSize = 18;
 
@@ -270,26 +272,64 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 15,
   },
+  reviewUsernameAndIcon: {
+    flexDirection: 'row',
+    alignSelf: 'center', 
+  },
+
+  reviewUsernameAndIcon: {
+    flexDirection:"row",
+    alignSelf: 'center', 
+  },
   reviewUsername: {
     marginTop: reviewUsernameMarginTop,
     fontSize: 22,
     color: 'black',
     fontWeight: "700",
-    alignSelf: "center",
-    marginBottom: 10,
+    marginBottom: 5,
+    paddingRight: 5,
   },
   usernameIcon: {
     color: '#009688',
     marginTop: reviewUsernameMarginTop + 3,
     paddingRight: 5,
-
   },
   reviewText: {
     fontSize: 18,
     fontWeight: '500',
+    width: windowWidth * 0.75,
+    alignSelf: 'center',
     textAlign: 'center',
     paddingTop: 15,
-    marginBottom: 25,
+    paddingBottom: 15,
+    marginBottom: 5,
+  },
+  usernameIcon: {
+    color: '#009688',
+    marginTop: reviewUsernameMarginTop + 3,
+    paddingRight: 5,
+  },
+  reviewDateBar: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    alignItems: 'baseline',
+    marginTop: 15,
+    paddingBottom: 10,
+    fontSize: 14,
+    color: 'black',
+  },
+  dateOfReview: {
+    paddingLeft: 5,
+  },
+  reviewText: {
+    fontSize: 18,
+    fontWeight: '500',
+    width: windowWidth * 0.75,
+    alignSelf: 'center',
+    textAlign: 'center',
+    paddingTop: 15,
+    paddingBottom: 15,
+    marginBottom: 5,
   },
 beerImage: {
     width: 100,
@@ -351,7 +391,6 @@ textWrap: {
     marginBottom: 10,
   },
   ratingTitle: {
-    // textDecorationLine: 'underline',
     alignSelf: 'center',
     fontSize: 25,
     fontWeight: '700',
@@ -362,8 +401,6 @@ textWrap: {
     marginTop: 15,
     marginBottom: 25,
     width: 350,
-    minHeight: 125,
-    maxHeight: 150,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
@@ -379,8 +416,7 @@ textWrap: {
     elevation: 20,
   },
   ratingStars: {
-    paddingVertical: 10,
-
+    paddingBottom: 10,
   },
   averageStarStyle: {
     color: '#009688',

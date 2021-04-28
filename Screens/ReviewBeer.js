@@ -30,6 +30,7 @@ class ReviewBeer extends React.PureComponent {
         beer_bitterness: this.props.route.params.beer_bitterness,
         beer_fullness: this.props.route.params.beer_fullness,
         beer_sweetness: this.props.route.params.beer_sweetness,
+        review_date: this.props.route.params.review_date,
         modalVisible: this.props.route.params.modalVisible,
         error: null,
         recommendations: [],
@@ -124,6 +125,7 @@ class ReviewBeer extends React.PureComponent {
           <Text style = {styles.productName}>
             {this.state.beer_name}
           </Text>
+          <Text style = {styles.reviewDate}>{this.state.review_date.substring(0, 10)}</Text>
           <Image style={styles.beerImage} source={{uri: this.state.beer_pic + '_100.png' }}/> 
             <View style={styles.ratingStars}>
               <Stars
