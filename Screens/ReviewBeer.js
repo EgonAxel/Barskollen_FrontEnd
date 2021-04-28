@@ -125,7 +125,6 @@ class ReviewBeer extends React.PureComponent {
           <Text style = {styles.productName}>
             {this.state.beer_name}
           </Text>
-          <Text style = {styles.reviewDate}>{this.state.review_date.substring(0, 10)}</Text>
           <Image style={styles.beerImage} source={{uri: this.state.beer_pic + '_100.png' }}/> 
             <View style={styles.ratingStars}>
               <Stars
