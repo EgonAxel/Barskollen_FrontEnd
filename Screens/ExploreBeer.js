@@ -110,7 +110,7 @@ class Beers extends React.PureComponent {
     return(
       // Bortkommenderad från <Card>: pointerEvents="none">
       <View style = {styles.beerItem}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating, hasReviewed: null})}>
               <View style = {styles.beerInstance}>
                 <Image style = {styles.beerImage} source = {{uri: item.picture_url + '_100.png' }}/>
                   <View style = {styles.beerInformation}>

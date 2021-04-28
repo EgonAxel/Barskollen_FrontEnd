@@ -18,11 +18,10 @@ async function getValueFor(key) {
    }
  }
 
-class ReviewBeer extends React.PureComponent {
+class ViewRecommendations extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-        stars: 0,
         beer_ID: this.props.route.params.beer_ID,
         beer_pic: this.props.route.params.beer_pic,
         beer_name: this.props.route.params.beer_name,
@@ -30,36 +29,15 @@ class ReviewBeer extends React.PureComponent {
         beer_bitterness: this.props.route.params.beer_bitterness,
         beer_fullness: this.props.route.params.beer_fullness,
         beer_sweetness: this.props.route.params.beer_sweetness,
-        modalVisible: this.props.route.params.modalVisible,
+        modalVisible: true,
         error: null,
         recommendations: [],
-        review: "",
+        rating: this.props.route.params.rating,
     };
   }
   reviewText = (text) => {
     this.setState({ review: text })
     }
-  
-  postRatingComment(beer_ID, beer_name, starValue, review) {
-    getValueFor("Username").then((username) => {
-      getValueFor("Token").then((token) => {
-      if (review == "") { 
-        axios
-          .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
-          .catch(error => {
-          console.log(error.message);
-          });
-        }
-        else {
-          axios
-            .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
-            .catch(error => {
-              console.log(error.message);
-          });
-        }
-      });
-    });
-  }
 
   getRecommendations(beer_ID, starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
     const beer_type_encoded = encodeURIComponent(beer_type)
@@ -79,8 +57,7 @@ class ReviewBeer extends React.PureComponent {
   }
 
   componentDidMount() {
-    // this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.rating, this.state.review)
-    // this.getRecommendations(this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
+    this.getRecommendations(this.state.beer_ID, this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
   }
 
   setModalVisible = (visible) => {
@@ -127,34 +104,7 @@ class ReviewBeer extends React.PureComponent {
             {this.state.beer_name}
           </Text>
           <Image style={styles.beerImage} source={{uri: this.state.beer_pic + '_100.png' }}/> 
-            <View style={styles.ratingStars}>
-              <Stars
-                update={(val)=>{this.setState({stars: val})}}
-                half={true}
-                display= {Number((this.state.stars).toFixed(1))}
-                fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                />
-            </View>
-            <TextInput style = {styles.textInputFields}
-              clearButtonMode = 'always'
-              underlineColorAndroid = "transparent"
-              placeholder = "Vad tyckte du om ölen?"
-              placeholderTextColor = "grey"
-              returnKeyType="go"
-              onChangeText = {this.reviewText}
-              onSubmitEditing={() => { this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review) }}
-              blurOnSubmit={false}
-              multiline={true}
-            />
-            <TouchableOpacity 
-              onPress={() => {
-                this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
-                this.getRecommendations(this.state.beer_ID, this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
-                this.setModalVisible(true)}}>
-                <Text style={styles.sendReview}>Skicka review</Text>
-            </TouchableOpacity>
+            <Text>Laddar rekommendationer...</Text>
           </View>
         </KeyboardAvoidingView>
       </View>
@@ -168,7 +118,7 @@ class ReviewBeer extends React.PureComponent {
             this.setModalVisible(!modalVisible);
           }}
         >
-        <Text style = {styles.recommendationHeader}>Tack för din rating!</Text>
+        <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
         <Text style = {styles.recommendationText}>Här är några öl du kanske gillar baserat på ditt betyg.</Text>
         <FlatList
           style={{flex: 1}}
@@ -373,6 +323,9 @@ rating: {
   buttonOpen: {
     backgroundColor: "#009688",
   },
+  buttonClose: {
+    backgroundColor: "#009688",
+  },
   textStyle: {
     color: "white",
     fontWeight: "bold",
@@ -380,4 +333,4 @@ rating: {
   },
   })
   
-  export default ReviewBeer
+  export default ViewRecommendations

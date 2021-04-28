@@ -11,6 +11,7 @@ import UserProfile from './UserProfile';
 import IndividualBeerFromProfile from './IndividualBeerFromProfile';
 import IndividualBeer from './IndividualBeer';
 import ReviewBeer from './ReviewBeer';
+import ViewRecommendations from './ViewRecommendations';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -89,6 +90,17 @@ function ExploreBeerStackScreen() {
           component={ReviewBeer}
           options={{ 
             title: 'Betygssätt öl' ,
+            headerTitleStyle: { alignSelf: 'flex-start' },
+            headerStyle: {
+              backgroundColor: '#fff', 
+              }}
+            } 
+         />
+        <ExploreBeerStack.Screen 
+          name="ViewRecommendations" 
+          component={ViewRecommendations}
+          options={{ 
+            title: 'Rekommendationer' ,
             headerTitleStyle: { alignSelf: 'flex-start' },
             headerStyle: {
               backgroundColor: '#fff', 
