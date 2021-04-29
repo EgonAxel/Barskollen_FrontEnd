@@ -112,19 +112,19 @@ class Beers extends React.PureComponent {
       <View style = {styles.beerItem}>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating, hasReviewed: null})}>
               <View style = {styles.beerInstance}>
-                <Image style = {styles.beerImage} source = {{uri: item.picture_url + '_100.png' }}/>
-                  <View style = {styles.beerInformation}>
-                    <Text style = {styles.productNameBold}>{item.name}</Text>
-                    <Text style = {styles.productNameThin}>{item.beer_type}</Text>
-                    <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                    <Stars
-                      display= {Number((item.avg_rating))}
-                      half={true}
-                      fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                      emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                      halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                    />
-                  </View>
+                {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImage)}
+                <View style = {styles.beerInformation}>
+                  <Text style = {styles.productNameBold}>{item.name}</Text>
+                  <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+                  <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                  <Stars
+                    display= {Number((item.avg_rating))}
+                    half={true}
+                    fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                    emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                    halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                  />
+                </View>
               </View> 
               {/* <View style = {styles.ratingStars}> */}
               
@@ -132,6 +132,15 @@ class Beers extends React.PureComponent {
           </TouchableOpacity>
       </View>
     )
+  }
+
+  renderBeerImage = (beer_image, resolution, imageStyle) => {
+    if (beer_image == null) {
+      return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
+    }
+    else {
+      return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
+    }
   }
 
   renderListHeader = () => {
@@ -152,9 +161,7 @@ class Beers extends React.PureComponent {
         {/* {shouldShowSearchArea ? ( */}
 
     <View style={styles.filterAndSearchArea}>
-      <View style={ Platform.OS === 'ios'
-              ? searchBarStyles.searchBarIOS
-              : searchBarStyles.searchBarAndroid}>  
+      <View>  
       <TextInput style = {searchBarStyles}
         useNativeAndroidPickerStyle={false}
         clearButtonMode = 'always'

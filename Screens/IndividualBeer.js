@@ -178,6 +178,15 @@ renderUserRelated = () => {
     }
 }
 
+renderBeerImage = (beer_image, resolution, imageStyle) => {
+  if (beer_image == null) {
+    return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
+  }
+  else {
+    return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
+  }
+}
+
 renderListHeader = () => {
   return (
     <View style={styles.individualBeerScreen}>
@@ -190,7 +199,7 @@ renderListHeader = () => {
           </View>
         </View>
         <View style = {styles.imageWrap}>
-          <Image source={{uri: this.state.beer_pic + '_200.png' }} style={styles.beerImage} />
+          {this.renderBeerImage(this.state.beer_pic, '_200.png', styles.beerImage)}
         </View>
         <View style = {styles.textWrap}>
           {/* <View style = {styles.tasteClockWrap}>

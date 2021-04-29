@@ -87,12 +87,21 @@ class ReviewBeer extends React.PureComponent {
     this.setState({ modalVisible: visible });
   }
 
+  renderBeerImage = (beer_image, resolution, imageStyle) => {
+    if (beer_image == null) {
+      return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
+    }
+    else {
+      return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
+    }
+  }
+
   _renderListItem(item) {
     return(
         <View style = {styles.beerItem}>
           <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}}>
               <View style = {styles.beerInstance}>
-                <Image style = {styles.beerImageRecommendation} source = {{uri: item.picture_url + '_100.png' }}/>
+                {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
                   <View style = {styles.beerInformation}>
                     <Text style = {styles.productNameRecommendation}>{item.name}</Text>
                     <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
@@ -124,7 +133,7 @@ class ReviewBeer extends React.PureComponent {
           <Text style = {styles.productName}>
             {this.state.beer_name}
           </Text>
-          <Image style={styles.beerImage} source={{uri: this.state.beer_pic + '_100.png' }}/> 
+          {this.renderBeerImage(this.state.beer_pic, '_200.png', styles.beerImage)}
             <View style={styles.ratingStars}>
               <Stars
                 update={(val)=>{this.setState({stars: val})}}
@@ -177,7 +186,7 @@ class ReviewBeer extends React.PureComponent {
               alignItems: 'center',
               justifyContent: 'center',
               marginTop: 15 }}
-            data={this.state.recommendations}
+              data={this.state.recommendations}
               keyExtractor={(beer, index) => String(index)}
               renderItem={({ item }) => this._renderListItem(item)}/>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.state.beer_ID, beer_name: this.state.name, beer_pic: this.state.picture_url, beer_type: this.state.beer_type, beer_percentage: this.state.alcohol_percentage, beer_volume: this.state.volume, beer_container_type: this.state.container_type, beer_bitterness: this.state.bitterness, beer_sweetness: this.state.sweetness, beer_fullness: this.state.fullness, beer_avgrating: this.state.avg_rating, hasReviewed: true})}>
