@@ -224,7 +224,7 @@ renderListHeader = () => {
 render() {
   return (
     <FlatList
-      style={{flex: 1}}
+      style={{flex: 1, backgroundColor: '#ffffff'}}
       contentContainerStyle={{
         backgroundColor: '#ffffff',
         alignItems: 'center',

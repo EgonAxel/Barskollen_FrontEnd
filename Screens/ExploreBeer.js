@@ -295,7 +295,7 @@ const searchBarStyles = StyleSheet.create({
     borderColor: '#009688',
     borderWidth: 2.5,
     borderRadius: searchBarBorderRadius,
-    backgroundColor: 'white'
+    backgroundColor: '#ffffff'
   },
   searchBarAndroid: {
     marginTop: 15,
@@ -306,7 +306,7 @@ const searchBarStyles = StyleSheet.create({
     borderColor: '#009688',
     borderWidth: 2.5,
     borderRadius: searchBarBorderRadius,
-    backgroundColor: 'white'
+    backgroundColor: '#ffffff'
   },
 });
 

@@ -266,6 +266,7 @@ rating: {
     flexDirection: 'row',
   },
   beerInformation: {
+    maxWidth : windowWidth * 0.55,
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
