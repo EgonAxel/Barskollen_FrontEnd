@@ -34,7 +34,7 @@ class IndividualBeer extends React.PureComponent {
       beer_sweetness: this.props.route.params.beer_sweetness,
       beer_fullness: this.props.route.params.beer_fullness,
       beer_avgrating: this.props.route.params.beer_avgrating,
-      hasReviewed: this.props.route.params.hasReviewed,
+      hasReviewed: null,
       userRating: null,
     };
   }
@@ -43,7 +43,7 @@ class IndividualBeer extends React.PureComponent {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
         axios
-          .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}&user=${username}`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .get(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}&user=${username}`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
           .then(response => {
             if (response.data.results.length > 0) {
               this.setState({
@@ -62,7 +62,7 @@ class IndividualBeer extends React.PureComponent {
   fetchReview = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://192.168.1.73:8000/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           reviews: this.state.reviews.concat(response.data.results),
@@ -165,7 +165,7 @@ renderUserRelated = () => {
         </View>
       )
     }
-    else {
+    else if (hasReviewed == false){
       return (
         <View>
           <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, modalVisible: false})}}>
