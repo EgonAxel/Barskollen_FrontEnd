@@ -112,19 +112,19 @@ class Beers extends React.PureComponent {
       <View style = {styles.beerItem}>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}>
               <View style = {styles.beerInstance}>
-                <Image style = {styles.beerImage} source = {{uri: item.picture_url + '_100.png' }}/>
-                  <View style = {styles.beerInformation}>
-                    <Text style = {styles.productNameBold}>{item.name}</Text>
-                    <Text style = {styles.productNameThin}>{item.beer_type}</Text>
-                    <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                    <Stars
-                      display= {Number((item.avg_rating))}
-                      half={true}
-                      fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                      emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                      halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                    />
-                  </View>
+                {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImage)}
+                <View style = {styles.beerInformation}>
+                  <Text style = {styles.productNameBold}>{item.name}</Text>
+                  <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+                  <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                  <Stars
+                    display= {Number((item.avg_rating))}
+                    half={true}
+                    fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                    emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                    halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                  />
+                </View>
               </View> 
               {/* <View style = {styles.ratingStars}> */}
               
@@ -132,6 +132,15 @@ class Beers extends React.PureComponent {
           </TouchableOpacity>
       </View>
     )
+  }
+
+  renderBeerImage = (beer_image, resolution, imageStyle) => {
+    if (beer_image == null) {
+      return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
+    }
+    else {
+      return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
+    }
   }
 
   renderListHeader = () => {
@@ -150,62 +159,64 @@ class Beers extends React.PureComponent {
           </Text>
         </View> */}
         {/* {shouldShowSearchArea ? ( */}
-          <View style={styles.filterAndSearchArea}>
-              <TextInput style = {styles.searchField}
-                clearButtonMode = 'always'
-                underlineColorAndroid = "transparent"
-                placeholder = "Sök efter bärs..."
-                placeholderTextColor = "grey"
-                autoCapitalize = "none"
 
-                returnKeyType="search"
-                onChangeText={this.handleSearchText}/>
-            <View style={ Platform.OS === 'ios'
-                  ? pickerSelectStyles.inputIOS
-                  : pickerSelectStyles.inputAndroid, 
-                  { flexDirection:"row", 
-                    justifyContent:"space-between",
-                  }}>  
-              <RNPickerSelect style={pickerSelectStyles}
-                  useNativeAndroidPickerStyle={false}
-                  placeholder={{
-                  label: 'Ölsort',
-                  value: "",
-                  }}
-                  onValueChange={(value) => this.setState({
-                    beerType: value},
-                    this.handleFilterAction)}
-                  items={[
-                    { label: 'Ljus lager', value: 'Ljus lager', inputLabel: 'Ljus lager' },
-                    { label: 'Ale', value: 'Ale', inputLabel: 'Ale' },
-                    { label: 'Porter & Stout', value: 'Porter+%26+Stout', inputLabel: 'Porter & Stout' },
-                    { label: 'Veteöl', value: 'Veteöl', inputLabel: 'Veteöl' },
-                    { label: "Mellanmörk & Mörk lager", value: "Mellanm%C3%B6rk+%26+M%C3%B6rk+lager", inputLabel: "Mellanmörk & Mörk lager" },
-                    { label: 'Syrlig öl', value: 'Syrlig öl', inputLabel: 'Syrlig öl' },
-                    { label: 'Annan öl', value: 'Annan öl', inputLabel: 'Annan öl' },
-                  ]}
-                />
-                <RNPickerSelect style={pickerSelectStyles}
-                  useNativeAndroidPickerStyle={false}
-                  placeholder={{
-                  label: 'Sortering',
-                  value: "",
-                  }}
-                  onValueChange={(value) => this.setState({
-                    orderingValue: value},
-                    this.handleFilterAction)}
-                  items={[
-                    { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
-                    { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
-                    { label: 'Sortera alfabetiskt (a-ö)', value: 'name', inputLabel: 'Alfabetiskt (a-ö)' },
-                    { label: 'Sortera alfabetiskt (ö-a)', value: '-name', inputLabel: 'Alfabetiskt (ö-a)' },
-                  ]}
-                />
-            </View>
-          </View>
-         {/* ) : null} */}
-      </SafeAreaView>
-    )}
+    <View style={styles.filterAndSearchArea}>
+      <View>  
+      <TextInput style = {searchBarStyles}
+        useNativeAndroidPickerStyle={false}
+        clearButtonMode = 'always'
+        underlineColorAndroid = "transparent"
+        placeholder = "Sök efter bärs..."
+        placeholderTextColor = "grey"
+        autoCapitalize = "none"
+        returnKeyType="search"
+        onChangeText={this.handleSearchText}/>
+    </View>
+
+    <View style={ Platform.OS === 'ios'
+          ? pickerSelectStyles.inputIOS
+          : pickerSelectStyles.inputAndroid, 
+          { flexDirection:"row", 
+            justifyContent:"space-between"}}>  
+      <RNPickerSelect style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
+          placeholder={{
+          label: 'Ölsort',
+          value: "",
+          }}
+          onValueChange={(value) => this.setState({
+            beerType: value},
+            this.handleFilterAction)}
+          items={[
+            { label: 'Ljus lager', value: 'Ljus lager', inputLabel: 'Ljus lager' },
+            { label: 'Ale', value: 'Ale', inputLabel: 'Ale' },
+            { label: 'Porter & Stout', value: 'Porter+%26+Stout', inputLabel: 'Porter & Stout' },
+            { label: 'Veteöl', value: 'Veteöl', inputLabel: 'Veteöl' },
+            { label: "Mellanmörk & Mörk lager", value: "Mellanm%C3%B6rk+%26+M%C3%B6rk+lager", inputLabel: "Mellanmörk & Mörk lager" },
+            { label: 'Syrlig öl', value: 'Syrlig öl', inputLabel: 'Syrlig öl' },
+            { label: 'Annan öl', value: 'Annan öl', inputLabel: 'Annan öl' },
+          ]}
+        />
+        <RNPickerSelect style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
+          placeholder={{
+          label: 'Sortering',
+          value: "",
+          }}
+          onValueChange={(value) => this.setState({
+            orderingValue: value},
+            this.handleFilterAction)}
+          items={[
+            { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
+            { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
+            { label: 'Sortera alfabetiskt (a-ö)', value: 'name', inputLabel: 'Alfabetiskt (a-ö)' },
+            { label: 'Sortera alfabetiskt (ö-a)', value: '-name', inputLabel: 'Alfabetiskt (ö-a)' },
+          ]}
+        />
+    </View>
+  </View>
+</SafeAreaView>
+)}
 
   render() {
 
@@ -281,6 +292,31 @@ const windowHeight = Dimensions.get('window').height;
 const beerItemMarginTop = 15;
 const searchBarBorderRadius = 23;
 
+const searchBarStyles = StyleSheet.create({
+  searchBarIOS: {
+    marginTop: 15,
+    paddingHorizontal: 17,
+    paddingVertical: 10,
+    marginBottom: 10,
+    width: windowWidth * 0.85,
+    borderColor: '#009688',
+    borderWidth: 2.5,
+    borderRadius: searchBarBorderRadius,
+    backgroundColor: '#ffffff'
+  },
+  searchBarAndroid: {
+    marginTop: 15,
+    paddingHorizontal: 17,
+    paddingVertical: 10,
+    marginBottom: 10,
+    width: windowWidth * 0.85,
+    borderColor: '#009688',
+    borderWidth: 2.5,
+    borderRadius: searchBarBorderRadius,
+    backgroundColor: '#ffffff'
+  },
+});
+
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: { //
     minWidth: windowWidth * 0.22,
@@ -331,17 +367,17 @@ const styles = StyleSheet.create({
   safeAreaView: {
     alignSelf: 'center',
   },
-  searchField: {
-    marginTop: 25,
-    paddingHorizontal: 17,
-    paddingVertical: 10,
-    marginBottom: 10,
-    width: windowWidth * 0.85,
-    borderColor: '#009688',
-    borderWidth: 2.5,
-    borderRadius: searchBarBorderRadius,
-    backgroundColor: 'white'
-  },
+  // searchField: {
+  //   marginTop: 25,
+  //   paddingHorizontal: 17,
+  //   paddingVertical: 10,
+  //   marginBottom: 10,
+  //   width: windowWidth * 0.85,
+  //   borderColor: '#009688',
+  //   borderWidth: 2.5,
+  //   borderRadius: searchBarBorderRadius,
+  //   backgroundColor: 'white'
+  // },
   filterAndSearchArea: {
     paddingBottom: 15,
     borderRadius: searchBarBorderRadius,
@@ -357,13 +393,11 @@ const styles = StyleSheet.create({
     left: 0,
   },
   productNameBold: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     fontWeight: '500',
     textAlign: 'left',
   },
   productNameThin: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     fontWeight: '400',
     textAlign: 'left',
@@ -387,7 +421,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   alcohol_percentage: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     textAlign: 'left',
   },

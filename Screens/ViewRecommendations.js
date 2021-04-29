@@ -64,12 +64,21 @@ class ViewRecommendations extends React.PureComponent {
     this.setState({ modalVisible: visible });
   }
 
+  renderBeerImage = (beer_image, resolution, imageStyle) => {
+    if (beer_image == null) {
+      return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
+    }
+    else {
+      return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
+    }
+  }
+
   _renderListItem(item) {
     return(
         <View style = {styles.modalStyleRecommendation}>
           <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}}>
             <View style = {styles.beerInstance}>
-              <Image style = {styles.beerImageRecommendation} source = {{uri: item.picture_url + '_100.png' }}/>
+              {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
               <View style = {styles.beerInformation}>
                 <Text style = {styles.productNameRecommendation}>{item.name}  </Text>
                 <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
@@ -103,8 +112,8 @@ class ViewRecommendations extends React.PureComponent {
           <Text style = {styles.productName}>
             {this.state.beer_name}
           </Text>
-          <Image style={styles.beerImage} source={{uri: this.state.beer_pic + '_100.png' }}/> 
-            <Text>Laddar rekommendationer...</Text>
+          {this.renderBeerImage(this.state.beer_pic, '_200.png', styles.beerImage)}
+          <Text>Laddar rekommendationer...</Text>
           </View>
         </KeyboardAvoidingView>
       </View>
@@ -266,6 +275,7 @@ rating: {
     flexDirection: 'row',
   },
   beerInformation: {
+    maxWidth : windowWidth * 0.55,
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
