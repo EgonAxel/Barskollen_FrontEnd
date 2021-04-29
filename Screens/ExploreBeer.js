@@ -165,7 +165,7 @@ class Beers extends React.PureComponent {
         returnKeyType="search"
         onChangeText={this.handleSearchText}/>
     </View>
-    
+
     <View style={ Platform.OS === 'ios'
           ? pickerSelectStyles.inputIOS
           : pickerSelectStyles.inputAndroid, 
@@ -287,7 +287,7 @@ const searchBarBorderRadius = 23;
 
 const searchBarStyles = StyleSheet.create({
   searchBarIOS: {
-    marginTop: 25,
+    marginTop: 15,
     paddingHorizontal: 17,
     paddingVertical: 10,
     marginBottom: 10,
@@ -298,7 +298,7 @@ const searchBarStyles = StyleSheet.create({
     backgroundColor: 'white'
   },
   searchBarAndroid: {
-    marginTop: 25,
+    marginTop: 15,
     paddingHorizontal: 17,
     paddingVertical: 10,
     marginBottom: 10,
