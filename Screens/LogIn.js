@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, ImageBackground } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, ImageBackground, Image } from 'react-native'
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
@@ -29,7 +29,7 @@ class LogIn extends Component {
          return
       }
       axios
-         .post(`http://127.0.0.1:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+         .post(`http://192.168.1.73:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
          .then(response => {
             if (response.request.status === 200) { //Status 200 är 'Success'
                save("Token", response.data.token);
@@ -47,6 +47,7 @@ class LogIn extends Component {
       return (
          <View style = {styles.container}>
             <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}>
+              <Image style = {{width: 240, height: 240, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>
                <Text style = {styles.topTitle}>Logga in</Text>
                <TextInput style = {styles.textInputFields}
                   underlineColorAndroid = "transparent"
