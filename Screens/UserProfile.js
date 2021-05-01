@@ -8,13 +8,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import RNPickerSelect from 'react-native-picker-select';
 
-const AppButton = ({ onPress, title }) => (
-  <TouchableOpacity
-   onPress={onPress}>                 
-    <Text style={styles.logoutText}>{title}</Text>
-  </TouchableOpacity>
-);
-
 async function getValueFor(key) {
   let result = await SecureStore.getItemAsync(key);
   if (result) {
@@ -25,7 +18,7 @@ async function getValueFor(key) {
  }
 
 async function deleteValueFor(key) {
-  let result = await SecureStore.deleteItemAsync(key);
+  await SecureStore.deleteItemAsync(key);
 }
 
 class UserProfile extends React.PureComponent {
@@ -77,31 +70,37 @@ class UserProfile extends React.PureComponent {
       this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue);
     })
   }
+  renderBeerImage = (beer_image, resolution, imageStyle) => {
+    if (beer_image == null) {
+      return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
+    }
+    else {
+      return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
+    }
+  }
   _renderListItem(item) {
     return(
       <View style = {styles.viewStyle}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeerFromProfile', {beer_ID: item.beer, rating: item.rating})}>
-            <View style = {styles.reviewDateBar}>
-              <Ionicons name="calendar-outline" size={18}></Ionicons>
-              <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
-            </View>
-              <View style = {styles.beerInstance}>
-                <Image style = {styles.beerImage} source = {{uri: "https://product-cdn.systembolaget.se/productimages/" + item.beer + "/" + item.beer + '_100.png' }}/>
-                <View style = {styles.ratingStars}>
-                  <Text style = {styles.productNameBold}>{item.beer_name}</Text>
-                  <Stars
-                      display= {Number((item.rating).toFixed(1))}
-                      fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                      emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                      halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                  />
-                </View>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeerFromProfile', {beer_ID: item.beer, userRating: item.rating})}>
+          <View style = {styles.reviewDateBar}>
+            <Ionicons name="calendar-outline" size={18}></Ionicons>
+            <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
+          </View>
+            <View style = {styles.beerInstance}>
+              {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImage)}
+              <View style = {styles.ratingStars}>
+                <Text style = {styles.productNameBold}>{item.beer_name}</Text>
+                <Stars
+                  display= {Number((item.rating).toFixed(1))}
+                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}/>
               </View>
-          </TouchableOpacity>
+            </View>
+        </TouchableOpacity>
       </View>
       )
   }
-
   renderListHeader = () => {
     return (
     <View>

@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
 import axios from 'axios';
 import Stars from 'react-native-stars';
+import { Ionicons } from '@expo/vector-icons'; 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SecureStore from 'expo-secure-store';
-
 
 async function getValueFor(key) {
  let result = await SecureStore.getItemAsync(key);
@@ -19,11 +19,13 @@ class IndividualBeerFromProfile extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      beers: [],
-      offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
+      beer: null,
+      beerDataFetched: false,
+      reviews: [],
+      offset: 0,  //Bestämmer vilken sida från vår API vi laddar in reviews.
       error: null,
       beer_ID: this.props.route.params.beer_ID,
-      rating: this.props.route.params.rating
+      userRating: this.props.route.params.userRating
     };
   }
   fetchBeer = () => {
@@ -31,188 +33,396 @@ class IndividualBeerFromProfile extends React.PureComponent {
     axios
       .get(`http://127.0.0.1:8000/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
+        console.log(response.data)
         this.setState({
-          beers: this.state.beers.concat(response.data),
+          beer: response.data,
+          beerDataFetched: true
         });
-     
       })
       .catch(error => {
         this.setState({error: error.message});
       });
     })
   };
+  fetchReviews = () => {
+    getValueFor("Token").then((token) => {
+    axios
+      .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .then(response => {
+        console.log(this.state.beerDataFetched)
+        this.setState({
+          reviews: this.state.reviews.concat(response.data.results),
+        });
+      })
+      .catch(error => {
+        this.setState({error: error.message});
+      });
+    })
+  };
+  fetchMoreReviews = () => {
+    this.setState(
+      prevState => ({
+        offset: prevState.offset + 20 ,
+      }),
+      () => {
+        this.fetchReviews();
+      },
+    );
+  };
+
+
   componentDidMount() {
-    this.fetchBeer(this.state.offset);
+    this.fetchBeer()
+    this.fetchReviews()
   }
 
-_renderListItem(item){
-  return(
-    
-    <View style = {styles.viewStyle}>
-          {/* <Card pointerEvents="none"> */} 
-          <View style={styles.beerTitles}>
-            <Text style = {styles.productNameBold}>{item.name}</Text>
-            <Text style = {styles.productNameThin}>{item.beer_type}</Text>
-          </View>
-          <View style = {styles.imageWrap}>
-          <Image source={{uri: item.picture_url + '_200.png' }} style={styles.beerImage} />
-          </View>
-            <View style = {styles.textWrap}>
-              <Text style = {styles.alcoholPercentageStyle}>{item.alcohol_percentage + '% vol'}</Text>
-              <Text style = {styles.containerAndVolumeStyle}>{item.container_type + ', ' + item.volume + ' ml'}</Text>
-            </View>
-          {/* <Text style = {styles.volumeStyle}>{item.volume + ' ml'}</Text> */}
-          <View style = {styles.tasteClockWrap}>
-            <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + item.bitterness}</Text>
-            <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + item.fullness}</Text>
-            <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  item.sweetness}</Text>
-          </View>
-          <View style = {styles.ratingStars}>
-            <Stars
-              display= {Number((item.avg_rating).toFixed(1))}
-              half={true}
-              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-            />
-          </View>
-          <Text style = {styles.rating}>{'Medelrating: ' + Number((item.avg_rating).toFixed(1)) + ' av 5'}</Text>
-          <View style = {styles.ratingStars}>
-            <Stars
-              display= {Number(this.state.rating)}
-              half={true}
-              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-            />
-          </View>
-          <Text style = {styles.rating}>{'Din rating: ' + Number(this.state.rating) + ' av 5'}</Text> 
+ _renderListItem(item) {
+  if (item.review_text != null) {
+    return(
+      <View style = {styles.commentWrap}>
+        <View style = {styles.reviewDateBar}>
+          <Ionicons name="calendar-outline" size={18}></Ionicons>
+          <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
         </View>
-    
-    )
+        <View style={styles.reviewUsernameAndIcon}>
+          <Ionicons name="person" size={23} style={styles.usernameIcon}/>
+          <Text style = {styles.reviewUsername}>{item.user}</Text>
+        </View>
+        <Stars
+          display= {Number(item.rating)}
+          half={true}
+          fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
+          emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
+          halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}/>
+          <Text style = {styles.reviewText}>{item.review_text} </Text>
+      </View>
+    )}
+  else {
+    return(
+      <View style = {styles.commentWrap}>
+        <View style = {styles.reviewDateBar}>
+          <Ionicons name="calendar-outline" size={18}></Ionicons>
+          <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
+        </View>
+        <View style={styles.reviewUsernameAndIcon}>
+          <Ionicons name="person" size={23} style={styles.usernameIcon}/>
+          <Text style = {styles.reviewUsername}>{item.user}</Text>
+        </View> 
+        <Stars
+          display= {Number(item.rating)}
+          half={true}
+          fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
+          emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
+          halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}/>
+      </View>
+  )}
 }
-render() {
 
-return (
+renderUserRelated = () => {
+  return (
+    <View>
+      <View style = {styles.ratingStars}>
+        <Stars
+          display= {Number(this.state.userRating)}
+          half={true}
+          fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
+          emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
+          halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
+        />
+      </View>
+      <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
+      <View>
+        <TouchableOpacity onPress={() => {this.props.navigation.navigate('ViewRecommendations', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, rating: this.state.userRating})}}>
+          <Text style={styles.giveRating}>Visa rekommendationer</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
+
+renderBeerImage = (beer_image, resolution, imageStyle) => {
+  if (beer_image == null) {
+    return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
+  }
+  else {
+    return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
+  }
+}
+
+renderListHeader = () => {
+  if (this.state.beerDataFetched == true) {
+  return (
+    <View style={styles.individualBeerScreen}>
+      <View style = {styles.viewStyle}>
+        <View style={styles.beerTitles}>
+          <Text style = {styles.productNameBold}>{this.state.beer.name}</Text>
+          <Text style = {styles.productNameThin}>{this.state.beer.beer_type}</Text>
+          <View style={styles.percentageAndContainer}>
+            <Text style = {styles.containerAndVolumeStyle}>{this.state.beer.container_type + ' • ' + this.state.beer.volume + ' ml • ' + this.state.beer.alcohol_percentage + '% vol'}</Text>
+          </View>
+        </View>
+        <View style = {styles.imageWrap}>
+          {this.renderBeerImage(this.state.beer.picture_url, '_200.png', styles.beerImage)}
+        </View>
+        <View style = {styles.textWrap}>
+          {/* <View style = {styles.tasteClockWrap}>
+            <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + this.state.beer_bitterness}</Text>
+            <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + this.state.beer_fullness}</Text>
+            <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  this.state.beer_sweetness}</Text>
+          </View> */}
+          <View style = {styles.ratingStars}>
+            <Stars
+              display= {Number(this.state.beer.avg_rating)}
+              half={true}
+              fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
+              emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
+              halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
+            />
+          </View>
+          <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer.avg_rating).toFixed(1) + ' av 5'}</Text>
+          {this.renderUserRelated()}
+        </View>
+      </View>
+      <View>
+        <Text style= {styles.ratingTitle}> Ratings </Text>
+      </View>
+    </View>
+  )
+        }
+}
+
+render() {
+  return (
     <FlatList
-    style={{flex: 1}}
+      style={{flex: 1, backgroundColor: '#ffffff'}}
       contentContainerStyle={{
         backgroundColor: '#ffffff',
         alignItems: 'center',
         justifyContent: 'center',
         // marginTop: 15,
-      
       }}
-      data={this.state.beers}
+
+      data={this.state.reviews}
+     
       keyExtractor={(beer, index) => String(index)}
-      
       renderItem={({ item }) => this._renderListItem(item)}
+      ListHeaderComponent={this.renderListHeader()}
       //horizontal={true}
        />
+       
     );
   }
 }
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+const reviewUsernameMarginTop = 7;
+const usedBorderRadius = 15;
+const beerInformationFontSize = 16;
 
 const styles = StyleSheet.create({
 
-viewStyle: {
-  marginTop: 15,
-  width: 350,
-  height: 650,
-  backgroundColor: '#ffffff',
-  borderRadius: 15,
-  borderStyle: 'solid', 
-  borderColor: '#dadada',
-  borderWidth: 1,
-  shadowColor: "#000000",
-  shadowOffset: {
-    width: 1,
-    height: 1
+  individualBeerScreen: {
+    minHeight: 650,
+    maxHeight: windowHeight,
   },
-  shadowOpacity: 0.5,
-  shadowRadius: 3,
-  elevation: 20,
-  flexDirection: 'column',
-  justifyContent: 'center'
-},
-beerTitles: {
-  maxWidth: windowWidth * 0.75,
-  alignSelf: 'center',
-},
-productNameBold: {
-  fontSize: 25,
-  fontWeight: '700',
-  marginTop: 25,
-  textAlign: 'center',
-},
-productNameThin: {
-  fontSize: 18,
-  fontWeight: '400',
-  textAlign: 'center',
-  marginTop: 10,
-  marginBottom: 5,
-},
-beerImage: {
-  width: 150,
-  height: 205,
-  resizeMode: 'contain',
-  alignSelf: 'center'
-},
-imageWrap: {
-  flex: 3,
-  marginTop: 80,
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
-  marginBottom: 20
-},
-textWrap: {
-  flex: 1,
-  marginTop: 50,
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
-},
-tasteClockWrap: {
-  flex: 1,
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
-},
-alcoholPercentageStyle: {
-  fontSize: 20,
-  textAlign: 'center',
-  fontWeight: '500',
-  marginBottom: 10,
-},
-containerAndVolumeStyle: {
-  fontSize: 20,
-  textAlign: 'center',
-},
-tasteClockStyle: {
-  marginVertical: 10,
-  fontSize: 16,
-  fontWeight: '400',
-  textAlign: 'center',
-},
-rating: {
-  fontSize: 18,
-  textAlign: 'center',
-  marginBottom: 25,
-},
-myStarStyle: {
-  color: '#009688',
-  backgroundColor: 'transparent',
-  textShadowColor: 'black',
-  textShadowOffset: {width: 1, height: 1},
-  textShadowRadius: 2,
-  fontSize: 30,
-},
-myEmptyStarStyle: {
-  color: '#009688',
-},
+  viewStyle: {
+    width: 350,
+    maxHeight: windowHeight,
+    marginTop: 15,
+    backgroundColor: '#ffffff',
+    borderRadius: usedBorderRadius,
+    borderStyle: 'solid', 
+    borderColor: '#dadada',
+    borderWidth: 2,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 3,
+      height: 3
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  beerTitles: {
+    maxWidth: windowWidth * 0.75,
+    alignSelf: 'center',
+  },
+  productNameBold: {
+    fontSize: 25,
+    fontWeight: '600',
+    marginTop: 25,
+    textAlign: 'center',
+  },
+  productNameThin: {
+    fontSize: 18,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  reviewUsernameAndIcon: {
+    flexDirection: 'row',
+    alignSelf: 'center', 
+  },
+
+  reviewUsernameAndIcon: {
+    flexDirection:"row",
+    alignSelf: 'center', 
+  },
+  reviewUsername: {
+    marginTop: reviewUsernameMarginTop,
+    fontSize: 22,
+    color: 'black',
+    fontWeight: "700",
+    marginBottom: 5,
+    paddingRight: 5,
+  },
+  usernameIcon: {
+    color: '#009688',
+    marginTop: reviewUsernameMarginTop + 3,
+    paddingRight: 5,
+  },
+  reviewText: {
+    fontSize: 18,
+    fontWeight: '500',
+    width: windowWidth * 0.75,
+    alignSelf: 'center',
+    textAlign: 'center',
+    paddingTop: 15,
+    paddingBottom: 15,
+    marginBottom: 5,
+  },
+  usernameIcon: {
+    color: '#009688',
+    marginTop: reviewUsernameMarginTop + 3,
+    paddingRight: 5,
+  },
+  reviewDateBar: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    alignItems: 'baseline',
+    marginTop: 15,
+    paddingBottom: 10,
+    fontSize: 14,
+    color: 'black',
+  },
+  dateOfReview: {
+    paddingLeft: 5,
+  },
+  reviewText: {
+    fontSize: 16,
+    fontWeight: '500',
+    width: windowWidth * 0.75,
+    alignSelf: 'center',
+    textAlign: 'center',
+    paddingBottom: 15,
+  },
+  beerImage: {
+      width: 100,
+      height: 225,
+      resizeMode: 'contain',
+      alignSelf: 'center',
+  },
+  imageWrap: {
+    marginTop: 15,
+    marginBottom: 10,
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  giveRating: {
+    alignSelf: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    backgroundColor: '#009688',
+    color: '#ffffff',
+    overflow: 'hidden',
+    paddingHorizontal: 35,
+    paddingVertical: 15,
+    marginTop: 10,
+    marginBottom: 25,
+    borderRadius: usedBorderRadius,
+  },
+  textWrap: {
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  alcoholPercentageStyle: {
+    fontSize: beerInformationFontSize,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  containerAndVolumeStyle: {
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  percentageAndContainer: {
+    // marginTop: 25,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+  },
+  tasteClockWrap: {
+    marginTop: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+  },
+  tasteClockStyle: {
+      fontSize: beerInformationFontSize,
+      fontWeight: '400',
+      textAlign: 'center',
+    },
+  averageRatingText: {
+    fontSize: beerInformationFontSize,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  ratingTitle: {
+    alignSelf: 'center',
+    fontSize: 25,
+    fontWeight: '700',
+    color: '#000000',
+    marginTop: 40,
+  },
+  commentWrap: {
+    marginTop: 15,
+    marginBottom: 15,
+    width: 350,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    borderStyle: 'solid', 
+    borderColor: '#dadada',
+    borderWidth: 1,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 1,
+      height: 1
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 20,
+  },
   ratingStars: {
-    
+    paddingBottom: 10,
+  },
+  averageStarStyle: {
+    color: '#009688',
+    backgroundColor: 'transparent',
+    textShadowColor: '#dadada',
+    textShadowOffset: 
+    {width: 1, height: 1},
+    textShadowRadius: 5,
+    fontSize: 35,
+    marginTop: 10,
+  },
+  reviewStarStyle: {
+    color: '#009688',
+    backgroundColor: 'transparent',
+    textShadowColor: '#dadada',
+    textShadowOffset: 
+    {width: 1, height: 1},
+    textShadowRadius: 5,
+    fontSize: 30,
+    paddingVertical: 15,
   },
 })
 

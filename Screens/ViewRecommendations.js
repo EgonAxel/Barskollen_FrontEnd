@@ -82,7 +82,7 @@ class ViewRecommendations extends React.PureComponent {
               <View style = {styles.beerInformation}>
                 <Text style = {styles.productNameRecommendation}>{item.name}  </Text>
                 <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
-                <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                {/* <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text> */}
                 <Stars
                   display= {Number((item.avg_rating).toFixed(1))}
                   half={true}
@@ -225,10 +225,13 @@ rating: {
   fontSize: 25,
   textAlign: 'center',
 },
+ratingStars: {
+  alignItems: 'center',
+},
 
 // ---------- REKOMMENDATIONER ------------  
   modalStyleRecommendation: {
-    margin: 10,
+    margin: 5,
     width: windowWidth * 0.93,
     backgroundColor: "white",
     borderRadius: 15,
@@ -248,7 +251,7 @@ rating: {
   recommendationHeader: {
     fontSize: 25,
     fontWeight: '700',
-    marginTop: windowHeight * 0.15,
+    marginTop: windowHeight * 0.1,
     textAlign: 'center',
   },
   recommendationText: {
@@ -279,7 +282,7 @@ rating: {
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
   },
   attributeStyle: {
     fontSize: 20,
@@ -295,7 +298,7 @@ rating: {
     height: 100,
     marginTop: 10,
     marginBottom: 10,
-    marginLeft: 10,
+    alignSelf: 'center',
     resizeMode: 'contain',
   },
   myStarStyle: {
@@ -305,12 +308,10 @@ rating: {
     textShadowOffset: {width: 1, height: 1},
     textShadowRadius: 5,
     fontSize: 35,
+    marginBottom: 10,
   },
   myEmptyStarStyle: {
     color: '#009688',
-  },
-  ratingStars: {
-    alignItems: 'center',
   },
   button: {
     alignSelf: 'center',

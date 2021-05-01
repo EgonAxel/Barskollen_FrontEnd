@@ -98,25 +98,27 @@ class ReviewBeer extends React.PureComponent {
 
   _renderListItem(item) {
     return(
-        <View style = {styles.beerItem}>
+        <View style = {styles.modalStyleRecommendation}>
           <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}}>
-              <View style = {styles.beerInstance}>
-                {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
-                  <View style = {styles.beerInformation}>
-                    <Text style = {styles.productNameRecommendation}>{item.name}</Text>
-                    <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
-                    <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                    <Stars
-                      display= {Number((item.avg_rating))}
-                      half={true}
-                      fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                      emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                      halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                    />
-                  </View>
-              </View> 
+            <View style = {styles.beerInstance}>
+              {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
+              <View style = {styles.beerInformation}>
+                <Text style = {styles.productNameRecommendation}>{item.name}  </Text>
+                <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
+                {/* <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text> */}
+                <Stars
+                  display= {Number((item.avg_rating).toFixed(1))}
+                  half={true}
+                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                />
+              </View>
+            </View> 
+            <View style = {styles.ratingStars}>
+            </View>
           </TouchableOpacity>
-      </View>
+         </View>        
       )
   }
 
@@ -178,7 +180,7 @@ class ReviewBeer extends React.PureComponent {
           onRequestClose={() => {
             this.setModalVisible(!modalVisible);}}>
           <Text style = {styles.recommendationHeader}>Tack för din rating!</Text>
-          <Text style = {styles.recommendationText}>Här är några öl du kanske gillar {"\n"} baserat på ditt betyg.</Text>
+          <Text style = {styles.recommendationText}>Här är några öl du kanske gillar baserat på ditt betyg.</Text>
           <FlatList
             style={{flex: 1}}
             contentContainerStyle={{
@@ -277,38 +279,38 @@ rating: {
   fontSize: 25,
   textAlign: 'center',
 },
+ratingStars: {
+  alignItems: 'center',
+},
 
 // ---------- REKOMMENDATIONER ------------  
-
-  beerItem: {
-    marginTop: beerItemMarginTop,
+  modalStyleRecommendation: {
+    margin: 5,
     width: windowWidth * 0.93,
-    minHeight: 125,
-    maxHeight: 175,
-    backgroundColor: '#ffffff',
+    backgroundColor: "white",
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 1,
-    shadowColor: "#000000",
+    padding: 5,
+    shadowColor: "#000",
     shadowOffset: {
-      width: 3,
-      height: 3
+      width: 0,
+      height: 2
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
   },
   recommendationHeader: {
-    fontSize: 32,
+    fontSize: 25,
     fontWeight: '700',
-    marginTop: windowHeight * 0.15,
+    marginTop: windowHeight * 0.1,
     textAlign: 'center',
   },
   recommendationText: {
-    fontSize: 18,
+    fontSize: 14,
     marginTop: 20,
-    paddingBottom: 25,
     fontWeight: '400',
     textAlign: 'center',
   },
@@ -330,19 +332,11 @@ rating: {
     flexDirection: 'row',
   },
   beerInformation: {
-    maxWidth: windowWidth * 0.55,
+    maxWidth : windowWidth * 0.55,
     marginTop: 15,
     paddingBottom: 5,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
-
-    maxWidth: windowWidth * 0.55,
-    marginTop: 15,
-    paddingBottom: 15,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    left: 20,
-
+    justifyContent: 'space-between',
   },
   attributeStyle: {
     fontSize: 20,
@@ -358,7 +352,7 @@ rating: {
     height: 100,
     marginTop: 10,
     marginBottom: 10,
-    marginLeft: 10,
+    alignSelf: 'center',
     resizeMode: 'contain',
   },
   myStarStyle: {
@@ -368,21 +362,12 @@ rating: {
     textShadowOffset: {width: 1, height: 1},
     textShadowRadius: 5,
     fontSize: 35,
+    marginBottom: 10,
   },
   myEmptyStarStyle: {
     color: '#009688',
   },
-  ratingStars: {
-    alignItems: 'center',
-  },
   button: {
-    // backgroundColor: "#009688",
-    // fontSize: 16,
-    // borderRadius: 20,
-    // paddingVertical: 12,
-    // marginBottom: windowHeight * 0.05,
-    // width: windowWidth * 0.3,
-    // elevation: 2,
     alignSelf: 'center',
     fontSize: 16,
     fontWeight: '600',
@@ -395,11 +380,17 @@ rating: {
     marginBottom: 25,
     borderRadius: usedBorderRadius,
   },
+  buttonOpen: {
+    backgroundColor: "#009688",
+  },
+  buttonClose: {
+    backgroundColor: "#009688",
+  },
   textStyle: {
     color: "white",
     fontWeight: "bold",
     textAlign: "center"
   },
-  })
+})
   
   export default ReviewBeer
