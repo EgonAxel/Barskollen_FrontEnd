@@ -118,7 +118,7 @@ function UserProfileStackScreen() {
         name="UserProfile" 
         component={UserProfile}
         options={{ 
-          title: 'Min profil' ,
+          title: 'Mitt konto' ,
           headerTitleStyle: { alignSelf: 'flex-start' },
           headerStyle: {
             backgroundColor: '#fff',

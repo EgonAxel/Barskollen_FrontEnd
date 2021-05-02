@@ -126,7 +126,7 @@ class ViewRecommendations extends React.PureComponent {
             Alert.alert("Modal has been closed.");
             this.setModalVisible(!modalVisible);}}>
           <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
-          <Text style = {styles.recommendationText}>Här är några öl du kanske gillar baserat på ditt betyg.</Text>
+          <Text style = {styles.recommendationText}>Här är några öl du kanske gillar {'\n'} baserat på ditt betyg.</Text>
           <FlatList
             style={{flex: 1}}
             contentContainerStyle={{
@@ -249,14 +249,15 @@ ratingStars: {
     elevation: 5
   },
   recommendationHeader: {
-    fontSize: 25,
+    fontSize: 28,
     fontWeight: '700',
     marginTop: windowHeight * 0.1,
     textAlign: 'center',
   },
   recommendationText: {
-    fontSize: 14,
+    fontSize: 18,
     marginTop: 20,
+    paddingBottom: 25,
     fontWeight: '400',
     textAlign: 'center',
   },
@@ -314,6 +315,7 @@ ratingStars: {
     color: '#009688',
   },
   button: {
+    width: windowWidth * 0.4,
     alignSelf: 'center',
     fontSize: 16,
     fontWeight: '600',
@@ -323,13 +325,11 @@ ratingStars: {
     paddingHorizontal: 35,
     paddingVertical: 15,
     marginTop: 10,
-    marginBottom: 25,
+    marginBottom: 50,
     borderRadius: usedBorderRadius,
   },
-  buttonOpen: {
-    backgroundColor: "#009688",
-  },
   buttonClose: {
+    marginBottom: 50,
     backgroundColor: "#009688",
   },
   textStyle: {
