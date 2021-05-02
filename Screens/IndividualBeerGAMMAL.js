@@ -15,41 +15,60 @@ async function getValueFor(key) {
   }
 }
 
-class IndividualBeerFromProfile extends React.PureComponent {
+class IndividualBeer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      beer: null,
-      beerDataFetched: false,
-      reviews: [],
-      offset: 0,  //Bestämmer vilken sida från vår API vi laddar in reviews.
+      beers: [],
+      reviews:[],
+      offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
       error: null,
       beer_ID: this.props.route.params.beer_ID,
-      userRating: this.props.route.params.userRating
+      beer_name: this.props.route.params.beer_name,
+      beer_pic: this.props.route.params.beer_pic,
+      beer_type: this.props.route.params.beer_type,
+      beer_percentage: this.props.route.params.beer_percentage,
+      beer_volume: this.props.route.params.beer_volume,
+      beer_container_type: this.props.route.params.beer_container_type,
+      beer_bitterness: this.props.route.params.beer_bitterness,
+      beer_sweetness: this.props.route.params.beer_sweetness,
+      beer_fullness: this.props.route.params.beer_fullness,
+      beer_avgrating: this.props.route.params.beer_avgrating,
+      hasReviewed: null,
+      userRating: null,
     };
   }
-  fetchBeer = () => {
-    getValueFor("Token").then((token) => {
-    axios
-      .get(`http://127.0.0.1:8000/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
-      .then(response => {
-        console.log(response.data)
-        this.setState({
-          beer: response.data,
-          beerDataFetched: true
-        });
+  
+  checkHasReviewed = () => {
+    getValueFor("Username").then((username) => {
+      getValueFor("Token").then((token) => {
+        axios
+          .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}&user=${username}`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .then(response => {
+            if (response.data.results.length > 0) {
+              this.setState({
+                hasReviewed: true,
+                userRating: response.data.results[0].rating
+              });
+            }
+            else {
+              this.setState({
+                hasReviewed: false
+              })
+            }
+          })
+          .catch(error => {
+          console.log(error.message);
+          });
+        })
       })
-      .catch(error => {
-        this.setState({error: error.message});
-      });
-    })
-  };
-  fetchReviews = () => {
+    }
+
+  fetchReview = () => {
     getValueFor("Token").then((token) => {
     axios
       .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
-        console.log(this.state.beerDataFetched)
         this.setState({
           reviews: this.state.reviews.concat(response.data.results),
         });
@@ -65,15 +84,21 @@ class IndividualBeerFromProfile extends React.PureComponent {
         offset: prevState.offset + 20 ,
       }),
       () => {
-        this.fetchReviews();
+        this.fetchReview();
       },
     );
   };
-
-
+  
   componentDidMount() {
-    this.fetchBeer()
-    this.fetchReviews()
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+        this.setState({reviews: []})
+        this.checkHasReviewed();
+        this.fetchReview();
+    });
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
   }
 
  _renderListItem(item) {
@@ -119,25 +144,39 @@ class IndividualBeerFromProfile extends React.PureComponent {
 }
 
 renderUserRelated = () => {
-  return (
-    <View>
-      <View style = {styles.ratingStars}>
-        <Stars
-          display= {Number(this.state.userRating)}
-          half={true}
-          fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
-          emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
-          halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
-        />
-      </View>
-      <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
-      <View>
-        <TouchableOpacity onPress={() => {this.props.navigation.navigate('ViewRecommendations', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, rating: this.state.userRating})}}>
-          <Text style={styles.giveRating}>Visa rekommendationer</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
+  const { hasReviewed } = this.state;
+    if (hasReviewed) {
+      return (
+        <View>
+          <View style = {styles.ratingStars}>
+            <Stars
+              display= {Number(this.state.userRating)}
+              half={true}
+              fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
+              emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
+              halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
+            />
+          </View>
+          <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
+          <View>
+            <TouchableOpacity onPress={() => {this.props.navigation.navigate('ViewRecommendations', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, rating: this.state.userRating})}}>
+              <Text style={styles.giveRating}>Visa rekommendationer</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )
+    }
+    else if (hasReviewed == false){
+      return (
+        <View>
+          <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer_ID, beer_name:this.state.beer_name, beer_pic: this.state.beer_pic, beer_type: this.state.beer_type, beer_bitterness: this.state.beer_bitterness, beer_fullness: this.state.beer_fullness, beer_sweetness: this.state.beer_sweetness, modalVisible: false})}}>
+            <Text style={styles.giveRating}>
+              Ge rating
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }
 }
 
 renderBeerImage = (beer_image, resolution, imageStyle) => {
@@ -150,19 +189,18 @@ renderBeerImage = (beer_image, resolution, imageStyle) => {
 }
 
 renderListHeader = () => {
-  if (this.state.beerDataFetched == true) {
   return (
     <View style={styles.individualBeerScreen}>
       <View style = {styles.viewStyle}>
         <View style={styles.beerTitles}>
-          <Text style = {styles.productNameBold}>{this.state.beer.name}</Text>
-          <Text style = {styles.productNameThin}>{this.state.beer.beer_type}</Text>
+          <Text style = {styles.productNameBold}>{this.state.beer_name}</Text>
+          <Text style = {styles.productNameThin}>{this.state.beer_type}</Text>
           <View style={styles.percentageAndContainer}>
-            <Text style = {styles.containerAndVolumeStyle}>{this.state.beer.container_type + ' • ' + this.state.beer.volume + ' ml • ' + this.state.beer.alcohol_percentage + '% vol'}</Text>
+            <Text style = {styles.containerAndVolumeStyle}>{this.state.beer_container_type + ' • ' + this.state.beer_volume + ' ml • ' + this.state.beer_percentage + '% vol'}</Text>
           </View>
         </View>
         <View style = {styles.imageWrap}>
-          {this.renderBeerImage(this.state.beer.picture_url, '_200.png', styles.beerImage)}
+          {this.renderBeerImage(this.state.beer_pic, '_200.png', styles.beerImage)}
         </View>
         <View style = {styles.textWrap}>
           {/* <View style = {styles.tasteClockWrap}>
@@ -172,14 +210,14 @@ renderListHeader = () => {
           </View> */}
           <View style = {styles.ratingStars}>
             <Stars
-              display= {Number(this.state.beer.avg_rating)}
+              display= {Number(this.state.beer_avgrating)}
               half={true}
               fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
               emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
               halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
             />
           </View>
-          <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer.avg_rating).toFixed(1) + ' av 5'}</Text>
+          <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer_avgrating).toFixed(1) + ' av 5'}</Text>
           {this.renderUserRelated()}
         </View>
       </View>
@@ -187,9 +225,11 @@ renderListHeader = () => {
         <Text style= {styles.ratingTitle}> Ratings </Text>
       </View>
     </View>
+    
   )
-        }
 }
+
+
 
 render() {
   return (
@@ -424,6 +464,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     paddingVertical: 15,
   },
+
 })
 
-export default IndividualBeerFromProfile
+export default IndividualBeer  

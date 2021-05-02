@@ -81,7 +81,7 @@ class UserProfile extends React.PureComponent {
   _renderListItem(item) {
     return(
       <View style = {styles.viewStyle}>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeerFromProfile', {beer_ID: item.beer, userRating: item.rating})}>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer, hasReviewed: true, userRating: item.rating, beerDataFetched: false})}>
           <View style = {styles.reviewDateBar}>
             <Ionicons name="calendar-outline" size={18}></Ionicons>
             <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>

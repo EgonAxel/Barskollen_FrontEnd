@@ -4,11 +4,9 @@ import { createStackNavigator, } from '@react-navigation/stack';
 import { MaterialCommunityIcons, MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { BorderlessButton } from "react-native-gesture-handler";
 import SearchLayout from "react-navigation-addon-search-layout";
-
 import Home from './Home';
 import ExploreBeer from './ExploreBeer';
 import UserProfile from './UserProfile';
-import IndividualBeerFromProfile from './IndividualBeerFromProfile';
 import IndividualBeer from './IndividualBeer';
 import ReviewBeer from './ReviewBeer';
 import ViewRecommendations from './ViewRecommendations';
@@ -63,50 +61,50 @@ const ExploreBeerStack = createStackNavigator();
 function ExploreBeerStackScreen() {
   return (
     <ExploreBeerStack.Navigator>  
-        <ExploreBeerStack.Screen
-          name="Utforska" 
-          component={ExploreBeer} 
-          options={{ 
-            title: 'Utforska',
-            headerTitleStyle: { alignSelf: 'center'},
-            headerStyle: {
-              backgroundColor: '#fff',
-              }
+      <ExploreBeerStack.Screen
+        name="Utforska" 
+        component={ExploreBeer} 
+        options={{ 
+          title: 'Utforska',
+          headerTitleStyle: { alignSelf: 'center'},
+          headerStyle: {
+            backgroundColor: '#fff',
+            }
+          }}
+      />
+      <ExploreBeerStack.Screen 
+        name="IndividualBeer" 
+        component={IndividualBeer}
+        options={{ 
+          title: 'Info',
+          headerTitleStyle: { alignSelf: 'flex-start' },
+          headerStyle: {
+            backgroundColor: '#fff',
             }}
+          } 
         />
-        <ExploreBeerStack.Screen 
-          name="IndividualBeer" 
-          component={IndividualBeer}
-          options={{ 
-            title: 'Info',
-            headerTitleStyle: { alignSelf: 'flex-start' },
-            headerStyle: {
-              backgroundColor: '#fff',
-              }}
-            } 
-         />
-        <ExploreBeerStack.Screen 
-          name="ReviewBeer" 
-          component={ReviewBeer}
-          options={{ 
-            title: 'Betygssätt öl' ,
-            headerTitleStyle: { alignSelf: 'flex-start' },
-            headerStyle: {
-              backgroundColor: '#fff', 
-              }}
-            } 
-         />
-        <ExploreBeerStack.Screen 
-          name="ViewRecommendations" 
-          component={ViewRecommendations}
-          options={{ 
-            title: 'Rekommendationer' ,
-            headerTitleStyle: { alignSelf: 'flex-start' },
-            headerStyle: {
-              backgroundColor: '#fff', 
-              }}
-            } 
-         />
+      <ExploreBeerStack.Screen 
+        name="ReviewBeer" 
+        component={ReviewBeer}
+        options={{ 
+          title: 'Betygssätt öl' ,
+          headerTitleStyle: { alignSelf: 'flex-start' },
+          headerStyle: {
+            backgroundColor: '#fff', 
+            }}
+          } 
+        />
+      <ExploreBeerStack.Screen 
+        name="ViewRecommendations" 
+        component={ViewRecommendations}
+        options={{ 
+          title: 'Rekommendationer' ,
+          headerTitleStyle: { alignSelf: 'flex-start' },
+          headerStyle: {
+            backgroundColor: '#fff', 
+            }}
+          } 
+        />
     </ExploreBeerStack.Navigator>
   );
 }
@@ -128,8 +126,8 @@ function UserProfileStackScreen() {
           } 
       />
       <UserProfileStack.Screen 
-        name="IndividualBeerFromProfile" 
-        component={IndividualBeerFromProfile}
+        name="IndividualBeer" 
+        component={IndividualBeer}
         options={{ 
           title: 'Info' ,
           headerTitleStyle: { alignSelf: 'flex-start' },
@@ -138,6 +136,28 @@ function UserProfileStackScreen() {
           }
         }}
       />
+      <UserProfileStack.Screen 
+        name="ReviewBeer" 
+        component={ReviewBeer}
+        options={{ 
+          title: 'Info' ,
+          headerTitleStyle: { alignSelf: 'flex-start' },
+          headerStyle: {
+            backgroundColor: '#fff',
+          }
+        }}
+      />
+      <UserProfileStack.Screen 
+        name="ViewRecommendations" 
+        component={ViewRecommendations}
+        options={{ 
+          title: 'Rekommendationer' ,
+          headerTitleStyle: { alignSelf: 'flex-start' },
+          headerStyle: {
+            backgroundColor: '#fff', 
+            }}
+          } 
+        />
     </UserProfileStack.Navigator>
   );
 }
