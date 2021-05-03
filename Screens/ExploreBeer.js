@@ -161,7 +161,10 @@ class Beers extends React.PureComponent {
         {/* {shouldShowSearchArea ? ( */}
 
     <View style={styles.filterAndSearchArea}>
-      <View>  
+      <View style={ Platform.OS === 'ios'
+          ? searchBarStyles.searchBarIOS
+          : searchBarStyles.searchBarAndroid}> 
+
       <TextInput style = {searchBarStyles}
         useNativeAndroidPickerStyle={false}
         clearButtonMode = 'always'

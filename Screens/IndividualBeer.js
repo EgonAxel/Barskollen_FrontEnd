@@ -310,11 +310,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignSelf: 'center', 
   },
-
-  reviewUsernameAndIcon: {
-    flexDirection:"row",
-    alignSelf: 'center', 
-  },
   reviewUsername: {
     marginTop: reviewUsernameMarginTop,
     fontSize: 22,
