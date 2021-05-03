@@ -80,7 +80,7 @@ class ViewRecommendations extends React.PureComponent {
             <View style = {styles.beerInstance}>
               {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
               <View style = {styles.beerInformation}>
-                <Text style = {styles.productNameRecommendation}>{item.name}  </Text>
+                <Text style = {styles.productNameRecommendation}>{item.name}</Text>
                 <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
                 {/* <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text> */}
                 <Stars
@@ -128,7 +128,7 @@ class ViewRecommendations extends React.PureComponent {
           <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
           <Text style = {styles.recommendationText}>Här är några öl du kanske gillar baserat på ditt betyg.</Text>
           <FlatList
-            style={{flex: 1}}
+            style={styles.alignRecommendations}
             contentContainerStyle={{
               backgroundColor: '#ffffff',
               alignItems: 'center',
@@ -153,91 +153,96 @@ const usedBorderRadius = 15;
 const styles = StyleSheet.create({
   
 // ÖL SOM RATEAS
-wholePage: {
-  height: windowHeight,
-  backgroundColor: '#ffffff',
-},
-viewStyle: {
-  marginTop: 15,
-  width: 350,
-  minHeight: 500,
-  maxHeight: 1000,
-  backgroundColor: '#ffffff',
-  borderRadius: 15,
-  borderStyle: 'solid', 
-  borderColor: '#dadada',
-  borderWidth: 1,
-  shadowColor: "#000000",
-  shadowOffset: {
-    width: 1,
-    height: 1
+  wholePage: {
+    height: windowHeight,
+    backgroundColor: '#ffffff',
   },
-  shadowOpacity: 0.5,
-  shadowRadius: 3,
-  elevation: 20,
-  alignSelf: 'center'
-},
-productName: {
-  fontSize: 25,
-  fontWeight: '700',
-  marginTop: 25,
-  textAlign: 'center',
-  marginBottom: 15
-},
-textInputFields: {
-  paddingLeft: 15,
-  paddingRight: 15,
-  paddingTop: 10,
-  paddingBottom: 10,
-  marginRight: 40,
-  marginTop: 10,
-  marginBottom: 5,
-  marginLeft: 40,
-  height: 75,
-  width: windowWidth * 0.7,
-  borderColor: '#009688',
-  borderWidth: 2,
-  borderRadius: 10,
-  backgroundColor: 'white',
-  alignSelf: 'center',
-},
-sendReview: {
-  alignSelf: 'center',
-  fontSize: 16,
-  fontWeight: '600',
-  backgroundColor: '#009688',
-  color: '#ffffff',
-  overflow: 'hidden',
-  paddingHorizontal: 35,
-  paddingVertical: 15,
-  marginTop: 10,
-  marginBottom: 25,
-  borderRadius: usedBorderRadius,
-},
-beerImage: {
-  width: 125,
-  height: windowHeight * 0.3,
-  marginVertical: 20,
-  resizeMode: 'contain',
-  alignSelf: 'center'
-},
-rating: {
-  fontSize: 25,
-  textAlign: 'center',
-},
-ratingStars: {
-  alignItems: 'center',
-},
+  viewStyle: {
+    marginTop: 15,
+    width: 350,
+    minHeight: 500,
+    maxHeight: 1000,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    borderStyle: 'solid', 
+    borderColor: '#dadada',
+    borderWidth: 1,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 1,
+      height: 1
+      },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 20,
+    alignSelf: 'center'
+  },
+  productName: {
+    fontSize: 25,
+    fontWeight: '700',
+    marginTop: 25,
+    textAlign: 'center',
+    marginBottom: 15
+  },
+  textInputFields: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginRight: 40,
+    marginTop: 10,
+    marginBottom: 5,
+    marginLeft: 40,
+    height: 75,
+    width: windowWidth * 0.7,
+    borderColor: '#009688',
+    borderWidth: 2,
+    borderRadius: 10,
+    backgroundColor: 'white',
+    alignSelf: 'center',
+  },
+  sendReview: {
+    alignSelf: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    backgroundColor: '#009688',
+    color: '#ffffff',
+    overflow: 'hidden',
+    paddingHorizontal: 35,
+    paddingVertical: 15,
+    marginTop: 10,
+    marginBottom: 25,
+    borderRadius: usedBorderRadius,
+  },
+  beerImage: {
+    width: 125,
+    height: windowHeight * 0.3,
+    marginVertical: 20,
+    resizeMode: 'contain',
+    alignSelf: 'center'
+  },
+  rating: {
+    fontSize: 25,
+    textAlign: 'center',
+  },
+  ratingStars: {
+    alignItems: 'center',
+  },
 
 // ---------- REKOMMENDATIONER ------------  
+  alignRecommendations: {
+    flexDirection: 'row',
+    alignContent: 'center',
+    flex: 1,
+  },
   modalStyleRecommendation: {
-    margin: 5,
     width: windowWidth * 0.93,
     backgroundColor: "white",
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 1,
+    margin: 5,
     padding: 5,
     shadowColor: "#000",
     shadowOffset: {
@@ -246,7 +251,7 @@ ratingStars: {
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   recommendationHeader: {
     fontSize: 25,

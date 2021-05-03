@@ -21,10 +21,10 @@ class IndividualBeer extends React.PureComponent {
     this.state = {
       beer_ID: this.props.route.params.beer_ID,
       beer: this.props.route.params.beer,
-      beerDataFetched: this.props.route.params.beerDataFetched,
       reviews: [],
       offset: 0,  //Bestämmer vilken sida från vår API vi laddar in reviews.
       error: null,
+      beerDataFetched: this.props.route.params.beerDataFetched,
       hasReviewed: this.props.route.params.hasReviewed,
       userRating: this.props.route.params.userRating
     };
@@ -32,7 +32,7 @@ class IndividualBeer extends React.PureComponent {
   fetchBeer = () => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://127.0.0.1:8000/beer/${this.state.beer_ID}/`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/${this.state.beer_ID}/`, { headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beer: response.data,
@@ -44,18 +44,25 @@ class IndividualBeer extends React.PureComponent {
       });
     })
   };
-  fetchReviews = () => {
+  fetchReviews = (firstLoad) => {
     getValueFor("Token").then((token) => {
     axios
-      .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
-        this.setState({
-          reviews: this.state.reviews.concat(response.data.results),
-        });
+        if (firstLoad) {
+          this.setState({
+            reviews: response.data.results,
+          });
+        }
+        else {
+          this.setState({
+            reviews: this.state.reviews.concat(response.data.results),
+          })
+        }
       })
       .catch(error => {
         this.setState({error: error.message});
-      });
+      })
     })
   };
   fetchMoreReviews = () => {
@@ -64,7 +71,7 @@ class IndividualBeer extends React.PureComponent {
         offset: prevState.offset + 20 ,
       }),
       () => {
-        this.fetchReviews();
+        this.fetchReviews(false);
       },
     );
   };
@@ -98,165 +105,162 @@ class IndividualBeer extends React.PureComponent {
       if (this.state.beerDataFetched != true) {
         this.fetchBeer()
       }
-      this.fetchReviews()
+      this.fetchReviews(true)
       if (this.state.hasReviewed != true) {
         this.checkHasReviewed()
       }
     });
   }
-
   componentWillUnmount() {
     this._unsubscribe();
   }
-
- _renderListItem(item) {
-  if (item.review_text != null) {
-    return(
-      <View style = {styles.commentWrap}>
-        <View style = {styles.reviewDateBar}>
-          <Ionicons name="calendar-outline" size={18}></Ionicons>
-          <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
-        </View>
-        <View style={styles.reviewUsernameAndIcon}>
-          <Ionicons name="person" size={23} style={styles.usernameIcon}/>
-          <Text style = {styles.reviewUsername}>{item.user}</Text>
-        </View>
-        <Stars
-          display= {Number(item.rating)}
-          half={true}
-          fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
-          emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
-          halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}/>
-          <Text style = {styles.reviewText}>{item.review_text} </Text>
-      </View>
-    )}
-  else {
-    return(
-      <View style = {styles.commentWrap}>
-        <View style = {styles.reviewDateBar}>
-          <Ionicons name="calendar-outline" size={18}></Ionicons>
-          <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
-        </View>
-        <View style={styles.reviewUsernameAndIcon}>
-          <Ionicons name="person" size={23} style={styles.usernameIcon}/>
-          <Text style = {styles.reviewUsername}>{item.user}</Text>
-        </View> 
-        <Stars
-          display= {Number(item.rating)}
-          half={true}
-          fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
-          emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
-          halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}/>
-      </View>
-  )}
-}
-
-renderUserRelated = () => {
-  const { hasReviewed } = this.state;
-    if (hasReviewed) {
-      return (
-        <View>
-          <View style = {styles.ratingStars}>
-            <Stars
-              display= {Number(this.state.userRating)}
-              half={true}
-              fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
-              emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
-              halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
-            />
+  _renderListItem(item) {
+    if (item.review_text != null) {
+      return(
+        <View style = {styles.commentWrap}>
+          <View style = {styles.reviewDateBar}>
+            <Ionicons name="calendar-outline" size={18}></Ionicons>
+            <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
           </View>
-          <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
+          <View style={styles.reviewUsernameAndIcon}>
+            <Ionicons name="person" size={23} style={styles.usernameIcon}/>
+            <Text style = {styles.reviewUsername}>{item.user}</Text>
+          </View>
+          <Stars
+            display= {Number(item.rating)}
+            half={true}
+            fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
+            emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
+            halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}/>
+            <Text style = {styles.reviewText}>{item.review_text} </Text>
+        </View>
+      )
+    }
+    else {
+      return(
+        <View style = {styles.commentWrap}>
+          <View style = {styles.reviewDateBar}>
+            <Ionicons name="calendar-outline" size={18}></Ionicons>
+            <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
+          </View>
+          <View style={styles.reviewUsernameAndIcon}>
+            <Ionicons name="person" size={23} style={styles.usernameIcon}/>
+            <Text style = {styles.reviewUsername}>{item.user}</Text>
+          </View> 
+          <Stars
+            display= {Number(item.rating)}
+            half={true}
+            fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
+            emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
+            halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}/>
+        </View>
+      )
+    }
+  }
+
+  renderUserRelated = () => {
+    const { hasReviewed } = this.state;
+      if (hasReviewed) {
+        return (
           <View>
-            <TouchableOpacity onPress={() => {this.props.navigation.navigate('ViewRecommendations', {beer_ID: this.state.beer.beer_ID, beer_name:this.state.beer.name, beer_pic: this.state.beer.picture_url, beer_type: this.state.beer.beer_type, beer_bitterness: this.state.beer.bitterness, beer_fullness: this.state.beer.fullness, beer_sweetness: this.state.beer.sweetness, rating: this.state.userRating})}}>
-              <Text style={styles.giveRating}>Visa rekommendationer</Text>
+            <View style = {styles.ratingStars}>
+              <Stars
+                display= {Number(this.state.userRating)}
+                half={true}
+                fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
+                emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
+                halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
+              />
+            </View>
+            <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
+            <View>
+              <TouchableOpacity onPress={() => {this.props.navigation.navigate('ViewRecommendations', {beer_ID: this.state.beer.beer_ID, beer_name:this.state.beer.name, beer_pic: this.state.beer.picture_url, beer_type: this.state.beer.beer_type, beer_bitterness: this.state.beer.bitterness, beer_fullness: this.state.beer.fullness, beer_sweetness: this.state.beer.sweetness, rating: this.state.userRating})}}>
+                <Text style={styles.giveRating}>Visa rekommendationer</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )
+      }
+      else if (hasReviewed == false){
+        return (
+          <View>
+            <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer: this.state.beer, modalVisible: false})}}>
+              <Text style={styles.giveRating}>
+                Ge rating
+              </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      )
+        )
+      }
+  }
+
+  renderBeerImage = (beer_image, resolution, imageStyle) => {
+    if (beer_image == null) {
+      return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
     }
-    else if (hasReviewed == false){
+    else {
+      return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
+    }
+  }
+
+  renderListHeader = () => {
+    if (this.state.beerDataFetched == true) {
       return (
         <View>
-          <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer_ID: this.state.beer.beer_ID, beer_name:this.state.beer.name, beer_pic: this.state.beer.picture_url, beer_type: this.state.beer.beer_type, beer_bitterness: this.state.beer.bitterness, beer_fullness: this.state.beer.fullness, beer_sweetness: this.state.beer.sweetness, modalVisible: false})}}>
-            <Text style={styles.giveRating}>
-              Ge rating
-            </Text>
-          </TouchableOpacity>
+          <View style = {styles.viewStyle}>
+            <View style={styles.beerTitles}>
+              <Text style = {styles.productNameBold}>{this.state.beer.name}</Text>
+              <Text style = {styles.productNameThin}>{this.state.beer.beer_type}</Text>
+              <View style={styles.percentageAndContainer}>
+                <Text style = {styles.containerAndVolumeStyle}>{this.state.beer.container_type + ' • ' + this.state.beer.volume + ' ml • ' + this.state.beer.alcohol_percentage + '% vol'}</Text>
+              </View>
+            </View>
+            <View style = {styles.imageWrap}>
+              {this.renderBeerImage(this.state.beer.picture_url, '_200.png', styles.beerImage)}
+            </View>
+            <View style = {styles.textWrap}>
+              {/* <View style = {styles.tasteClockWrap}>
+                <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + this.state.beer_bitterness}</Text>
+                <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + this.state.beer_fullness}</Text>
+                <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  this.state.beer_sweetness}</Text>
+              </View> */}
+              <View style = {styles.ratingStars}>
+                <Stars
+                  display= {Number(this.state.beer.avg_rating)}
+                  half={true}
+                  fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
+                  emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
+                  halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
+                />
+              </View>
+              <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer.avg_rating).toFixed(1) + ' av 5'}</Text>
+              {this.renderUserRelated()}
+            </View>
+          </View>
+          <View>
+            <Text style= {styles.ratingTitle}> Ratings </Text>
+          </View>
         </View>
       )
     }
-}
-
-renderBeerImage = (beer_image, resolution, imageStyle) => {
-  if (beer_image == null) {
-    return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
   }
-  else {
-    return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
-  }
-}
 
-renderListHeader = () => {
-  if (this.state.beerDataFetched == true) {
-  return (
-    <View style={styles.individualBeerScreen}>
-      <View style = {styles.viewStyle}>
-        <View style={styles.beerTitles}>
-          <Text style = {styles.productNameBold}>{this.state.beer.name}</Text>
-          <Text style = {styles.productNameThin}>{this.state.beer.beer_type}</Text>
-          <View style={styles.percentageAndContainer}>
-            <Text style = {styles.containerAndVolumeStyle}>{this.state.beer.container_type + ' • ' + this.state.beer.volume + ' ml • ' + this.state.beer.alcohol_percentage + '% vol'}</Text>
-          </View>
-        </View>
-        <View style = {styles.imageWrap}>
-          {this.renderBeerImage(this.state.beer.picture_url, '_200.png', styles.beerImage)}
-        </View>
-        <View style = {styles.textWrap}>
-          {/* <View style = {styles.tasteClockWrap}>
-            <Text style = {styles.tasteClockStyle}>{'Bitterhet: ' + this.state.beer_bitterness}</Text>
-            <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + this.state.beer_fullness}</Text>
-            <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  this.state.beer_sweetness}</Text>
-          </View> */}
-          <View style = {styles.ratingStars}>
-            <Stars
-              display= {Number(this.state.beer.avg_rating)}
-              half={true}
-              fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
-              emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
-              halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
-            />
-          </View>
-          <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer.avg_rating).toFixed(1) + ' av 5'}</Text>
-          {this.renderUserRelated()}
-        </View>
-      </View>
-      <View>
-        <Text style= {styles.ratingTitle}> Ratings </Text>
-      </View>
-    </View>
-  )
-        }
-}
-
-render() {
-  return (
-    <FlatList
-      style={{flex: 1, backgroundColor: '#ffffff'}}
-      contentContainerStyle={{
-        backgroundColor: '#ffffff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        // marginTop: 15,
-      }}
-
-      data={this.state.reviews}
-     
-      keyExtractor={(beer, index) => String(index)}
-      renderItem={({ item }) => this._renderListItem(item)}
-      ListHeaderComponent={this.renderListHeader()}
-      //horizontal={true}
-       />
-       
+  render() {
+    return (
+      <FlatList
+        style={{flex: 1, backgroundColor: '#ffffff'}}
+        contentContainerStyle={{
+          backgroundColor: '#ffffff',
+          alignItems: 'center',
+          justifyContent: 'center',
+          // marginTop: 15,
+        }}
+        data={this.state.reviews}
+        keyExtractor={(beer, index) => String(index)}
+        renderItem={({ item }) => this._renderListItem(item)}
+        ListHeaderComponent={this.renderListHeader()}
+        //horizontal={true}
+      />
     );
   }
 }
@@ -269,10 +273,6 @@ const beerInformationFontSize = 16;
 
 const styles = StyleSheet.create({
 
-  individualBeerScreen: {
-    minHeight: 650,
-    maxHeight: windowHeight,
-  },
   viewStyle: {
     width: 350,
     maxHeight: windowHeight,

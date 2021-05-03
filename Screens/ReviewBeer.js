@@ -23,13 +23,7 @@ class ReviewBeer extends React.PureComponent {
     super(props);
     this.state = {
         stars: 0,
-        beer_ID: this.props.route.params.beer_ID,
-        beer_pic: this.props.route.params.beer_pic,
-        beer_name: this.props.route.params.beer_name,
-        beer_type: this.props.route.params.beer_type,
-        beer_bitterness: this.props.route.params.beer_bitterness,
-        beer_fullness: this.props.route.params.beer_fullness,
-        beer_sweetness: this.props.route.params.beer_sweetness,
+        beer: this.props.route.params.beer,
         modalVisible: this.props.route.params.modalVisible,
         error: null,
         recommendations: [],
@@ -40,21 +34,19 @@ class ReviewBeer extends React.PureComponent {
     this.setState({ review: text })
     }
   
-  postRatingComment(beer_ID, beer_name, starValue, review) {
+  postReview(beer_ID, starValue, review) {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
-      if (review == "") { 
-        axios
-          .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+        if (review == "") {
+          axios.post(`http://127.0.0.1:8000/review/`, { beer: beer_ID, user: username, rating: starValue }, { headers: { Authorization: 'Token ' + token }})
           .catch(error => {
-          console.log(error.message);
+            console.log(error.message);
           });
         }
         else {
-          axios
-            .post(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { beer:beer_ID, user:username, beer_name: beer_name, rating: starValue, review_text: review, headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
-            .catch(error => {
-              console.log(error.message);
+          axios.post(`http://127.0.0.1:8000/review/`, { beer: beer_ID, user: username, rating: starValue, review_text: review }, { headers: { Authorization: 'Token ' + token }})
+          .catch(error => {
+            console.log(error.message);
           });
         }
       });
@@ -76,11 +68,6 @@ class ReviewBeer extends React.PureComponent {
         this.setState({error: error.message});
         });
       });
-  }
-
-  componentDidMount() {
-    // this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.rating, this.state.review)
-    // this.getRecommendations(this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
   }
 
   setModalVisible = (visible) => {
@@ -133,9 +120,9 @@ class ReviewBeer extends React.PureComponent {
           >  
         <View style = {styles.viewStyle}>
           <Text style = {styles.productName}>
-            {this.state.beer_name}
+            {this.state.beer.name}
           </Text>
-          {this.renderBeerImage(this.state.beer_pic, '_200.png', styles.beerImage)}
+          {this.renderBeerImage(this.state.beer.picture_url, '_200.png', styles.beerImage)}
             <View style={styles.ratingStars}>
               <Stars
                 update={(val)=>{this.setState({stars: val})}}
@@ -153,15 +140,24 @@ class ReviewBeer extends React.PureComponent {
               placeholderTextColor = "grey"
               returnKeyType="go"
               onChangeText = {this.reviewText}
-              onSubmitEditing={() => { this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review) }}
+              onSubmitEditing={() => {
+                if (this.state.stars > 0) {
+                  this.postReview(this.state.beer.beer_ID, this.state.stars, this.state.review),
+                  this.getRecommendations(this.state.beer.beer_ID, this.state.stars, this.state.beer.beer_type, this.state.beer.bitterness, this.state.beer.fullness, this.state.beer.sweetness),
+                  this.setModalVisible(true)
+                }
+                else {
+                  Alert.alert("Noll stjärnor?", "Så dåliga öl finns det inte. Kör en halv i alla fall!")
+                }
+              }}
               blurOnSubmit={false}
               multiline={true}
             />
             <TouchableOpacity 
               onPress={() => {
                 if (this.state.stars > 0) {
-                  this.postRatingComment(this.state.beer_ID, this.state.beer_name, this.state.stars, this.state.review),
-                  this.getRecommendations(this.state.beer_ID, this.state.stars, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness),
+                  this.postReview(this.state.beer.beer_ID, this.state.stars, this.state.review),
+                  this.getRecommendations(this.state.beer.beer_ID, this.state.stars, this.state.beer.beer_type, this.state.beer.bitterness, this.state.beer.fullness, this.state.beer.sweetness),
                   this.setModalVisible(true)
                 }
                 else {

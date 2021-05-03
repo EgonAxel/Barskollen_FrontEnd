@@ -66,10 +66,8 @@ function ExploreBeerStackScreen() {
         component={ExploreBeer} 
         options={{ 
           title: 'Utforska',
-          headerTitleStyle: { alignSelf: 'center'},
-          headerStyle: {
-            backgroundColor: '#fff',
-            }
+          headerTitleStyle: { alignSelf: 'center' },
+          headerStyle: { backgroundColor: '#fff' }
           }}
       />
       <ExploreBeerStack.Screen 
@@ -78,32 +76,26 @@ function ExploreBeerStackScreen() {
         options={{ 
           title: 'Info',
           headerTitleStyle: { alignSelf: 'flex-start' },
-          headerStyle: {
-            backgroundColor: '#fff',
-            }}
-          } 
-        />
+          headerStyle: { backgroundColor: '#fff' }
+        }}
+      />
       <ExploreBeerStack.Screen 
         name="ReviewBeer" 
         component={ReviewBeer}
         options={{ 
           title: 'Betygssätt öl' ,
           headerTitleStyle: { alignSelf: 'flex-start' },
-          headerStyle: {
-            backgroundColor: '#fff', 
-            }}
-          } 
-        />
+          headerStyle: { backgroundColor: '#fff' }
+        }} 
+      />
       <ExploreBeerStack.Screen 
         name="ViewRecommendations" 
         component={ViewRecommendations}
         options={{ 
           title: 'Rekommendationer' ,
           headerTitleStyle: { alignSelf: 'flex-start' },
-          headerStyle: {
-            backgroundColor: '#fff', 
-            }}
-          } 
+          headerStyle: { backgroundColor: '#fff' }
+        }} 
         />
     </ExploreBeerStack.Navigator>
   );
