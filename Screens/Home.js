@@ -27,9 +27,48 @@ const AppButton = ({ onPress, title }) => (
 
 class Home extends React.PureComponent {
 
+secondsUntilFriday() {
+
+  let secondsLeftUntillFriday = 0;
+  let dayFromFriday = 0;
+
+  if (moment().weekday() == 1) {
+    dayFromFriday = 2;
+  }
+  else if (moment().weekday() == 2){
+    dayFromFriday = 3;
+  }
+  else if (moment().weekday() == 3){
+    dayFromFriday = 4;
+  }
+  else if (moment().weekday() == 4){
+    dayFromFriday = 5;
+  }
+  else if (moment().weekday() == 5){
+    secondsLeftUntillFriday = 604800;
+
+    return(secondsLeftUntillFriday)
+  }
+  else if (moment().weekday() == 6){
+    dayFromFriday = 0;
+  }
+  else if (moment().weekday() == 7){
+    dayFromFriday = 1;
+  }
+
+  let secondsInDays = dayFromFriday * 86400;
+  let secondsInHours = (moment().hour() + 2) * 3600;
+  let secondsInMinutes = moment().minute() * 60;
+  let seconsInSeconds = moment().seconds();
+
+  secondsLeftUntillFriday = secondsLeftUntillFriday + secondsInDays + secondsInHours + secondsInMinutes + seconsInSeconds;
+
+  return(secondsLeftUntillFriday) 
+}  
+
 render(){
-    
 return (
+
 <SafeAreaProvider style = {{backgroundColor: '#ffff'}}>
   <View >
     <Header                   // --- För att ha en header behövs en safearea runt appen 
@@ -41,15 +80,14 @@ return (
           centerComponent={<Image style = {{ width: 150, height: 150}} source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>}
           />          
     <View style={styles.buttonContainer}>
-      <Text style = {styles.fridayTextStyle}> Det är fredag om... </Text>
+      <Text style = {styles.fridayTextStyle}> Det är fredag om...</Text>
       <CountDown
-        until={604800} // 
+        until={604800 - this.secondsUntilFriday()}  
         size={30}
         digitStyle={{backgroundColor: '#009688'}}
         digitTxtStyle={{color: '#ffffff'}}
         timeLabels={{d: 'Dagar', h: 'Timmar', m: 'Minuter', s: 'Sekunder'}}
         style = {{zIndex: 100,}}
-        onPress={() => console.log(moment().format())}
       />
 
 
