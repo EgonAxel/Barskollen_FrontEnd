@@ -27,44 +27,70 @@ const AppButton = ({ onPress, title }) => (
 
 class Home extends React.PureComponent {
 
-secondsUntilFriday() {
+  untilFriday = () => {
+    const currentDay = moment().weekday();
+    const currentHour = moment().hours();
+    const currentMinute = moment().minutes();
+    const currentSecond = moment().seconds();
+    // [{monday = 1}, {tuesday = 2}, {wednesday = 3}, {thursday = 4}, {friday = 5}, {saturday = 6}, {sunday = 7}]
+    const countdownDay = 5;
+    const hoursInDay = 24;
+    const secondsInMinute = 60;
+    const minutesInHour = 60;
+    const seconds = secondsInMinute - currentSecond;
+    const minutes = ((minutesInHour - currentMinute) * secondsInMinute);
+    const hours = (hoursInDay - currentHour - 1) * minutesInHour * secondsInMinute;
+    const secondsToMidnight = hours + minutes + seconds;
+    const secondsToCountdownDay = (countdownDay - currentDay - 1) * hoursInDay * minutesInHour * secondsInMinute;
 
-  let secondsLeftUntillFriday = 0;
-  let dayFromFriday = 0;
+    const tenHours = minutesInHour * secondsInMinute * 10;
 
-  if (moment().weekday() == 1) {
-    dayFromFriday = 2;
-  }
-  else if (moment().weekday() == 2){
-    dayFromFriday = 3;
-  }
-  else if (moment().weekday() == 3){
-    dayFromFriday = 4;
-  }
-  else if (moment().weekday() == 4){
-    dayFromFriday = 5;
-  }
-  else if (moment().weekday() == 5){
-    secondsLeftUntillFriday = 604800;
-
-    return(secondsLeftUntillFriday)
-  }
-  else if (moment().weekday() == 6){
-    dayFromFriday = 0;
-  }
-  else if (moment().weekday() == 7){
-    dayFromFriday = 1;
+    return(
+      (secondsToCountdownDay + secondsToMidnight)
+      //Countdown till Systembolaget öppnar på fredag (10:00)
+      //(secondsToCountdownDay + secondsToMidnight + tenHours)
+    )
   }
 
-  let secondsInDays = dayFromFriday * 86400;
-  let secondsInHours = (moment().hour() + 2) * 3600;
-  let secondsInMinutes = moment().minute() * 60;
-  let seconsInSeconds = moment().seconds();
 
-  secondsLeftUntillFriday = secondsLeftUntillFriday + secondsInDays + secondsInHours + secondsInMinutes + seconsInSeconds;
+// secondsUntilFriday() {
 
-  return(secondsLeftUntillFriday) 
-}  
+//   let secondsLeftUntillFriday = 0;
+//   let dayFromFriday = 0;
+
+//   if (moment().weekday() == 1) {
+//     dayFromFriday = 2;
+//   }
+//   else if (moment().weekday() == 2){
+//     dayFromFriday = 3;
+//   }
+//   else if (moment().weekday() == 3){
+//     dayFromFriday = 4;
+//   }
+//   else if (moment().weekday() == 4){
+//     dayFromFriday = 5;
+//   }
+//   else if (moment().weekday() == 5){
+//     secondsLeftUntillFriday = 604800;
+
+//     return(secondsLeftUntillFriday)
+//   }
+//   else if (moment().weekday() == 6){
+//     dayFromFriday = 0;
+//   }
+//   else if (moment().weekday() == 7){
+//     dayFromFriday = 1;
+//   }
+
+//   let secondsInDays = dayFromFriday * 86400;
+//   let secondsInHours = (moment().hour() + 2) * 3600;
+//   let secondsInMinutes = moment().minute() * 60;
+//   let seconsInSeconds = moment().seconds();
+
+//   secondsLeftUntillFriday = secondsLeftUntillFriday + secondsInDays + secondsInHours + secondsInMinutes + seconsInSeconds;
+
+//   return(secondsLeftUntillFriday) 
+// }  
 
 render(){
 return (
@@ -82,7 +108,8 @@ return (
     <View style={styles.buttonContainer}>
       <Text style = {styles.fridayTextStyle}> Det är fredag om...</Text>
       <CountDown
-        until={604800 - this.secondsUntilFriday()}  
+        // until={604800 - this.secondsUntilFriday()}
+        until={this.untilFriday()}  
         size={30}
         digitStyle={{backgroundColor: '#009688'}}
         digitTxtStyle={{color: '#ffffff'}}
@@ -92,7 +119,7 @@ return (
 
 
         <AppButton 
-            title="Topplistan"
+            title="Hitta nya öl"
             onPress={() => {{this.props.navigation.navigate('Utforska')}
               console.log( 'Klicka topplistan')
               // axios
@@ -111,7 +138,7 @@ return (
       <StatusBar style="dark" />
       </View> 
 	        <MakeItRain
-	          numItems={5}
+	          numItems={0}
 	          itemComponent={<Ionicons name="beer"  size={50}/>}
            // itemComponent={<Image style = {{width: 50, height: 50, resizeMode: 'contain'}} source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>}
            // itemComponent={<Image source = {{uri: "https://product-cdn.systembolaget.se/productimages/" + this.state.beerImage.beer + "/" + this.state.beerImage.beer + '_100.png' }}/>}
@@ -128,7 +155,6 @@ return (
   </SafeAreaProvider> 
  
     )
-    
     }
 }
 
@@ -139,7 +165,6 @@ const styles = StyleSheet.create({
         padding: 10,
         justifyContent: 'center',
     },
-
     appButtonContainer: {
         margin: 15,
         elevation: 8,
@@ -158,7 +183,6 @@ const styles = StyleSheet.create({
       padding: 10,
     }, 
     appButtonText: {
-       // fontFamily: 'Avenir',
         fontSize: 18,
         color: "#fff",
         fontWeight: "bold",

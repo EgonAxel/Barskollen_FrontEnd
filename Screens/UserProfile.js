@@ -138,17 +138,17 @@ class UserProfile extends React.PureComponent {
                 <RNPickerSelect style={pickerSelectStyles}
                   useNativeAndroidPickerStyle={false}
                   placeholder={{
-                  label: 'Sortering',
-                  value: null,
+                  label: 'Sortera datum (nyast först)',
+                  value: '-review_date',
+                  inputLabel: 'Datum (nyast först)',
                   }}
                   onValueChange={(value) => this.setState({
                     orderingValue: value},
                     this.handleFilterAction)}
                   items={[
-                    { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
-                    { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
-                    { label: 'Sortera datum (nyast först)', value: '-review_date', inputLabel: 'Datum (nyast först)' },
                     { label: 'Sortera datum (äldst först)', value: 'review_date', inputLabel: 'Datum (äldst först)' },
+                    { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
+                    { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
                   ]}
                 />
             </View>
@@ -198,7 +198,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#009688',
     borderRadius: 10,
-    color: 'black',
+    color: '#000000',
     alignSelf: 'center',
   },
   inputAndroid: {
@@ -208,7 +208,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#009688',
     borderRadius: 10,
-    color: 'black',
+    color: '#000000',
   },
 });
 
