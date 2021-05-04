@@ -79,7 +79,7 @@ class IndividualBeer extends React.PureComponent {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
         axios
-          .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}&user=${username}`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+          .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}&user=${username}`, { headers: { 'Authorization': 'Token ' + token }}) //Här behövs din egen adress till APIn
           .then(response => {
             if (response.data.results.length > 0) {
               this.setState({
@@ -99,7 +99,6 @@ class IndividualBeer extends React.PureComponent {
       })
     })
   }
-
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       if (this.state.beerDataFetched != true) {
@@ -157,7 +156,6 @@ class IndividualBeer extends React.PureComponent {
       )
     }
   }
-
   renderUserRelated = () => {
     const { hasReviewed } = this.state;
       if (hasReviewed) {
@@ -174,7 +172,7 @@ class IndividualBeer extends React.PureComponent {
             </View>
             <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
             <View>
-              <TouchableOpacity onPress={() => {this.props.navigation.navigate('ViewRecommendations', {beer_ID: this.state.beer.beer_ID, beer_name:this.state.beer.name, beer_pic: this.state.beer.picture_url, beer_type: this.state.beer.beer_type, beer_bitterness: this.state.beer.bitterness, beer_fullness: this.state.beer.fullness, beer_sweetness: this.state.beer.sweetness, rating: this.state.userRating})}}>
+              <TouchableOpacity onPress={() => {this.props.navigation.navigate('ViewRecommendations', {beer: this.state.beer, rating: this.state.userRating})}}>
                 <Text style={styles.giveRating}>Visa rekommendationer</Text>
               </TouchableOpacity>
             </View>
@@ -193,7 +191,6 @@ class IndividualBeer extends React.PureComponent {
         )
       }
   }
-
   renderBeerImage = (beer_image, resolution, imageStyle) => {
     if (beer_image == null) {
       return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
@@ -202,7 +199,6 @@ class IndividualBeer extends React.PureComponent {
       return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
     }
   }
-
   renderListHeader = () => {
     if (this.state.beerDataFetched == true) {
       return (
@@ -244,11 +240,10 @@ class IndividualBeer extends React.PureComponent {
       )
     }
   }
-
   render() {
     return (
       <FlatList
-        style={{flex: 1, backgroundColor: '#ffffff'}}
+        style={{ flex: 1, backgroundColor: '#ffffff' }}
         contentContainerStyle={{
           backgroundColor: '#ffffff',
           alignItems: 'center',
@@ -409,10 +404,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   tasteClockStyle: {
-      fontSize: beerInformationFontSize,
-      fontWeight: '400',
-      textAlign: 'center',
-    },
+    fontSize: beerInformationFontSize,
+    fontWeight: '400',
+    textAlign: 'center',
+  },
   averageRatingText: {
     fontSize: beerInformationFontSize,
     textAlign: 'center',

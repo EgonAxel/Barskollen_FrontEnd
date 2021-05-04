@@ -126,9 +126,6 @@ class Beers extends React.PureComponent {
                   />
                 </View>
               </View> 
-              {/* <View style = {styles.ratingStars}> */}
-              
-              {/* </View> */}
           </TouchableOpacity>
       </View>
     )
@@ -147,25 +144,8 @@ class Beers extends React.PureComponent {
     // const [shouldShowSearchArea, setShouldShow] = useState(true);
     return (
       <SafeAreaView style={styles.safeAreaView}>
-        {/* <View style={styles.toggleSearch}>
-          <TouchableOpacity onPress={() => setShouldShow(!shouldShowSearchArea) }>
-            <Ionicons style={styles.searchIcon}
-              name="md-search"
-            />
-          </TouchableOpacity>
-          <Text onPress={() => setShouldShow(!shouldShowSearchArea)}
-                style={styles.searchIconText}>
-                Hitta din favoritbärs
-          </Text>
-        </View> */}
-        {/* {shouldShowSearchArea ? ( */}
-
     <View style={styles.filterAndSearchArea}>
-      <View style={ Platform.OS === 'ios'
-          ? searchBarStyles.searchBarIOS
-          : searchBarStyles.searchBarAndroid}> 
-
-      <TextInput style = {searchBarStyles}
+      <TextInput style = {styles.searchBar}
         useNativeAndroidPickerStyle={false}
         clearButtonMode = 'always'
         underlineColorAndroid = "transparent"
@@ -174,7 +154,6 @@ class Beers extends React.PureComponent {
         autoCapitalize = "none"
         returnKeyType="search"
         onChangeText={this.handleSearchText}/>
-    </View>
 
     <View style={ Platform.OS === 'ios'
           ? pickerSelectStyles.inputIOS
@@ -295,31 +274,6 @@ const windowHeight = Dimensions.get('window').height;
 const beerItemMarginTop = 15;
 const searchBarBorderRadius = 23;
 
-const searchBarStyles = StyleSheet.create({
-  searchBarIOS: {
-    marginTop: 15,
-    paddingHorizontal: 17,
-    paddingVertical: 10,
-    marginBottom: 10,
-    width: windowWidth * 0.85,
-    borderColor: '#009688',
-    borderWidth: 2.5,
-    borderRadius: searchBarBorderRadius,
-    backgroundColor: '#ffffff'
-  },
-  searchBarAndroid: {
-    marginTop: 15,
-    paddingHorizontal: 17,
-    paddingVertical: 10,
-    marginBottom: 10,
-    width: windowWidth * 0.85,
-    borderColor: '#009688',
-    borderWidth: 2.5,
-    borderRadius: searchBarBorderRadius,
-    backgroundColor: '#ffffff'
-  },
-});
-
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: { //
     minWidth: windowWidth * 0.22,
@@ -370,17 +324,17 @@ const styles = StyleSheet.create({
   safeAreaView: {
     alignSelf: 'center',
   },
-  // searchField: {
-  //   marginTop: 25,
-  //   paddingHorizontal: 17,
-  //   paddingVertical: 10,
-  //   marginBottom: 10,
-  //   width: windowWidth * 0.85,
-  //   borderColor: '#009688',
-  //   borderWidth: 2.5,
-  //   borderRadius: searchBarBorderRadius,
-  //   backgroundColor: 'white'
-  // },
+  searchBar: {
+    marginTop: 15,
+    paddingHorizontal: 17,
+    paddingVertical: 10,
+    marginBottom: 10,
+    width: windowWidth * 0.85,
+    borderColor: '#009688',
+    borderWidth: 2.5,
+    borderRadius: searchBarBorderRadius,
+    backgroundColor: '#ffffff'
+  },
   filterAndSearchArea: {
     paddingBottom: 15,
     borderRadius: searchBarBorderRadius,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, FlatList, StyleSheet,TouchableOpacity,
-         TextInput, Dimensions, Modal, Alert, Pressable, KeyboardAvoidingView } from 'react-native';
+         Dimensions, Modal, Alert, KeyboardAvoidingView } from 'react-native';
 import Stars from 'react-native-stars';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -22,13 +22,7 @@ class ViewRecommendations extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-        beer_ID: this.props.route.params.beer_ID,
-        beer_pic: this.props.route.params.beer_pic,
-        beer_name: this.props.route.params.beer_name,
-        beer_type: this.props.route.params.beer_type,
-        beer_bitterness: this.props.route.params.beer_bitterness,
-        beer_fullness: this.props.route.params.beer_fullness,
-        beer_sweetness: this.props.route.params.beer_sweetness,
+        beer: this.props.route.params.beer,
         modalVisible: true,
         error: null,
         recommendations: [],
@@ -37,8 +31,7 @@ class ViewRecommendations extends React.PureComponent {
   }
   reviewText = (text) => {
     this.setState({ review: text })
-    }
-
+  }
   getRecommendations(beer_ID, starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
     const beer_type_encoded = encodeURIComponent(beer_type)
     getValueFor("Token").then((token) => {
@@ -55,15 +48,12 @@ class ViewRecommendations extends React.PureComponent {
         });
       });
   }
-
   componentDidMount() {
-    this.getRecommendations(this.state.beer_ID, this.state.rating, this.state.beer_type, this.state.beer_bitterness, this.state.beer_fullness, this.state.beer_sweetness)
+    this.getRecommendations(this.state.beer.beer_ID, this.state.rating, this.state.beer.beer_type, this.state.beer.bitterness, this.state.beer.fullness, this.state.beer.sweetness)
   }
-
   setModalVisible = (visible) => {
     this.setState({ modalVisible: visible });
   }
-
   renderBeerImage = (beer_image, resolution, imageStyle) => {
     if (beer_image == null) {
       return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
@@ -72,11 +62,11 @@ class ViewRecommendations extends React.PureComponent {
       return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
     }
   }
-
   _renderListItem(item) {
     return(
+      console.log(item),
         <View style = {styles.modalStyleRecommendation}>
-          <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}}>
+          <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', { beer_ID: item.beer_ID, beer: item, beerDataFetched: true, hasReviewed: null })}}>
             <View style = {styles.beerInstance}>
               {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
               <View style = {styles.beerInformation}>
@@ -98,26 +88,10 @@ class ViewRecommendations extends React.PureComponent {
          </View>        
       )
   }
-
   render() {
     const { modalVisible } = this.state;
     return (
-    <View>
-      <View style={styles.wholePage}>  
-        <KeyboardAvoidingView 
-          behavior="position"
-          style={{ flex: 1 }}
-          >  
-        <View style = {styles.viewStyle}>
-          <Text style = {styles.productName}>
-            {this.state.beer_name}
-          </Text>
-          {this.renderBeerImage(this.state.beer_pic, '_200.png', styles.beerImage)}
-          <Text>Laddar rekommendationer...</Text>
-          </View>
-        </KeyboardAvoidingView>
-      </View>
-      <View>
+      <View style={styles.wholePage}>
         <Modal 
           visible={modalVisible}
           animationType="slide"
@@ -128,24 +102,22 @@ class ViewRecommendations extends React.PureComponent {
           <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
           <Text style = {styles.recommendationText}>Här är några öl du kanske gillar {'\n'} baserat på ditt betyg.</Text>
           <FlatList
-            style={styles.alignRecommendations}
+            style={{flex: 1}}
             contentContainerStyle={{
               backgroundColor: '#ffffff',
               alignItems: 'center',
               justifyContent: 'center',
-              marginTop: 15,
-            }}
-            data={this.state.recommendations}
+              marginTop: 15 }}
+              data={this.state.recommendations}
               keyExtractor={(beer, index) => String(index)}
               renderItem={({ item }) => this._renderListItem(item)}/>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.state.beer_ID, beer_name: this.state.name, beer_pic: this.state.picture_url, beer_type: this.state.beer_type, beer_percentage: this.state.alcohol_percentage, beer_volume: this.state.volume, beer_container_type: this.state.container_type, beer_bitterness: this.state.bitterness, beer_sweetness: this.state.sweetness, beer_fullness: this.state.fullness, beer_avgrating: this.state.avg_rating, hasReviewed: true})}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.state.beer_ID, beer: this.state.beer, beerDataFetched: true, hasReviewed: true})}>
             <View style={styles.button}>
               <Text style={styles.textStyle}>Stäng</Text>
             </View>
           </TouchableOpacity>
         </Modal>    
       </View>
-    </View>
     );
   }
 }
@@ -230,11 +202,6 @@ const styles = StyleSheet.create({
   },
 
 // ---------- REKOMMENDATIONER ------------  
-  alignRecommendations: {
-    flexDirection: 'row',
-    alignContent: 'center',
-    flex: 1,
-  },
   modalStyleRecommendation: {
     width: windowWidth * 0.93,
     backgroundColor: "white",
@@ -267,13 +234,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   productNameRecommendation: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     fontWeight: '500',
     textAlign: 'left',
   },
   productTypeRecommendation: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     fontWeight: '400',
     textAlign: 'left',
@@ -295,7 +260,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   alcohol_percentage: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     textAlign: 'left',
   },

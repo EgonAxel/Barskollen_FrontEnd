@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, FlatList, StyleSheet,TouchableOpacity,
-         TextInput, Dimensions, Modal, Alert, Pressable, KeyboardAvoidingView } from 'react-native';
+         TextInput, Dimensions, Modal, Alert, KeyboardAvoidingView } from 'react-native';
 import Stars from 'react-native-stars';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -86,7 +86,7 @@ class ReviewBeer extends React.PureComponent {
   _renderListItem(item) {
     return(
         <View style = {styles.modalStyleRecommendation}>
-          <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', {beer_ID: item.beer_ID, beer_name:item.name, beer_pic: item.picture_url, beer_type: item.beer_type, beer_percentage: item.alcohol_percentage, beer_volume:item.volume, beer_container_type:item.container_type, beer_bitterness:item.bitterness, beer_sweetness: item.sweetness, beer_fullness:item.fullness, beer_avgrating:item.avg_rating})}}>
+          <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', {beer_ID: item.beer_ID, beer: item, beerDataFetched: true, hasReviewed: null})}}>
             <View style = {styles.beerInstance}>
               {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
               <View style = {styles.beerInformation}>
@@ -114,24 +114,21 @@ class ReviewBeer extends React.PureComponent {
     return (
     <View>
       <View style={styles.wholePage}>  
-        <KeyboardAvoidingView 
-          behavior="position"
-          style={{ flex: 1 }}
-          >  
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset = {100}>  
         <View style = {styles.viewStyle}>
           <Text style = {styles.productName}>
             {this.state.beer.name}
           </Text>
           {this.renderBeerImage(this.state.beer.picture_url, '_200.png', styles.beerImage)}
-            <View style={styles.ratingStars}>
-              <Stars
-                update={(val)=>{this.setState({stars: val})}}
-                half={true}
-                display= {Number((this.state.stars).toFixed(1))}
-                fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                />
+          <View style={styles.ratingStars}>
+            <Stars
+              update={(val)=>{this.setState({stars: val})}}
+              half={true}
+              display= {Number((this.state.stars).toFixed(1))}
+              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+              />
             </View>
             <TextInput style = {styles.textInputFields}
               clearButtonMode = 'always'
@@ -140,17 +137,7 @@ class ReviewBeer extends React.PureComponent {
               placeholderTextColor = "grey"
               returnKeyType="go"
               onChangeText = {this.reviewText}
-              onSubmitEditing={() => {
-                if (this.state.stars > 0) {
-                  this.postReview(this.state.beer.beer_ID, this.state.stars, this.state.review),
-                  this.getRecommendations(this.state.beer.beer_ID, this.state.stars, this.state.beer.beer_type, this.state.beer.bitterness, this.state.beer.fullness, this.state.beer.sweetness),
-                  this.setModalVisible(true)
-                }
-                else {
-                  Alert.alert("Noll stjärnor?", "Så dåliga öl finns det inte. Kör en halv i alla fall!")
-                }
-              }}
-              blurOnSubmit={false}
+              blurOnSubmit={true}
               multiline={true}
             />
             <TouchableOpacity 
@@ -201,83 +188,82 @@ class ReviewBeer extends React.PureComponent {
 const usedBorderRadius = 15;
 const beerItemMarginTop = 15;
 const styles = StyleSheet.create({
-  
-// ÖL SOM RATEAS
-wholePage: {
-  height: windowHeight,
-  backgroundColor: '#ffffff',
-},
-viewStyle: {
-  marginTop: 15,
-  width: 350,
-  minHeight: 500,
-  maxHeight: 1000,
-  backgroundColor: '#ffffff',
-  borderRadius: 15,
-  borderStyle: 'solid', 
-  borderColor: '#dadada',
-  borderWidth: 1,
-  shadowColor: "#000000",
-  shadowOffset: {
-    width: 1,
-    height: 1
+  // ÖL SOM RATEAS
+  wholePage: {
+    height: windowHeight,
+    backgroundColor: '#ffffff',
   },
-  shadowOpacity: 0.5,
-  shadowRadius: 3,
-  elevation: 20,
-  alignSelf: 'center'
-},
-productName: {
-  fontSize: 25,
-  fontWeight: '700',
-  marginTop: 25,
-  textAlign: 'center',
-  marginBottom: 15
-},
-textInputFields: {
-  paddingLeft: 15,
-  paddingRight: 15,
-  paddingTop: 10,
-  paddingBottom: 10,
-  marginRight: 40,
-  marginTop: 10,
-  marginBottom: 5,
-  marginLeft: 40,
-  height: 75,
-  width: windowWidth * 0.7,
-  borderColor: '#009688',
-  borderWidth: 2,
-  borderRadius: 10,
-  backgroundColor: 'white',
-  alignSelf: 'center',
-},
-sendReview: {
-  alignSelf: 'center',
-  fontSize: 16,
-  fontWeight: '600',
-  backgroundColor: '#009688',
-  color: '#ffffff',
-  overflow: 'hidden',
-  paddingHorizontal: 35,
-  paddingVertical: 15,
-  marginTop: 10,
-  marginBottom: 25,
-  borderRadius: usedBorderRadius,
-},
-beerImage: {
-  width: 125,
-  height: windowHeight * 0.3,
-  marginVertical: 20,
-  resizeMode: 'contain',
-  alignSelf: 'center'
-},
-rating: {
-  fontSize: 25,
-  textAlign: 'center',
-},
-ratingStars: {
-  alignItems: 'center',
-},
+  viewStyle: {
+    marginTop: 15,
+    width: 350,
+    minHeight: 500,
+    maxHeight: 1000,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    borderStyle: 'solid', 
+    borderColor: '#dadada',
+    borderWidth: 1,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 1,
+      height: 1
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 20,
+    alignSelf: 'center'
+  },
+  productName: {
+    fontSize: 25,
+    fontWeight: '700',
+    marginTop: 25,
+    textAlign: 'center',
+    marginBottom: 15
+  },
+  textInputFields: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginRight: 40,
+    marginTop: 10,
+    marginBottom: 5,
+    marginLeft: 40,
+    height: 75,
+    width: windowWidth * 0.7,
+    borderColor: '#009688',
+    borderWidth: 2,
+    borderRadius: 10,
+    backgroundColor: 'white',
+    alignSelf: 'center',
+  },
+  sendReview: {
+    alignSelf: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    backgroundColor: '#009688',
+    color: '#ffffff',
+    overflow: 'hidden',
+    paddingHorizontal: 35,
+    paddingVertical: 15,
+    marginTop: 10,
+    marginBottom: 25,
+    borderRadius: usedBorderRadius,
+  },
+  beerImage: {
+    width: 125,
+    height: windowHeight * 0.3,
+    marginVertical: 20,
+    resizeMode: 'contain',
+    alignSelf: 'center'
+  },
+  rating: {
+    fontSize: 25,
+    textAlign: 'center',
+  },
+  ratingStars: {
+    alignItems: 'center',
+  },
 
 // ---------- REKOMMENDATIONER ------------  
   modalStyleRecommendation: {
@@ -312,13 +298,11 @@ ratingStars: {
     textAlign: 'center',
   },
   productNameRecommendation: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     fontWeight: '500',
     textAlign: 'left',
   },
   productTypeRecommendation: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     fontWeight: '400',
     textAlign: 'left',
@@ -340,7 +324,6 @@ ratingStars: {
     textAlign: 'left',
   },
   alcohol_percentage: {
-    // fontFamily: 'Avenir',
     fontSize: 14,
     textAlign: 'left',
   },

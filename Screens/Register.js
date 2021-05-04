@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, ImageBackground } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, ImageBackground, KeyboardAvoidingView } from 'react-native'
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
@@ -73,75 +73,77 @@ async function save(key, value) {
    render() {
       return (
          <View style = {styles.container}>
-            <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}> 
-               <Text style = {styles.topTitle}>Registrera dig</Text>
-               <TextInput style = {styles.textInputFields}
-                  underlineColorAndroid = "transparent"
-                  placeholder = "Användarnamn"
-                  placeholderTextColor = "grey"
-                  autoCapitalize = "none"
-                  returnKeyType="next"
-                  onChangeText = {this.handleUsername}
-                  onSubmitEditing={() => { this.emailInput.focus(); }}
-                  blurOnSubmit={false}/>
+            <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}>
+               <KeyboardAvoidingView behavior="position">
+                  <Text style = {styles.topTitle}>Registrera dig</Text>
+                  <TextInput style = {styles.textInputFields}
+                     underlineColorAndroid = "transparent"
+                     placeholder = "Användarnamn"
+                     placeholderTextColor = "grey"
+                     autoCapitalize = "none"
+                     returnKeyType="next"
+                     onChangeText = {this.handleUsername}
+                     onSubmitEditing={() => { this.emailInput.focus(); }}
+                     blurOnSubmit={false}/>
 
-               <TextInput style = {styles.textInputFields}
-                  ref={(input) => { this.emailInput = input; }}
-                  underlineColorAndroid = "transparent"
-                  placeholder = "Email-adress"
-                  placeholderTextColor = "grey"
-                  autoCapitalize = "none"
-                  returnKeyType="next"
-                  onChangeText = {this.handleEmail}
-                  onSubmitEditing={() => { this.birthDateInput.focus(); }}
-                  blurOnSubmit={false}/>
+                  <TextInput style = {styles.textInputFields}
+                     ref={(input) => { this.emailInput = input; }}
+                     underlineColorAndroid = "transparent"
+                     placeholder = "Email-adress"
+                     placeholderTextColor = "grey"
+                     autoCapitalize = "none"
+                     returnKeyType="next"
+                     onChangeText = {this.handleEmail}
+                     onSubmitEditing={() => { this.birthDateInput.focus(); }}
+                     blurOnSubmit={false}/>
 
-               <TextInput style = {styles.textInputFields}
-                  ref={(input) => { this.birthDateInput = input; }}
-                  underlineColorAndroid = "transparent"
-                  placeholder = "Födelsedatum (ÅÅÅÅ-MM-DD)"
-                  placeholderTextColor = "grey"
-                  autoCapitalize = "none"
-                  returnKeyType="next"
-                  onChangeText = {this.handleDateOfBirth}
-                  onSubmitEditing={() => { this.passwordInput.focus(); }}
-                  blurOnSubmit={false}/>
+                  <TextInput style = {styles.textInputFields}
+                     ref={(input) => { this.birthDateInput = input; }}
+                     underlineColorAndroid = "transparent"
+                     placeholder = "Födelsedatum (ÅÅÅÅ-MM-DD)"
+                     placeholderTextColor = "grey"
+                     autoCapitalize = "none"
+                     returnKeyType="next"
+                     onChangeText = {this.handleDateOfBirth}
+                     onSubmitEditing={() => { this.passwordInput.focus(); }}
+                     blurOnSubmit={false}/>
 
-               <TextInput secureTextEntry={true} style = {styles.textInputFields}
-                  ref={(input) => { this.passwordInput = input; }}
-                  underlineColorAndroid = "transparent"
-                  placeholder = "Lösenord"
-                  placeholderTextColor = "grey"
-                  autoCapitalize = "none"
-                  returnKeyType="next"
-                  onChangeText = {this.handlePassword}
-                  onSubmitEditing={() => { this.confirmPasswordInput.focus(); }}
-                  blurOnSubmit={false}/>
+                  <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                     ref={(input) => { this.passwordInput = input; }}
+                     underlineColorAndroid = "transparent"
+                     placeholder = "Lösenord"
+                     placeholderTextColor = "grey"
+                     autoCapitalize = "none"
+                     returnKeyType="next"
+                     onChangeText = {this.handlePassword}
+                     onSubmitEditing={() => { this.confirmPasswordInput.focus(); }}
+                     blurOnSubmit={false}/>
 
-               <TextInput secureTextEntry={true} style = {styles.textInputFields}
-                  ref={(input) => { this.confirmPasswordInput = input; }}
-                  underlineColorAndroid = "transparent"
-                  placeholder = "Bekräfta lösenord"
-                  placeholderTextColor = "grey"
-                  autoCapitalize = "none"
-                  returnKeyType="go"
-                  onChangeText = {this.handleConfirmPassword}/>
+                  <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                     ref={(input) => { this.confirmPasswordInput = input; }}
+                     underlineColorAndroid = "transparent"
+                     placeholder = "Bekräfta lösenord"
+                     placeholderTextColor = "grey"
+                     autoCapitalize = "none"
+                     returnKeyType="go"
+                     onChangeText = {this.handleConfirmPassword}/>
 
-               <TouchableOpacity
-                  style = {styles.registerButton}
-                  onPress = {
-                     () => this.registerUser(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
-                  }>
-                  <Text style = {styles.registerButtonText}> Registrera konto </Text>
-               </TouchableOpacity>
+                  <TouchableOpacity
+                     style = {styles.registerButton}
+                     onPress = {
+                        () => this.registerUser(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
+                     }>
+                     <Text style = {styles.registerButtonText}> Registrera konto </Text>
+                  </TouchableOpacity>
 
-               <TouchableOpacity
-                  style = {styles.alreadyHaveAnAccount}
-                  onPress = {
-                     () => this.props.navigation.replace('LoginScreen')
-                  }>
-                  <Text style = {styles.alreadyHaveAnAccountText}> Jag har redan ett konto </Text>
-               </TouchableOpacity>
+                  <TouchableOpacity
+                     style = {styles.alreadyHaveAnAccount}
+                     onPress = {
+                        () => this.props.navigation.replace('LoginScreen')
+                     }>
+                     <Text style = {styles.alreadyHaveAnAccountText}> Jag har redan ett konto </Text>
+                  </TouchableOpacity>
+               </KeyboardAvoidingView>
             </ImageBackground>
          </View>
       )

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, ImageBackground, Image } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, ImageBackground, Image, KeyboardAvoidingView } from 'react-native'
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
@@ -47,45 +47,47 @@ class LogIn extends Component {
       return (
          <View style = {styles.container}>
             <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}>
-              <Image style = {{width: 240, height: 240, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>
-               <Text style = {styles.topTitle}>Logga in</Text>
-               <TextInput style = {styles.textInputFields}
-                  underlineColorAndroid = "transparent"
-                  placeholder = "Användarnamn"
-                  placeholderTextColor = "grey"
-                  autoCapitalize = "none"
-                  returnKeyType="next"
-                  onChangeText = {this.handleUsername}
-                  onSubmitEditing={() => { this.passwordInput.focus(); }}
-                  blurOnSubmit={false}/>
+            <KeyboardAvoidingView behavior="position">
+               <Image style = {{width: 240, height: 240, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>
+                  <Text style = {styles.topTitle}>Logga in</Text>
+                  <TextInput style = {styles.textInputFields}
+                     underlineColorAndroid = "transparent"
+                     placeholder = "Användarnamn"
+                     placeholderTextColor = "grey"
+                     autoCapitalize = "none"
+                     returnKeyType="next"
+                     onChangeText = {this.handleUsername}
+                     onSubmitEditing={() => { this.passwordInput.focus(); }}
+                     blurOnSubmit={false}/>
+                     
+                  <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                     ref={(input) => { this.passwordInput = input; }}
+                     underlineColorAndroid = "transparent"
+                     placeholder = "Lösenord"
+                     placeholderTextColor = "grey"
+                     autoCapitalize = "none"
+                     returnKeyType="go"
+                     onChangeText = {this.handlePassword}
+                     onSubmitEditing={() => { this.login(this.state.username,  this.state.password) }}/>
                   
-               <TextInput secureTextEntry={true} style = {styles.textInputFields}
-                  ref={(input) => { this.passwordInput = input; }}
-                  underlineColorAndroid = "transparent"
-                  placeholder = "Lösenord"
-                  placeholderTextColor = "grey"
-                  autoCapitalize = "none"
-                  returnKeyType="go"
-                  onChangeText = {this.handlePassword}
-                  onSubmitEditing={() => { this.login(this.state.username,  this.state.password) }}/>
-               
-               <TouchableOpacity
-                  style = {styles.submitButton}
-                  onPress = {
-                     () => this.login(this.state.username,  this.state.password)
-                  }>
-                  <Text style = {styles.submitButtonText}> Logga in </Text>
-               </TouchableOpacity>
+                  <TouchableOpacity
+                     style = {styles.submitButton}
+                     onPress = {
+                        () => this.login(this.state.username,  this.state.password)
+                     }>
+                     <Text style = {styles.submitButtonText}> Logga in </Text>
+                  </TouchableOpacity>
 
-               <TouchableOpacity
-                  style = {styles.registerButton}
-                  onPress = {
-                     () => this.props.navigation.replace('Register')
-                  }>
-                  <Text style = {styles.registerButtonText}> Inget konto? Registrera dig! </Text>
-               </TouchableOpacity>
+                  <TouchableOpacity
+                     style = {styles.registerButton}
+                     onPress = {
+                        () => this.props.navigation.replace('Register')
+                     }>
+                     <Text style = {styles.registerButtonText}> Inget konto? Registrera dig! </Text>
+                  </TouchableOpacity>
+               </KeyboardAvoidingView>
             </ImageBackground>
-        </View>  
+         </View> 
       )
    }
 }
