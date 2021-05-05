@@ -64,29 +64,28 @@ class ViewRecommendations extends React.PureComponent {
   }
   _renderListItem(item) {
     return(
-      console.log(item),
-        <View style = {styles.modalStyleRecommendation}>
-          <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', { beer_ID: item.beer_ID, beer: item, beerDataFetched: true, hasReviewed: null })}}>
-            <View style = {styles.beerInstance}>
-              {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
-              <View style = {styles.beerInformation}>
-                <Text style = {styles.productNameRecommendation}>{item.name}</Text>
-                <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
-                {/* <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text> */}
-                <Stars
-                  display= {Number((item.avg_rating).toFixed(1))}
-                  half={true}
-                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-                />
-              </View>
-            </View> 
-            <View style = {styles.ratingStars}>
+      <View style = {styles.modalStyleRecommendation}>
+        <TouchableOpacity onPress={() => { this.props.navigation.replace('IndividualBeer', { beer_ID: item.beer_ID, beer: item, beerDataFetched: true, hasReviewed: null })}}>
+          <View style = {styles.beerInstance}>
+            {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
+            <View style = {styles.beerInformation}>
+              <Text style = {styles.productNameRecommendation}>{item.name}</Text>
+              <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
+              {/* <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text> */}
+              <Stars
+                display= {Number((item.avg_rating).toFixed(1))}
+                half={true}
+                fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
+                emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
+                halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+              />
             </View>
-          </TouchableOpacity>
-         </View>        
-      )
+          </View> 
+          <View style = {styles.ratingStars}>
+          </View>
+        </TouchableOpacity>
+      </View>        
+    )
   }
   render() {
     const { modalVisible } = this.state;

@@ -32,12 +32,14 @@ class UserProfile extends React.PureComponent {
       username: ""
     };
   }
+
   handleFilterAction = () => {
     this.setState({
       offset: 0,
       reviews: []})
     this.fetchReview(this.state.username, 0, this.state.orderingValue)
   }
+
   fetchReview = (username, offset, orderingValue) => {
     getValueFor("Token").then((token) => {
         axios
@@ -52,6 +54,7 @@ class UserProfile extends React.PureComponent {
         });
     })
   }
+
   fetchMoreReviews = () => {
     if (this.state.reviews.length >= 20) {
       this.setState(
@@ -64,12 +67,26 @@ class UserProfile extends React.PureComponent {
       );
     };
   }
+
   componentDidMount() {
-    getValueFor("Username").then((username) => {
-      this.setState({username: username})
-      this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue);
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      getValueFor("Username").then((username) => {
+        this.setState({username: username})
+        this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue);
+      })
+    })
+    this._unsubscribe2 = this.props.navigation.addListener('blur', () => {
+      this.setState({
+        reviews: []
+      })
     })
   }
+
+  componentWillUnmount() {
+    this._unsubscribe()
+    this._unsubscribe2()
+  }
+
   renderBeerImage = (beer_image, resolution, imageStyle) => {
     if (beer_image == null) {
       return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
@@ -78,6 +95,7 @@ class UserProfile extends React.PureComponent {
       return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
     }
   }
+
   _renderListItem(item) {
     return(
       <View style = {styles.viewStyle}>
@@ -101,6 +119,7 @@ class UserProfile extends React.PureComponent {
       </View>
       )
   }
+
   renderListHeader = () => {
     return (
     <View>
@@ -185,6 +204,7 @@ class UserProfile extends React.PureComponent {
     );
   }
 }
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 

@@ -44,21 +44,14 @@ class IndividualBeer extends React.PureComponent {
       });
     })
   };
-  fetchReviews = (firstLoad) => {
+  fetchReviews = () => {
     getValueFor("Token").then((token) => {
     axios
       .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
-        if (firstLoad) {
-          this.setState({
-            reviews: response.data.results,
-          });
-        }
-        else {
-          this.setState({
-            reviews: this.state.reviews.concat(response.data.results),
-          })
-        }
+        this.setState({
+          reviews: this.state.reviews.concat(response.data.results)
+        })
       })
       .catch(error => {
         this.setState({error: error.message});
@@ -71,7 +64,7 @@ class IndividualBeer extends React.PureComponent {
         offset: prevState.offset + 20 ,
       }),
       () => {
-        this.fetchReviews(false);
+        this.fetchReviews();
       },
     );
   };
@@ -99,20 +92,30 @@ class IndividualBeer extends React.PureComponent {
       })
     })
   }
+
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       if (this.state.beerDataFetched != true) {
         this.fetchBeer()
       }
-      this.fetchReviews(true)
+      this.fetchReviews()
       if (this.state.hasReviewed != true) {
         this.checkHasReviewed()
       }
-    });
+    })
+    this._unsubscribe2 = this.props.navigation.addListener('blur', () => {
+      this.setState({
+        beerDataFetched: false,
+        reviews: []
+      })
+    })
   }
+
   componentWillUnmount() {
     this._unsubscribe();
+    this._unsubscribe2();
   }
+
   _renderListItem(item) {
     if (item.review_text != null) {
       return(
@@ -126,7 +129,7 @@ class IndividualBeer extends React.PureComponent {
             <Text style = {styles.reviewUsername}>{item.user}</Text>
           </View>
           <Stars
-            display= {Number(item.rating)}
+            display= {item.rating}
             half={true}
             fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
             emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
@@ -145,7 +148,7 @@ class IndividualBeer extends React.PureComponent {
           <View style={styles.reviewUsernameAndIcon}>
             <Ionicons name="person" size={23} style={styles.usernameIcon}/>
             <Text style = {styles.reviewUsername}>{item.user}</Text>
-          </View> 
+          </View>
           <Stars
             display= {Number(item.rating)}
             half={true}
@@ -172,7 +175,8 @@ class IndividualBeer extends React.PureComponent {
             </View>
             <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
             <View>
-              <TouchableOpacity onPress={() => {this.props.navigation.navigate('ViewRecommendations', {beer: this.state.beer, rating: this.state.userRating})}}>
+              <TouchableOpacity onPress={() => {
+                this.props.navigation.navigate('ViewRecommendations', {beer: this.state.beer, rating: this.state.userRating})}}>
                 <Text style={styles.giveRating}>Visa rekommendationer</Text>
               </TouchableOpacity>
             </View>
@@ -182,7 +186,8 @@ class IndividualBeer extends React.PureComponent {
       else if (hasReviewed == false){
         return (
           <View>
-            <TouchableOpacity onPress={() => {this.props.navigation.navigate('ReviewBeer', {beer: this.state.beer, modalVisible: false})}}>
+            <TouchableOpacity onPress={() => {
+              this.props.navigation.navigate('ReviewBeer', {beer: this.state.beer, modalVisible: false})}}>
               <Text style={styles.giveRating}>
                 Ge rating
               </Text>
@@ -248,13 +253,11 @@ class IndividualBeer extends React.PureComponent {
           backgroundColor: '#ffffff',
           alignItems: 'center',
           justifyContent: 'center',
-          // marginTop: 15,
         }}
         data={this.state.reviews}
-        keyExtractor={(beer, index) => String(index)}
+        keyExtractor={(review, index) => String(index)}
         renderItem={({ item }) => this._renderListItem(item)}
         ListHeaderComponent={this.renderListHeader()}
-        //horizontal={true}
       />
     );
   }

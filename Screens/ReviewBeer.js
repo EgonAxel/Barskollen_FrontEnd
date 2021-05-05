@@ -173,8 +173,9 @@ class ReviewBeer extends React.PureComponent {
               marginTop: 15 }}
               data={this.state.recommendations}
               keyExtractor={(beer, index) => String(index)}
-              renderItem={({ item }) => this._renderListItem(item)}/>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.state.beer_ID, beer_name: this.state.name, beer_pic: this.state.picture_url, beer_type: this.state.beer_type, beer_percentage: this.state.alcohol_percentage, beer_volume: this.state.volume, beer_container_type: this.state.container_type, beer_bitterness: this.state.bitterness, beer_sweetness: this.state.sweetness, beer_fullness: this.state.fullness, beer_avgrating: this.state.avg_rating, hasReviewed: true})}>
+              renderItem={({ item }) => this._renderListItem(item)}
+          />
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.state.beer.beer_ID, beer: this.state.beer, beerDataFetched: false, hasReviewed: null})}>
             <View style={styles.button}>
               <Text style={styles.textStyle}>Stäng</Text>
             </View>
