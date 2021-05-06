@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions, Modal } from 'react-native';
 import axios from 'axios';
 import Stars from 'react-native-stars';
 import { Rating } from 'react-native-ratings';
@@ -27,9 +27,15 @@ class IndividualBeer extends React.PureComponent {
       error: null,
       beerDataFetched: this.props.route.params.beerDataFetched,
       hasReviewed: this.props.route.params.hasReviewed,
-      userRating: this.props.route.params.userRating
+      userRating: this.props.route.params.userRating,
+      recommendationsModalVisible: false
     };
   }
+
+  setModalVisible = (visible) => {
+    this.setState({ recommendationsModalVisible: visible });
+  }
+
   fetchBeer = () => {
     getValueFor("Token").then((token) => {
     axios
@@ -45,6 +51,7 @@ class IndividualBeer extends React.PureComponent {
       });
     })
   };
+
   fetchReviews = (firstLoad) => {
     getValueFor("Token").then((token) => {
     axios
@@ -66,6 +73,7 @@ class IndividualBeer extends React.PureComponent {
       })
     })
   };
+
   fetchMoreReviews = () => {
     this.setState(
       prevState => ({
@@ -76,6 +84,7 @@ class IndividualBeer extends React.PureComponent {
       },
     );
   };
+
   checkHasReviewed = () => {
     getValueFor("Username").then((username) => {
       getValueFor("Token").then((token) => {
@@ -99,6 +108,23 @@ class IndividualBeer extends React.PureComponent {
           });
       })
     })
+  }
+
+  getRecommendations(beer_ID, starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
+    const beer_type_encoded = encodeURIComponent(beer_type)
+    getValueFor("Token").then((token) => {
+      const interval = 6 - starValue
+      axios
+        .get(`http://127.0.0.1:8000/beer/?beer_type=${beer_type_encoded}&min_bitterness=${beer_bitterness - interval}&max_bitterness=${beer_bitterness + interval}&min_fullness=${beer_fullness - interval}&max_fullness=${beer_fullness + interval}&min_sweetness=${beer_sweetness - interval}&max_sweetness=${beer_sweetness + interval}&beer_ID_exclude=${beer_ID}&ordering=-rating&limit=3`, { headers: { 'Authorization': `Token ` + token}}) //Här behövs din egen adress till APIn
+        .then(response => {
+          this.setState({
+            recommendations: response.data.results,
+          });
+        })
+        .catch(error => {
+        this.setState({error: error.message});
+        });
+    });
   }
 
   componentDidMount() {
@@ -168,6 +194,7 @@ class IndividualBeer extends React.PureComponent {
       )
     }
   }
+
   renderUserRelated = () => {
     const { hasReviewed } = this.state;
       if (hasReviewed) {
@@ -186,7 +213,8 @@ class IndividualBeer extends React.PureComponent {
           <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
           <View>
             <TouchableOpacity onPress={() => {
-              this.props.navigation.navigate('ViewRecommendations', {beer: this.state.beer, rating: this.state.userRating})}}>
+              this.getRecommendations(this.state.beer.beer_ID, this.state.userRating, this.state.beer.beer_type, this.state.beer.bitterness, this.state.beer.fullness, this.state.beer.sweetness)
+              this.setModalVisible(true)}}>
               <Text style={styles.giveRating}>Visa rekommendationer</Text>
             </TouchableOpacity>
           </View>
@@ -260,21 +288,78 @@ class IndividualBeer extends React.PureComponent {
       )
     }
   }
+
   render() {
+    const { recommendationsModalVisible } = this.state;
     return (
-      <FlatList
-        style={{ flex: 1, backgroundColor: '#ffffff' }}
-        contentContainerStyle={{
-          backgroundColor: '#ffffff',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        data={this.state.reviews}
-        keyExtractor={(review, index) => String(index)}
-        renderItem={({ item }) => this._renderListItem(item)}
-        ListHeaderComponent={this.renderListHeader()}
-      />
+      <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <FlatList
+          contentContainerStyle={{
+            backgroundColor: '#ffffff',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          data={this.state.reviews}
+          keyExtractor={(review, index) => String(index)}
+          renderItem={({ item }) => this._renderListItem(item)}
+          ListHeaderComponent={this.renderListHeader()}
+        />
+        <Modal 
+          visible={recommendationsModalVisible}
+          animationType="slide"
+          useNativeDriver={true} 
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            this.setModalVisible(!recommendationsModalVisible);}}>
+          <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
+          <Text style = {styles.recommendationText}>Här är några öl du kanske gillar {'\n'} baserat på ditt betyg.</Text>
+          <FlatList
+            style={{flex: 1}}
+            contentContainerStyle={{
+              backgroundColor: '#ffffff',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 15 }}
+              data={this.state.recommendations}
+              keyExtractor={(beer, index) => String(index)}
+              renderItem={({ item }) => this._renderModalListItem(item)}/>
+          <TouchableOpacity onPress={() => this.setModalVisible(false)}>
+            <View style={styles.button}>
+              <Text style={styles.textStyle}>Stäng</Text>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </View>
     );
+  }
+
+  _renderModalListItem(item) {
+    return(
+      <View style = {styles.modalStyleRecommendation}>
+        <TouchableOpacity onPress={() => {
+            this.setModalVisible(false)
+            this.props.navigation.push('IndividualBeer', { beer_ID: item.beer_ID, beer: item, beerDataFetched: true, hasReviewed: null })}}>
+          <View style = {styles.beerInstance}>
+            {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImageRecommendation)}
+            <View style = {styles.beerInformation}>
+              <Text style = {styles.productNameRecommendation}>{item.name}</Text>
+              <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
+              {/* <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text> */}
+              <Rating
+                type='custom'
+                readonly={true}
+                startingValue={item.avg_rating}
+                style={styles.ratingStyle}
+                imageSize={28}
+                ratingColor='#009688'
+                ratingBackgroundColor='#dadada'
+                tintColor='white'
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>        
+    )
   }
 }
 
@@ -458,6 +543,105 @@ const styles = StyleSheet.create({
   },
   reviewStarStyle: {
     paddingVertical: 10,
+  },
+
+  // MODAL
+
+  modalStyleRecommendation: {
+    width: windowWidth * 0.93,
+    backgroundColor: "white",
+    borderRadius: 15,
+    borderStyle: 'solid', 
+    borderColor: '#dadada',
+    borderWidth: 1,
+    margin: 5,
+    padding: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  recommendationHeader: {
+    fontSize: 28,
+    fontWeight: '700',
+    marginTop: windowHeight * 0.1,
+    textAlign: 'center',
+  },
+  recommendationText: {
+    fontSize: 18,
+    marginTop: 20,
+    paddingBottom: 25,
+    fontWeight: '400',
+    textAlign: 'center',
+  },
+  productNameRecommendation: {
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'left',
+  },
+  productTypeRecommendation: {
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'left',
+    marginBottom: 5,
+  },
+  beerInstance: {
+    textAlign: 'left',
+    flexDirection: 'row',
+  },
+  beerInformation: {
+    maxWidth : windowWidth * 0.55,
+    marginTop: 15,
+    paddingBottom: 5,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  attributeStyle: {
+    fontSize: 20,
+    textAlign: 'left',
+  },
+  alcohol_percentage: {
+    fontSize: 14,
+    textAlign: 'left',
+  },
+  beerImageRecommendation: {
+    width: 100,
+    height: 100,
+    marginTop: 10,
+    marginBottom: 10,
+    alignSelf: 'center',
+    resizeMode: 'contain',
+  },
+  ratingStyle: {
+    paddingBottom: 10,
+    alignSelf: 'flex-start'
+  },
+  button: {
+    width: windowWidth * 0.4,
+    alignSelf: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    backgroundColor: '#009688',
+    color: '#ffffff',
+    overflow: 'hidden',
+    paddingHorizontal: 35,
+    paddingVertical: 15,
+    marginTop: 10,
+    marginBottom: 50,
+    borderRadius: usedBorderRadius,
+  },
+  buttonClose: {
+    marginBottom: 50,
+    backgroundColor: "#009688",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
   },
 })
 
