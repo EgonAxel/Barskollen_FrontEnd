@@ -26,7 +26,6 @@ const AppButton = ({ onPress, title }) => (
   );
 
 class Home extends React.PureComponent {
-
   untilFriday = () => {
     const currentDay = moment().weekday();
     const currentHour = moment().hours();
@@ -52,143 +51,101 @@ class Home extends React.PureComponent {
     )
   }
 
+  fridaySecondText = () => {
+    let fridayCountdown = this.untilFriday()
+    console.log(fridayCountdown)
+    if (fridayCountdown < 0) {
+      return ("Njut av helgen!")
+    }
+    else {
+      return ("Håll ut!")
+    }
+  }
 
-// secondsUntilFriday() {
-
-//   let secondsLeftUntillFriday = 0;
-//   let dayFromFriday = 0;
-
-//   if (moment().weekday() == 1) {
-//     dayFromFriday = 2;
-//   }
-//   else if (moment().weekday() == 2){
-//     dayFromFriday = 3;
-//   }
-//   else if (moment().weekday() == 3){
-//     dayFromFriday = 4;
-//   }
-//   else if (moment().weekday() == 4){
-//     dayFromFriday = 5;
-//   }
-//   else if (moment().weekday() == 5){
-//     secondsLeftUntillFriday = 604800;
-
-//     return(secondsLeftUntillFriday)
-//   }
-//   else if (moment().weekday() == 6){
-//     dayFromFriday = 0;
-//   }
-//   else if (moment().weekday() == 7){
-//     dayFromFriday = 1;
-//   }
-
-//   let secondsInDays = dayFromFriday * 86400;
-//   let secondsInHours = (moment().hour() + 2) * 3600;
-//   let secondsInMinutes = moment().minute() * 60;
-//   let seconsInSeconds = moment().seconds();
-
-//   secondsLeftUntillFriday = secondsLeftUntillFriday + secondsInDays + secondsInHours + secondsInMinutes + seconsInSeconds;
-
-//   return(secondsLeftUntillFriday) 
-// }  
-
-render(){
-return (
-
-<SafeAreaProvider style = {{backgroundColor: '#ffff'}}>
-  <View >
-    <Header                   // --- För att ha en header behövs en safearea runt appen 
-          containerStyle={{
-            backgroundColor: '#ffff',
-            justifyContent: 'space-around', 
-            zIndex: 100,
-          }}
-          centerComponent={<Image style = {{ width: 150, height: 150}} source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>}
-          />          
-    <View style={styles.buttonContainer}>
-      <Text style = {styles.fridayTextStyle}> Det är fredag om...</Text>
-      <CountDown
-        // until={604800 - this.secondsUntilFriday()}
-        until={this.untilFriday()}  
-        size={30}
-        digitStyle={{backgroundColor: '#009688'}}
-        digitTxtStyle={{color: '#ffffff'}}
-        timeLabels={{d: 'Dagar', h: 'Timmar', m: 'Minuter', s: 'Sekunder'}}
-        style = {{zIndex: 100,}}
-      />
-
-
-        <AppButton 
-            title="Hitta nya öl"
-            onPress={() => {{this.props.navigation.navigate('Utforska')}
-              console.log( 'Klicka topplistan')
-              // axios
-              //   .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText.replace(' ','+')}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
-              //   .then(response => {
-              //     this.setState({
-              //       beers: this.state.beers.concat(response.data.results),
-              //     });
-              //   })
-              //   .catch(error => {
-              //     this.setState({error: error.message});
-              //   });
+  render(){
+    return (
+      <SafeAreaProvider style = {{backgroundColor: '#ffff'}}>
+        <View>
+          <Header                   // --- För att ha en header behövs en safearea runt appen 
+            containerStyle={{
+              backgroundColor: '#ffff',
+              justifyContent: 'space-around', 
+              zIndex: 100,
             }}
-          />
-
-      <StatusBar style="dark" />
-      </View> 
-	        <MakeItRain
-	          numItems={0}
-	          itemComponent={<Ionicons name="beer"  size={50}/>}
-           // itemComponent={<Image style = {{width: 50, height: 50, resizeMode: 'contain'}} source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>}
-           // itemComponent={<Image source = {{uri: "https://product-cdn.systembolaget.se/productimages/" + this.state.beerImage.beer + "/" + this.state.beerImage.beer + '_100.png' }}/>}
-           // itemComponent={<Image style = {{width: 100, height: 100, resizeMode: 'contain'}} source = {{uri: this.state.beerImage[1].picture_url + '_100.png' }}/>}
+            centerComponent={
+              <Image style = {{ width: 150, height: 150}}source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>}
+          />         
+          <View style={styles.buttonContainer}>
+            <Text style = {styles.fridayTextStyle}>Det är fredag om...</Text>
+            <CountDown
+              // until={604800 - this.secondsUntilFriday()}
+              until={this.untilFriday()}  
+              size={30}
+              digitStyle={{backgroundColor: '#009688'}}
+              digitTxtStyle={{color: '#ffffff'}}
+              timeLabels={{d: 'Dagar', h: 'Timmar', m: 'Minuter', s: 'Sekunder'}}
+              style = {{zIndex: 100, paddingVertical: 10}}
+            />
+            <Text style = {styles.fridayTextStyle}>{this.fridaySecondText()}</Text>
+            <AppButton 
+              title="Hitta nya öl"
+              onPress={() => {{ this.props.navigation.navigate('Utforska')} }}
+            />
+            <AppButton 
+              title="Mina öl"
+              onPress={() => {{ this.props.navigation.navigate('Mitt konto')} }}
+            />
+            <StatusBar style="dark"/>
+          </View>
+          <MakeItRain
+            numItems={0}
+            itemComponent={<Ionicons name="beer"  size={50}/>}
+          // itemComponent={<Image style = {{width: 50, height: 50, resizeMode: 'contain'}} source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>}
+          // itemComponent={<Image source = {{uri: "https://product-cdn.systembolaget.se/productimages/" + this.state.beerImage.beer + "/" + this.state.beerImage.beer + '_100.png' }}/>}
+          // itemComponent={<Image style = {{width: 100, height: 100, resizeMode: 'contain'}} source = {{uri: this.state.beerImage[1].picture_url + '_100.png' }}/>}
             itemDimensions = {{ width: 50, height: 50 }}
-	          itemTintStrength={0}
+            itemTintStrength={0}
             fallSpeed = {10}
             flipSpeed = {0.1}
             horizSpeed = {20}
             continous = {true}
             //flavor={"rain"}
-	        />
-    </View>    
-  </SafeAreaProvider> 
- 
-    )
+          />
+        </View>
+      </SafeAreaProvider> 
+      )
     }
-}
+  }
 
 const styles = StyleSheet.create({
-  
-    buttonContainer: {
-        margin: 10,
-        padding: 10,
-        justifyContent: 'center',
-    },
-    appButtonContainer: {
-        margin: 15,
-        elevation: 8,
-        backgroundColor: "#009688",
-        borderRadius: 10,
-        paddingVertical: 20,
-        paddingHorizontal: 12,
-      },
-
-    fridayTextStyle: {
-      fontSize: 22,
-      color: "black",
-      fontWeight: "bold",
-      alignSelf: "center",
-      textTransform: "uppercase",
-      padding: 10,
-    }, 
-    appButtonText: {
-        fontSize: 18,
-        color: "#fff",
-        fontWeight: "bold",
-        alignSelf: "center",
-        textTransform: "uppercase"
-      }
+  buttonContainer: {
+    margin: 10,
+    padding: 10,
+    justifyContent: 'center',
+  },
+  appButtonContainer: {
+    margin: 15,
+    elevation: 8,
+    backgroundColor: "#009688",
+    borderRadius: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+  },
+  fridayTextStyle: {
+    fontSize: 22,
+    color: "black",
+    fontWeight: "bold",
+    alignSelf: "center",
+    textTransform: "uppercase",
+    padding: 10,
+  }, 
+  appButtonText: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "bold",
+    alignSelf: "center",
+    textTransform: "uppercase"
+  }
 })
 
 export default Home

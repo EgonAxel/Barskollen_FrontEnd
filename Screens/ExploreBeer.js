@@ -3,17 +3,7 @@ import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, Sa
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { Rating } from 'react-native-ratings';
-import { Ionicons } from '@expo/vector-icons'; 
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNPickerSelect from 'react-native-picker-select';
-
-
-// Installera dessa: 
-// npm i --save axios 
-// npm i react-native-elements --save
-// npm i --save react-native-vector-icons // required by react-native-elements
-
-// npm install react-native-stars --save  //För stärnor
 
 async function getValueFor(key) {
   let result = await SecureStore.getItemAsync(key);
@@ -75,8 +65,8 @@ class Beers extends React.PureComponent {
     else {
       this.fetchBeer(0, "", this.state.orderingValue, this.state.beerType)
     }
+  }
 
-}
   fetchBeer = (offset, searchText, orderingValue, beerType) => {
     getValueFor("Token").then((token) => {
       axios
@@ -91,6 +81,7 @@ class Beers extends React.PureComponent {
       });
     })
   }
+
   fetchMoreBeers = () => {
     if (this.state.beers.length >= 20) {
       this.setState(
@@ -103,45 +94,70 @@ class Beers extends React.PureComponent {
       );
     };
   }
+
   componentDidMount() {
     this.fetchBeer(this.state.offset, this.state.searchText, this.state.orderingValue, this.state.beerType);
   }
 
-  _renderListItem(item) {
-    return(
-      // Bortkommenderad från <Card>: pointerEvents="none">
-      <View style = {styles.beerItem}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer: item, beerDataFetched: true, hasReviewed: null})}>
-              <View style = {styles.beerInstance}>
-                {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImage)}
-                <View style = {styles.beerInformation}>
-                  <Text style = {styles.productNameBold}>{item.name}</Text>
-                  <Text style = {styles.productNameThin}>{item.beer_type}</Text>
-                  <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                  <Rating
-                    type='custom'
-                    readonly={true}
-                    startingValue={item.avg_rating}
-                    style={styles.ratingStyleRecommendation}
-                    imageSize={20}
-                    ratingColor='#009688'
-                    ratingBackgroundColor='#dadada'
-                    tintColor='white'
-                  />
-                </View>
-              </View> 
-          </TouchableOpacity>
-      </View>
-    )
-  }
+  render() {
+    const scrollY = new Animated.Value(0)
+    const diffClamp = Animated.diffClamp(scrollY, 0, 100) 
+    const translateY = diffClamp.interpolate({
+      inputRange:[0,100],
+      outputRange:[0,-225],
+      extrapolate: 'clamp',
+    })
 
-  renderBeerImage = (beer_image, resolution, imageStyle) => {
-    if (beer_image == null) {
-      return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
-    }
-    else {
-      return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
-    }
+    return (
+      <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+        <Animated.View  // - Måste ha denna styling här för att komma åt 'translate' varabel.
+          style={{
+            transform:[
+              {translateY:translateY}
+            ],
+            position:'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            borderBottomLeftRadius: 15,
+            borderBottomRightRadius: 15,
+            shadowColor: "#000000",
+            shadowOffset: {
+              width: 3,
+              height: 5
+            },
+            shadowOpacity: 0.4,
+            shadowRadius: 5,
+            // elevation: 601, // - Denna elevation ger ingen skugga runt objektet på android
+            zIndex: 1,
+            backgroundColor: '#ffffff',
+          }}>
+          <this.renderListHeader/>
+        </Animated.View>
+        <FlatList
+          style={{flex: 1}}
+          contentContainerStyle={{
+            backgroundColor: '#ffffff',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: this.state.toggleSearchMargin,
+            paddingBottom: 125 + beerItemMarginTop,
+            zIndex: -10,
+            elevation: -10,
+          }}
+          data={this.state.beers}
+          keyExtractor={(beer, index) => String(index)}
+          renderItem={({ item }) => this._renderListItem(item)}
+          onEndReached={this.fetchMoreBeers}
+          onEndReachedThreshold={2}
+          scrollEventThrottle="16"
+          onScroll = {(e)=>{
+            if (e.nativeEvent.contentOffset.y > 0)
+            scrollY.setValue(0.7 * (e.nativeEvent.contentOffset.y));
+          }}
+        />
+      </View>
+    );
   }
 
   renderListHeader = () => {
@@ -201,71 +217,43 @@ class Beers extends React.PureComponent {
     )
   }
 
-  render() {
-
-    const scrollY = new Animated.Value(0)
-    const diffClamp = Animated.diffClamp(scrollY, 0, 100) 
-
-    const translateY = diffClamp.interpolate({
-         inputRange:[0,100],
-         outputRange:[0,-225],
-         extrapolate: 'clamp',
-    })
-
-    return (
-      <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-        <Animated.View  // - Måste ha denna styling här för att komma åt 'translate' varabel.
-            style={{
-              transform:[
-                {translateY:translateY}
-              ],
-              position:'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              borderBottomLeftRadius: 15,
-              borderBottomRightRadius: 15,
-              shadowColor: "#000000",
-              shadowOffset: {
-                width: 3,
-                height: 5
-              },
-              shadowOpacity: 0.4,
-              shadowRadius: 5,
-              // elevation: 601, // - Denna elevation ger ingen skugga runt objektet på android
-              zIndex: 1,
-              backgroundColor: '#ffffff',
-                          }}
-          > 
-           <this.renderListHeader/>
-        </Animated.View>
-
-        <FlatList
-          style={{flex: 1}}
-          contentContainerStyle={{
-            backgroundColor: '#ffffff',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: this.state.toggleSearchMargin,
-            paddingBottom: 125 + beerItemMarginTop,
-            zIndex: -10,
-            elevation: -10,
-          }}
-          data={this.state.beers}
-          keyExtractor={(beer, index) => String(index)}
-          renderItem={({ item }) => this._renderListItem(item)}
-          onEndReached={this.fetchMoreBeers}
-          onEndReachedThreshold={2}
-
-          scrollEventThrottle="16"
-          onScroll = {(e)=>{
-            if (e.nativeEvent.contentOffset.y > 0)
-            scrollY.setValue(0.7 * (e.nativeEvent.contentOffset.y));
-          }}
-        />
+  _renderListItem(item) {
+    return(
+      // Bortkommenderad från <Card>: pointerEvents="none">
+      <View style = {styles.beerItem}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer: item, beerDataFetched: true, hasReviewed: null})}>
+              <View style = {styles.beerInstance}>
+                {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImage)}
+                <View style = {styles.beerInformation}>
+                  <Text style = {styles.productNameBold}>{item.name}</Text>
+                  <Text style = {styles.productNameThin}>{item.beer_type}</Text>
+                  <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
+                  <Rating
+                    type='custom'
+                    readonly={true}
+                    startingValue={item.avg_rating}
+                    style={styles.ratingStyleRecommendation}
+                    imageSize={20}
+                    ratingColor='#009688'
+                    ratingBackgroundColor='#dadada'
+                    tintColor='white'
+                  />
+                </View>
+              </View> 
+          </TouchableOpacity>
       </View>
-    );
+    )
   }
+
+  renderBeerImage = (beer_image, resolution, imageStyle) => {
+    if (beer_image == null) {
+      return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
+    }
+    else {
+      return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
+    }
+  }
+  
 }
 
 const windowWidth = Dimensions.get('window').width;
