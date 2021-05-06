@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, ImageBackground, KeyboardAvoidingView } from 'react-native'
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import moment, { parseTwoDigitYear } from 'moment';
+
 
 async function save(key, value) {
    await SecureStore.setItemAsync(key, value);
@@ -34,12 +36,17 @@ async function save(key, value) {
       this.setState({ dateOfBirth: text})
    }
    registerUser = (username, pass, pass2, email, dob) => {
+      const userDoB = dob.replace(/[^0123456789]/g, "")
       if (!username) {
          Alert.alert('Användarnamn saknas','Fyll i användarnamn')
          return
       }
       if (!pass) {
          Alert.alert('Lösenord saknas','Fyll i lösenord')
+         return
+      }
+      if (pass !== pass2) {
+         Alert.alert("Fel lösenord", "Lösenorden matchar inte") /*   Första strängen är alert-titel, andra strängen är alert-meddelandet  */ 
          return
       }
       if (!email) {
@@ -50,8 +57,8 @@ async function save(key, value) {
          Alert.alert('Födelsedatum saknas','Fyll i födelsedatum')
          return
       }
-      if (pass !== pass2) {
-         Alert.alert("Fel lösenord", "Lösenorden matchar inte") /*   Första strängen är alert-titel, andra strängen är alert-meddelandet  */ 
+      if ((userDoB.substring(0, 4) + 18, userDoB.substring(4, 6), userDoB.substring(6, 8)) > (moment().format("YYYY"), moment().format("MM"), moment().format("DD"))) {
+         Alert.alert('Inte riktigt ännu!','Du behöver vara minst 18 år för att registrera ett konto.')
          return
       }
       axios
@@ -133,6 +140,7 @@ async function save(key, value) {
                      onPress = {
                         () => this.registerUser(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
                      }>
+
                      <Text style = {styles.registerButtonText}> Registrera konto </Text>
                   </TouchableOpacity>
 
