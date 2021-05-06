@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
 import axios from 'axios';
 import Stars from 'react-native-stars';
-import { Ionicons } from '@expo/vector-icons'; 
+import { Rating } from 'react-native-ratings';
+import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SecureStore from 'expo-secure-store';
 
@@ -44,14 +45,21 @@ class IndividualBeer extends React.PureComponent {
       });
     })
   };
-  fetchReviews = () => {
+  fetchReviews = (firstLoad) => {
     getValueFor("Token").then((token) => {
     axios
       .get(`http://127.0.0.1:8000/review/?beer=${this.state.beer_ID}`, { headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
-        this.setState({
-          reviews: this.state.reviews.concat(response.data.results)
-        })
+        if (firstLoad) {
+          this.setState({
+            reviews: response.data.results
+          })
+        }
+        else {
+          this.setState({
+            reviews: this.state.reviews.concat(response.data.results)
+          })
+        }
       })
       .catch(error => {
         this.setState({error: error.message});
@@ -64,7 +72,7 @@ class IndividualBeer extends React.PureComponent {
         offset: prevState.offset + 20 ,
       }),
       () => {
-        this.fetchReviews();
+        this.fetchReviews(false);
       },
     );
   };
@@ -95,25 +103,18 @@ class IndividualBeer extends React.PureComponent {
 
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      if (this.state.beerDataFetched != true) {
+      if (this.state.beerDataFetched != true || this.state.refreshed != true) {
         this.fetchBeer()
       }
-      this.fetchReviews()
+      this.fetchReviews(true)
       if (this.state.hasReviewed != true) {
         this.checkHasReviewed()
       }
-    })
-    this._unsubscribe2 = this.props.navigation.addListener('blur', () => {
-      this.setState({
-        beerDataFetched: false,
-        reviews: []
-      })
     })
   }
 
   componentWillUnmount() {
     this._unsubscribe();
-    this._unsubscribe2();
   }
 
   _renderListItem(item) {
@@ -128,13 +129,17 @@ class IndividualBeer extends React.PureComponent {
             <Ionicons name="person" size={23} style={styles.usernameIcon}/>
             <Text style = {styles.reviewUsername}>{item.user}</Text>
           </View>
-          <Stars
-            display= {item.rating}
-            half={true}
-            fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
-            emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
-            halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}/>
-            <Text style = {styles.reviewText}>{item.review_text} </Text>
+          <Rating
+            type='custom'
+            readonly='true'
+            startingValue={item.rating}
+            style={styles.reviewStarStyle}
+            imageSize={35}
+            ratingColor='#009688'
+            ratingBackgroundColor='#dadada'
+            tintColor='white'
+          />
+          <Text style = {styles.reviewText}>{item.review_text} </Text>
         </View>
       )
     }
@@ -149,12 +154,16 @@ class IndividualBeer extends React.PureComponent {
             <Ionicons name="person" size={23} style={styles.usernameIcon}/>
             <Text style = {styles.reviewUsername}>{item.user}</Text>
           </View>
-          <Stars
-            display= {Number(item.rating)}
-            half={true}
-            fullStar={<Icon name={'star'} style={[styles.reviewStarStyle]}/>}
-            emptyStar={<Icon name={'star-outline'} style={[styles.reviewStarStyle]}/>}
-            halfStar={<Icon name={'star-half-full'} style={[styles.reviewStarStyle]}/>}/>
+          <Rating
+            type='custom'
+            readonly='true'
+            startingValue={item.rating}
+            style={styles.reviewStarStyle}
+            imageSize={35}
+            ratingColor='#009688'
+            ratingBackgroundColor='#dadada'
+            tintColor='white'
+          />
         </View>
       )
     }
@@ -164,23 +173,24 @@ class IndividualBeer extends React.PureComponent {
       if (hasReviewed) {
         return (
           <View>
-            <View style = {styles.ratingStars}>
-              <Stars
-                display= {Number(this.state.userRating)}
-                half={true}
-                fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
-                emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
-                halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
-              />
-            </View>
-            <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
-            <View>
-              <TouchableOpacity onPress={() => {
-                this.props.navigation.navigate('ViewRecommendations', {beer: this.state.beer, rating: this.state.userRating})}}>
-                <Text style={styles.giveRating}>Visa rekommendationer</Text>
-              </TouchableOpacity>
-            </View>
+          <Rating
+            type='custom'
+            readonly='true'
+            startingValue={this.state.userRating}
+            style={styles.reviewStarStyle}
+            imageSize={35}
+            ratingColor='#009688'
+            ratingBackgroundColor='#dadada'
+            tintColor='white'
+          />
+          <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
+          <View>
+            <TouchableOpacity onPress={() => {
+              this.props.navigation.navigate('ViewRecommendations', {beer: this.state.beer, rating: this.state.userRating})}}>
+              <Text style={styles.giveRating}>Visa rekommendationer</Text>
+            </TouchableOpacity>
           </View>
+        </View>
         )
       }
       else if (hasReviewed == false){
@@ -196,6 +206,7 @@ class IndividualBeer extends React.PureComponent {
         )
       }
   }
+
   renderBeerImage = (beer_image, resolution, imageStyle) => {
     if (beer_image == null) {
       return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
@@ -204,6 +215,7 @@ class IndividualBeer extends React.PureComponent {
       return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
     }
   }
+
   renderListHeader = () => {
     if (this.state.beerDataFetched == true) {
       return (
@@ -226,12 +238,15 @@ class IndividualBeer extends React.PureComponent {
                 <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  this.state.beer_sweetness}</Text>
               </View> */}
               <View style = {styles.ratingStars}>
-                <Stars
-                  display= {Number(this.state.beer.avg_rating)}
-                  half={true}
-                  fullStar={<Icon name={'star'} style={[styles.averageStarStyle]}/>}
-                  emptyStar={<Icon name={'star-outline'} style={[styles.averageStarStyle]}/>}
-                  halfStar={<Icon name={'star-half-full'} style={[styles.averageStarStyle]}/>}
+                <Rating
+                  type='custom'
+                  readonly='true'
+                  startingValue={this.state.beer.avg_rating}
+                  style={styles.reviewStarStyle}
+                  imageSize={35}
+                  ratingColor='#009688'
+                  ratingBackgroundColor='#dadada'
+                  tintColor='white'
                 />
               </View>
               <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer.avg_rating).toFixed(1) + ' av 5'}</Text>
@@ -357,10 +372,10 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   beerImage: {
-      width: 100,
-      height: 225,
-      resizeMode: 'contain',
-      alignSelf: 'center',
+    width: 100,
+    height: 225,
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
   imageWrap: {
     marginTop: 15,
@@ -441,28 +456,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 20,
   },
-  ratingStars: {
-    paddingBottom: 10,
-  },
-  averageStarStyle: {
-    color: '#009688',
-    backgroundColor: 'transparent',
-    textShadowColor: '#dadada',
-    textShadowOffset: 
-    {width: 1, height: 1},
-    textShadowRadius: 5,
-    fontSize: 35,
-    marginTop: 10,
-  },
   reviewStarStyle: {
-    color: '#009688',
-    backgroundColor: 'transparent',
-    textShadowColor: '#dadada',
-    textShadowOffset: 
-    {width: 1, height: 1},
-    textShadowRadius: 5,
-    fontSize: 30,
-    paddingVertical: 15,
+    paddingVertical: 10,
   },
 })
 

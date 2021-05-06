@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, Image, FlatList, StyleSheet,TouchableOpacity,
          TextInput, Dimensions, Modal, Alert, KeyboardAvoidingView } from 'react-native';
-import Stars from 'react-native-stars';
 import axios from 'axios';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Rating } from 'react-native-ratings';
 import * as SecureStore from 'expo-secure-store';
 
 const windowWidth = Dimensions.get('window').width;
@@ -22,7 +21,7 @@ class ReviewBeer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-        stars: 0,
+        ratingValue: 0,
         beer: this.props.route.params.beer,
         modalVisible: this.props.route.params.modalVisible,
         error: null,
@@ -30,9 +29,14 @@ class ReviewBeer extends React.PureComponent {
         review: "",
     };
   }
+
+  handleRating = (rating) => {
+    this.setState({ ratingValue: rating })
+  }
+
   reviewText = (text) => {
     this.setState({ review: text })
-    }
+  }
   
   postReview(beer_ID, starValue, review) {
     getValueFor("Username").then((username) => {
@@ -93,16 +97,17 @@ class ReviewBeer extends React.PureComponent {
                 <Text style = {styles.productNameRecommendation}>{item.name}  </Text>
                 <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
                 {/* <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text> */}
-                <Stars
-                  display= {Number((item.avg_rating).toFixed(1))}
-                  half={true}
-                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                <Rating
+                  type='custom'
+                  readonly='true'
+                  startingValue={item.avg_rating}
+                  style={styles.ratingStyleRecommendation}
+                  imageSize={20}
+                  ratingColor='#009688'
+                  ratingBackgroundColor='#dadada'
+                  tintColor='white'
                 />
               </View>
-            </View> 
-            <View style = {styles.ratingStars}>
             </View>
           </TouchableOpacity>
          </View>        
@@ -114,45 +119,45 @@ class ReviewBeer extends React.PureComponent {
     return (
     <View>
       <View style={styles.wholePage}>  
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset = {100}>  
-        <View style = {styles.viewStyle}>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset = {100} style={styles.viewStyle}>  
           <Text style = {styles.productName}>
             {this.state.beer.name}
           </Text>
           {this.renderBeerImage(this.state.beer.picture_url, '_200.png', styles.beerImage)}
           <View style={styles.ratingStars}>
-            <Stars
-              update={(val)=>{this.setState({stars: val})}}
-              half={true}
-              display= {Number((this.state.stars).toFixed(1))}
-              fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-              emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-              halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
-              />
-            </View>
-            <TextInput style = {styles.textInputFields}
-              clearButtonMode = 'always'
-              underlineColorAndroid = "transparent"
-              placeholder = "Vad tyckte du om ölen?"
-              placeholderTextColor = "grey"
-              returnKeyType="go"
-              onChangeText = {this.reviewText}
-              blurOnSubmit={true}
-              multiline={true}
+            <Rating
+              type='custom'
+              startingValue={0}
+              style={styles.ratingStyle}
+              imageSize={35}
+              ratingColor='#009688'
+              ratingBackgroundColor='#dadada'
+              tintColor='white'
+              onFinishRating={this.handleRating}
             />
-            <TouchableOpacity 
-              onPress={() => {
-                if (this.state.stars > 0) {
-                  this.postReview(this.state.beer.beer_ID, this.state.stars, this.state.review),
-                  this.getRecommendations(this.state.beer.beer_ID, this.state.stars, this.state.beer.beer_type, this.state.beer.bitterness, this.state.beer.fullness, this.state.beer.sweetness),
-                  this.setModalVisible(true)
-                }
-                else {
-                  Alert.alert("Noll stjärnor?", "Så dåliga öl finns det inte. Kör en halv i alla fall!")
-                }}}>
-                <Text style={styles.sendReview}>Skicka review</Text>
-            </TouchableOpacity>
           </View>
+          <TextInput style = {styles.textInputFields}
+            clearButtonMode = 'always'
+            underlineColorAndroid = "transparent"
+            placeholder = "Vad tyckte du om ölen?"
+            placeholderTextColor = "grey"
+            returnKeyType="go"
+            onChangeText = {this.reviewText}
+            blurOnSubmit={true}
+            multiline={true}
+          />
+          <TouchableOpacity 
+            onPress={() => {
+              if (this.state.ratingValue > 0) {
+                this.postReview(this.state.beer.beer_ID, this.state.ratingValue, this.state.review),
+                this.getRecommendations(this.state.beer.beer_ID, this.state.ratingValue, this.state.beer.beer_type, this.state.beer.bitterness, this.state.beer.fullness, this.state.beer.sweetness),
+                this.setModalVisible(true)
+              }
+              else {
+                Alert.alert("Noll stjärnor?", "Så dåliga öl finns det inte. Kör en halv i alla fall!")
+              }}}>
+              <Text style={styles.sendReview}>Skicka review</Text>
+          </TouchableOpacity>
         </KeyboardAvoidingView>
       </View>
       <View>
@@ -170,10 +175,11 @@ class ReviewBeer extends React.PureComponent {
               backgroundColor: '#ffffff',
               alignItems: 'center',
               justifyContent: 'center',
-              marginTop: 15 }}
-              data={this.state.recommendations}
-              keyExtractor={(beer, index) => String(index)}
-              renderItem={({ item }) => this._renderListItem(item)}
+              marginTop: 15
+            }}
+            data={this.state.recommendations}
+            keyExtractor={(beer, index) => String(index)}
+            renderItem={({ item }) => this._renderListItem(item)}
           />
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.state.beer.beer_ID, beer: this.state.beer, beerDataFetched: false, hasReviewed: null})}>
             <View style={styles.button}>
@@ -186,6 +192,7 @@ class ReviewBeer extends React.PureComponent {
     );
   }
 }
+
 const usedBorderRadius = 15;
 const beerItemMarginTop = 15;
 const styles = StyleSheet.create({
@@ -336,17 +343,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     resizeMode: 'contain',
   },
-  myStarStyle: {
-    color: '#009688',
-    backgroundColor: 'transparent',
-    textShadowColor: '#dadada',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 5,
-    fontSize: 35,
-    marginBottom: 10,
+  ratingStyle: {
+    alignSelf: 'center'
   },
-  myEmptyStarStyle: {
-    color: '#009688',
+  ratingStyleRecommendation: {
+    paddingBottom: 10,
+    alignSelf: 'flex-start'
   },
   button: {
     width: windowWidth * 0.4,

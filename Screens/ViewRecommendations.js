@@ -3,7 +3,7 @@ import { View, Text, Image, FlatList, StyleSheet,TouchableOpacity,
          Dimensions, Modal, Alert, KeyboardAvoidingView } from 'react-native';
 import Stars from 'react-native-stars';
 import axios from 'axios';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Rating } from 'react-native-ratings';
 import * as SecureStore from 'expo-secure-store';
 
 const windowWidth = Dimensions.get('window').width;
@@ -29,9 +29,11 @@ class ViewRecommendations extends React.PureComponent {
         rating: this.props.route.params.rating,
     };
   }
+
   reviewText = (text) => {
     this.setState({ review: text })
   }
+
   getRecommendations(beer_ID, starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
     const beer_type_encoded = encodeURIComponent(beer_type)
     getValueFor("Token").then((token) => {
@@ -48,12 +50,15 @@ class ViewRecommendations extends React.PureComponent {
         });
       });
   }
+
   componentDidMount() {
     this.getRecommendations(this.state.beer.beer_ID, this.state.rating, this.state.beer.beer_type, this.state.beer.bitterness, this.state.beer.fullness, this.state.beer.sweetness)
   }
+
   setModalVisible = (visible) => {
     this.setState({ modalVisible: visible });
   }
+
   renderBeerImage = (beer_image, resolution, imageStyle) => {
     if (beer_image == null) {
       return( <Image source={{uri: "https://cdn.systembolaget.se/492c4d/contentassets/ef797556881d4e20b334529d96b975a2/placeholder-beer-bottle.png" }} style={imageStyle}/>)
@@ -62,6 +67,7 @@ class ViewRecommendations extends React.PureComponent {
       return( <Image source={{uri: beer_image + resolution }} style={imageStyle} />)
     }
   }
+
   _renderListItem(item) {
     return(
       <View style = {styles.modalStyleRecommendation}>
@@ -72,21 +78,30 @@ class ViewRecommendations extends React.PureComponent {
               <Text style = {styles.productNameRecommendation}>{item.name}</Text>
               <Text style = {styles.productTypeRecommendation}>{item.beer_type}</Text>
               {/* <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text> */}
-              <Stars
+              {/* <Stars
                 display= {Number((item.avg_rating).toFixed(1))}
                 half={true}
                 fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
                 emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
                 halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+              /> */}
+              <Rating
+                type='custom'
+                readonly='true'
+                startingValue={item.avg_rating}
+                style={styles.ratingStyle}
+                imageSize={28}
+                ratingColor='#009688'
+                ratingBackgroundColor='#dadada'
+                tintColor='white'
               />
             </View>
-          </View> 
-          <View style = {styles.ratingStars}>
           </View>
         </TouchableOpacity>
       </View>        
     )
   }
+
   render() {
     const { modalVisible } = this.state;
     return (
@@ -120,9 +135,9 @@ class ViewRecommendations extends React.PureComponent {
     );
   }
 }
+
 const usedBorderRadius = 15;
 const styles = StyleSheet.create({
-  
 // ÖL SOM RATEAS
   wholePage: {
     height: windowHeight,
@@ -270,17 +285,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     resizeMode: 'contain',
   },
-  myStarStyle: {
-    color: '#009688',
-    backgroundColor: 'transparent',
-    textShadowColor: '#dadada',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 5,
-    fontSize: 35,
-    marginBottom: 10,
-  },
-  myEmptyStarStyle: {
-    color: '#009688',
+  ratingStyle: {
+    paddingBottom: 10,
+    alignSelf: 'flex-start'
   },
   button: {
     width: windowWidth * 0.4,
@@ -305,6 +312,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center"
   },
-  })
+})
   
   export default ViewRecommendations

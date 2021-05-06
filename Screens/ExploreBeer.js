@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Dimensions, Animated} from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import Stars from 'react-native-stars';
+import { Rating } from 'react-native-ratings';
 import { Ionicons } from '@expo/vector-icons'; 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNPickerSelect from 'react-native-picker-select';
@@ -106,6 +106,7 @@ class Beers extends React.PureComponent {
   componentDidMount() {
     this.fetchBeer(this.state.offset, this.state.searchText, this.state.orderingValue, this.state.beerType);
   }
+  
   _renderListItem(item) {
     return(
       // Bortkommenderad från <Card>: pointerEvents="none">
@@ -117,12 +118,15 @@ class Beers extends React.PureComponent {
                   <Text style = {styles.productNameBold}>{item.name}</Text>
                   <Text style = {styles.productNameThin}>{item.beer_type}</Text>
                   <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
-                  <Stars
-                    display= {Number((item.avg_rating))}
-                    half={true}
-                    fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                    emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                    halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}
+                  <Rating
+                    type='custom'
+                    readonly='true'
+                    startingValue={item.avg_rating}
+                    style={styles.ratingStyleRecommendation}
+                    imageSize={20}
+                    ratingColor='#009688'
+                    ratingBackgroundColor='#dadada'
+                    tintColor='white'
                   />
                 </View>
               </View> 
@@ -141,64 +145,61 @@ class Beers extends React.PureComponent {
   }
 
   renderListHeader = () => {
-    // const [shouldShowSearchArea, setShouldShow] = useState(true);
     return (
       <SafeAreaView style={styles.safeAreaView}>
-    <View style={styles.filterAndSearchArea}>
-      <TextInput style = {styles.searchBar}
-        useNativeAndroidPickerStyle={false}
-        clearButtonMode = 'always'
-        underlineColorAndroid = "transparent"
-        placeholder = "Sök efter bärs..."
-        placeholderTextColor = "grey"
-        autoCapitalize = "none"
-        returnKeyType="search"
-        onChangeText={this.handleSearchText}/>
-
-    <View style={ Platform.OS === 'ios'
-          ? pickerSelectStyles.inputIOS
-          : pickerSelectStyles.inputAndroid, 
-          { flexDirection:"row", 
-            justifyContent:"space-between"}}>  
-      <RNPickerSelect style={pickerSelectStyles}
-          useNativeAndroidPickerStyle={false}
-          placeholder={{
-          label: 'Ölsort',
-          value: "",
-          }}
-          onValueChange={(value) => this.setState({
-            beerType: value},
-            this.handleFilterAction)}
-          items={[
-            { label: 'Ljus lager', value: 'Ljus lager', inputLabel: 'Ljus lager' },
-            { label: 'Ale', value: 'Ale', inputLabel: 'Ale' },
-            { label: 'Porter & Stout', value: 'Porter+%26+Stout', inputLabel: 'Porter & Stout' },
-            { label: 'Veteöl', value: 'Veteöl', inputLabel: 'Veteöl' },
-            { label: "Mellanmörk & Mörk lager", value: "Mellanm%C3%B6rk+%26+M%C3%B6rk+lager", inputLabel: "Mellanmörk & Mörk lager" },
-            { label: 'Syrlig öl', value: 'Syrlig öl', inputLabel: 'Syrlig öl' },
-            { label: 'Annan öl', value: 'Annan öl', inputLabel: 'Annan öl' },
-          ]}
-        />
-        <RNPickerSelect style={pickerSelectStyles}
-          useNativeAndroidPickerStyle={false}
-          placeholder={{
-          label: 'Sortering',
-          value: "",
-          }}
-          onValueChange={(value) => this.setState({
-            orderingValue: value},
-            this.handleFilterAction)}
-          items={[
-            { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
-            { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
-            { label: 'Sortera alfabetiskt (a-ö)', value: 'name', inputLabel: 'Alfabetiskt (a-ö)' },
-            { label: 'Sortera alfabetiskt (ö-a)', value: '-name', inputLabel: 'Alfabetiskt (ö-a)' },
-          ]}
-        />
-    </View>
-  </View>
-</SafeAreaView>
-)}
+        <View style={styles.filterAndSearchArea}>
+          <TextInput style = {styles.searchBar}
+            useNativeAndroidPickerStyle={false}
+            clearButtonMode = 'always'
+            underlineColorAndroid = "transparent"
+            placeholder = "Sök efter bärs..."
+            placeholderTextColor = "grey"
+            autoCapitalize = "none"
+            returnKeyType="search"
+            onChangeText={this.handleSearchText}
+          />
+          <View style={ Platform.OS === 'ios'
+            ? pickerSelectStyles.inputIOS
+            : pickerSelectStyles.inputAndroid, 
+            { flexDirection:"row", 
+              justifyContent:"space-between"}}>  
+            <RNPickerSelect style={pickerSelectStyles}
+              useNativeAndroidPickerStyle={false}
+              placeholder={{ label: 'Ölsort', value: "" }}
+              onValueChange={(value) => this.setState({
+                beerType: value},
+                this.handleFilterAction)}
+              items={[
+                { label: 'Ljus lager', value: 'Ljus lager', inputLabel: 'Ljus lager' },
+                { label: 'Ale', value: 'Ale', inputLabel: 'Ale' },
+                { label: 'Porter & Stout', value: 'Porter+%26+Stout', inputLabel: 'Porter & Stout' },
+                { label: 'Veteöl', value: 'Veteöl', inputLabel: 'Veteöl' },
+                { label: "Mellanmörk & Mörk lager", value: "Mellanm%C3%B6rk+%26+M%C3%B6rk+lager", inputLabel: "Mellanmörk & Mörk lager" },
+                { label: 'Syrlig öl', value: 'Syrlig öl', inputLabel: 'Syrlig öl' },
+                { label: 'Annan öl', value: 'Annan öl', inputLabel: 'Annan öl' },
+              ]}
+            />
+            <RNPickerSelect style={pickerSelectStyles}
+              useNativeAndroidPickerStyle={false}
+              placeholder={{
+              label: 'Sortering',
+              value: "",
+              }}
+              onValueChange={(value) => this.setState({
+                orderingValue: value},
+                this.handleFilterAction)}
+              items={[
+                { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
+                { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
+                { label: 'Sortera alfabetiskt (a-ö)', value: 'name', inputLabel: 'Alfabetiskt (a-ö)' },
+                { label: 'Sortera alfabetiskt (ö-a)', value: '-name', inputLabel: 'Alfabetiskt (ö-a)' },
+              ]}
+            />
+          </View>
+        </View>
+      </SafeAreaView>
+    )
+  }
 
   render() {
 
@@ -252,9 +253,7 @@ class Beers extends React.PureComponent {
           }}
           data={this.state.beers}
           keyExtractor={(beer, index) => String(index)}
-          
           renderItem={({ item }) => this._renderListItem(item)}
-        
           onEndReached={this.fetchMoreBeers}
           onEndReachedThreshold={2}
 

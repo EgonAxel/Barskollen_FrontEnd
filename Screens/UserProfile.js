@@ -3,6 +3,7 @@ import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, Bu
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Stars from 'react-native-stars';
+import { Rating } from 'react-native-ratings';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Ionicons } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
@@ -75,16 +76,10 @@ class UserProfile extends React.PureComponent {
         this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue);
       })
     })
-    this._unsubscribe2 = this.props.navigation.addListener('blur', () => {
-      this.setState({
-        reviews: []
-      })
-    })
   }
 
   componentWillUnmount() {
     this._unsubscribe()
-    this._unsubscribe2()
   }
 
   renderBeerImage = (beer_image, resolution, imageStyle) => {
@@ -104,20 +99,25 @@ class UserProfile extends React.PureComponent {
             <Ionicons name="calendar-outline" size={18}></Ionicons>
             <Text style={styles.dateOfReview}>{item.review_date.substring(0, 10)}</Text>
           </View>
-            <View style = {styles.beerInstance}>
-              {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImage)}
-              <View style = {styles.ratingStars}>
-                <Text style = {styles.productNameBold}>{item.beer_name}</Text>
-                <Stars
-                  display= {Number((item.rating).toFixed(1))}
-                  fullStar={<Icon name={'star'} style={[styles.myStarStyle]}/>}
-                  emptyStar={<Icon name={'star-outline'} style={[styles.myStarStyle, styles.myEmptyStarStyle]}/>}
-                  halfStar={<Icon name={'star-half-full'} style={[styles.myStarStyle]}/>}/>
-              </View>
+          <View style = {styles.beerInstance}>
+            {this.renderBeerImage(item.picture_url, '_100.png', styles.beerImage)}
+            <View style = {styles.ratingStars}>
+              <Text style = {styles.productNameBold}>{item.beer_name}</Text>
+              <Rating
+                type='custom'
+                readonly='true'
+                startingValue={item.rating}
+                style={styles.reviewStarStyle}
+                imageSize={35}
+                ratingColor='#009688'
+                ratingBackgroundColor='#dadada'
+                tintColor='white'
+              />
             </View>
+          </View>
         </TouchableOpacity>
       </View>
-      )
+    )
   }
 
   renderListHeader = () => {
@@ -188,15 +188,10 @@ class UserProfile extends React.PureComponent {
             backgroundColor: '#ffffff',
             alignItems: 'center',
             justifyContent: 'center',
-            // marginTop: 15,
-          
           }}
           data={this.state.reviews}
           keyExtractor={(beer, index) => String(index)}
-          
           renderItem={({ item }) => this._renderListItem(item)}
-          //horizontal={true}
-        
           onEndReached={this.fetchMoreReviews}
           onEndReachedThreshold={2}
           ListHeaderComponent={this.renderListHeader}/>
