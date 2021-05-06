@@ -87,7 +87,7 @@ class ViewRecommendations extends React.PureComponent {
               /> */}
               <Rating
                 type='custom'
-                readonly='true'
+                readonly={true}
                 startingValue={item.avg_rating}
                 style={styles.ratingStyle}
                 imageSize={28}

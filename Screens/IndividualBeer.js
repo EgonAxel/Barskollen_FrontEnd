@@ -131,7 +131,7 @@ class IndividualBeer extends React.PureComponent {
           </View>
           <Rating
             type='custom'
-            readonly='true'
+            readonly={true}
             startingValue={item.rating}
             style={styles.reviewStarStyle}
             imageSize={35}
@@ -156,7 +156,7 @@ class IndividualBeer extends React.PureComponent {
           </View>
           <Rating
             type='custom'
-            readonly='true'
+            readonly={true}
             startingValue={item.rating}
             style={styles.reviewStarStyle}
             imageSize={35}
@@ -175,7 +175,7 @@ class IndividualBeer extends React.PureComponent {
           <View>
           <Rating
             type='custom'
-            readonly='true'
+            readonly={true}
             startingValue={this.state.userRating}
             style={styles.reviewStarStyle}
             imageSize={35}
@@ -240,7 +240,7 @@ class IndividualBeer extends React.PureComponent {
               <View style = {styles.ratingStars}>
                 <Rating
                   type='custom'
-                  readonly='true'
+                  readonly={true}
                   startingValue={this.state.beer.avg_rating}
                   style={styles.reviewStarStyle}
                   imageSize={35}

@@ -105,7 +105,7 @@ class UserProfile extends React.PureComponent {
               <Text style = {styles.productNameBold}>{item.beer_name}</Text>
               <Rating
                 type='custom'
-                readonly='true'
+                readonly={true}
                 startingValue={item.rating}
                 style={styles.reviewStarStyle}
                 imageSize={35}

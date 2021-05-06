@@ -99,7 +99,7 @@ class ReviewBeer extends React.PureComponent {
                 {/* <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text> */}
                 <Rating
                   type='custom'
-                  readonly='true'
+                  readonly={true}
                   startingValue={item.avg_rating}
                   style={styles.ratingStyleRecommendation}
                   imageSize={20}

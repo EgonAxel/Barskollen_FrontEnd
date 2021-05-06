@@ -106,7 +106,7 @@ class Beers extends React.PureComponent {
   componentDidMount() {
     this.fetchBeer(this.state.offset, this.state.searchText, this.state.orderingValue, this.state.beerType);
   }
-  
+
   _renderListItem(item) {
     return(
       // Bortkommenderad från <Card>: pointerEvents="none">
@@ -120,7 +120,7 @@ class Beers extends React.PureComponent {
                   <Text style = {styles.alcohol_percentage}>{item.alcohol_percentage + '% vol'}{'\n'}</Text>
                   <Rating
                     type='custom'
-                    readonly='true'
+                    readonly={true}
                     startingValue={item.avg_rating}
                     style={styles.ratingStyleRecommendation}
                     imageSize={20}
