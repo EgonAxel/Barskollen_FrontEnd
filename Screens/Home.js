@@ -53,12 +53,21 @@ class Home extends React.PureComponent {
 
   fridaySecondText = () => {
     let fridayCountdown = this.untilFriday()
-    console.log(fridayCountdown)
     if (fridayCountdown < 0) {
       return ("Njut av helgen!")
     }
     else {
       return ("Håll ut!")
+    }
+  }
+  rainingBeerNumber = ()  => {
+    let fridayCountdown = this.untilFriday()
+    let  numberOfRainingBeer = 0
+    if (fridayCountdown < 0) {
+      return (numberOfRainingBeer = 15 )
+    }
+    else {
+      return ( numberOfRainingBeer == 0)
     }
   }
 
@@ -78,7 +87,6 @@ class Home extends React.PureComponent {
           <View style={styles.buttonContainer}>
             <Text style = {styles.fridayTextStyle}>Det är fredag om...</Text>
             <CountDown
-              // until={604800 - this.secondsUntilFriday()}
               until={this.untilFriday()}  
               size={30}
               digitStyle={{backgroundColor: '#009688'}}
@@ -98,18 +106,14 @@ class Home extends React.PureComponent {
             <StatusBar style="dark"/>
           </View>
           <MakeItRain
-            numItems={0}
+            numItems={this.rainingBeerNumber()}
             itemComponent={<Ionicons name="beer"  size={50}/>}
-          // itemComponent={<Image style = {{width: 50, height: 50, resizeMode: 'contain'}} source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>}
-          // itemComponent={<Image source = {{uri: "https://product-cdn.systembolaget.se/productimages/" + this.state.beerImage.beer + "/" + this.state.beerImage.beer + '_100.png' }}/>}
-          // itemComponent={<Image style = {{width: 100, height: 100, resizeMode: 'contain'}} source = {{uri: this.state.beerImage[1].picture_url + '_100.png' }}/>}
             itemDimensions = {{ width: 50, height: 50 }}
             itemTintStrength={0}
             fallSpeed = {10}
             flipSpeed = {0.1}
             horizSpeed = {20}
             continous = {true}
-            //flavor={"rain"}
           />
         </View>
       </SafeAreaProvider> 
