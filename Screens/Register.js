@@ -57,9 +57,21 @@ async function save(key, value) {
          Alert.alert('Födelsedatum saknas','Fyll i födelsedatum')
          return
       }
-      if ((userDoB.substring(0, 4) + 18, userDoB.substring(4, 6), userDoB.substring(6, 8)) > (moment().format("YYYY"), moment().format("MM"), moment().format("DD"))) {
-         Alert.alert('Inte riktigt ännu!','Du behöver vara minst 18 år för att registrera ett konto.')
-         return
+      // if (((userDoB.substring(0, 4) + 18), (userDoB.substring(4, 6)), (userDoB.substring(6, 8))) > (moment().format("YYYY"), moment().format("MM"), moment().format("DD"))) {
+      //    Alert.alert('Inte riktigt ännu!','Du behöver vara minst 18 år för att registrera ett konto.')
+      //    return
+      // }
+      // if (userDoB.substring(0, 4) + 18 > (moment().format("YYYY"))) {
+      //    Alert.alert('Inte riktigt ännu!','Du behöver vara minst 18 år för att registrera ett konto.', moment().format("YYYY"))
+      //    return
+      // }
+      if (userDoB.substring(0, 4) >= (moment().format("YYYY"))-18) {
+         if (userDoB.substring(4, 6) >= (moment().format("MM"))) {
+            if (userDoB.substring(6, 8) > (moment().format("DD"))) {
+               Alert.alert('Inte riktigt ännu!','Du behöver vara minst 18 år för att registrera ett konto.')
+               return   
+            }
+         }
       }
       axios
       .post(`http://127.0.0.1:8000/register/`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
