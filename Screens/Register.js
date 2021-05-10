@@ -36,7 +36,6 @@ async function save(key, value) {
       this.setState({ dateOfBirth: text})
    }
    registerUser = (username, pass, pass2, email, dob) => {
-      const userDoB = dob.replace(/[^0123456789]/g, "")
       if (!username) {
          Alert.alert('Användarnamn saknas','Fyll i användarnamn')
          return
@@ -57,22 +56,6 @@ async function save(key, value) {
          Alert.alert('Födelsedatum saknas','Fyll i födelsedatum')
          return
       }
-      // if (((userDoB.substring(0, 4) + 18), (userDoB.substring(4, 6)), (userDoB.substring(6, 8))) > (moment().format("YYYY"), moment().format("MM"), moment().format("DD"))) {
-      //    Alert.alert('Inte riktigt ännu!','Du behöver vara minst 18 år för att registrera ett konto.')
-      //    return
-      // }
-      // if (userDoB.substring(0, 4) + 18 > (moment().format("YYYY"))) {
-      //    Alert.alert('Inte riktigt ännu!','Du behöver vara minst 18 år för att registrera ett konto.', moment().format("YYYY"))
-      //    return
-      // }
-      if (userDoB.substring(0, 4) >= (moment().format("YYYY"))-18) {
-         if (userDoB.substring(4, 6) >= (moment().format("MM"))) {
-            if (userDoB.substring(6, 8) > (moment().format("DD"))) {
-               Alert.alert('Inte riktigt ännu!','Du behöver vara minst 18 år för att registrera ett konto.')
-               return   
-            }
-         }
-      }
       axios
       .post(`http://127.0.0.1:8000/register/`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
       .then(response => {
@@ -84,11 +67,24 @@ async function save(key, value) {
          }
       })
       .catch((error) => {
-         if (error.response.status !== 201) {//Status 400 är 'Bad request'
-         Alert.alert('Kunde inte skapa konto','\nKontrollera att fälten fyllts i korrekt')
+         if (typeof error.response.data.username == 'object') {
+            Alert.alert('Felaktigt användarnamn','Användarnamnet får endast innehålla bokstäver, siffror och @/./+/-/_')
+         }
+         else if (typeof error.response.data.email == 'object') {
+            Alert.alert('Felaktig mailadress','Ange en korrekt mailadress')
+         }
+         else if (error.response.data.date_of_birth == "AgeRequirementNotSatisfied") {
+            Alert.alert('Inte riktigt ännu','Du behöver vara minst 18 år för att registrera ett konto.')
+         }
+         else if (typeof error.response.data.date_of_birth == 'object') {
+            Alert.alert('Felaktigt födelsedatum','Ange ett födelsedatum på formatet ÅÅÅÅ-MM-DD')
+         }
+         else if (error.response.status !== 201) {
+            Alert.alert('Kunde inte skapa konto','Kontrollera att fälten fyllts i korrekt')
          }
          });
    }
+
    render() {
       return (
          <View style = {styles.container}>
@@ -104,7 +100,7 @@ async function save(key, value) {
                      onChangeText = {this.handleUsername}
                      onSubmitEditing={() => { this.emailInput.focus(); }}
                      blurOnSubmit={false}/>
-
+                     
                   <TextInput style = {styles.textInputFields}
                      ref={(input) => { this.emailInput = input; }}
                      underlineColorAndroid = "transparent"

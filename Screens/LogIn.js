@@ -21,27 +21,27 @@ class LogIn extends Component {
    }
    login = (username, pass) => {
       if (!username) {
-         Alert.alert('Användarnamn saknas','Fyll i användarnamn!')
+         Alert.alert('Användarnamn saknas','Fyll i ditt användarnamn!')
          return
       }
       if (!pass) {
-         Alert.alert('Lösenord saknas','Fyll i lösenord!')
+         Alert.alert('Lösenord saknas','Fyll i ditt lösenord!')
          return
       }
       axios
-         .post(`http://127.0.0.1:8000/api-token-auth/`, {username:username, password:pass}) //Här behövs din egen adress till APIn
+         .post(`http://127.0.0.1:8000/api-token-auth/`, {username:username, password:pass})
          .then(response => {
-            if (response.request.status === 200) { //Status 200 är 'Success'
+            if (response.request.status === 200) {
                save("Token", response.data.token);
                save("Username", this.state.username);
                this.props.navigation.replace('NavigationControls')
             }
          })
          .catch((error) => {
-            if (error.response.status !== 200) {//Status 400 är 'Bad request'
-            Alert.alert('Kunde inte logga in','\nKontrollera användarnamn och lösenord')
+            if (error.response.status !== 200) {
+            Alert.alert('Kunde inte logga in','Kontrollera användarnamn och lösenord.')
             }
-            });
+         });
    }
    render() {
       return (
@@ -75,7 +75,7 @@ class LogIn extends Component {
                      onPress = {
                         () => this.login(this.state.username,  this.state.password)
                      }>
-                     <Text style = {styles.submitButtonText}> Logga in </Text>
+                     <Text style = {styles.submitButtonText}>Logga in</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
