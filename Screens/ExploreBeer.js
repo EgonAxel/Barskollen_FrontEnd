@@ -121,7 +121,7 @@ class Beers extends React.PureComponent {
             transform:[
               {translateY:translateY}
             ],
-            width: windowWidth * 0.93,
+            width: windowWidth,
             position:'absolute',
             alignSelf: 'center',
             top: 0,
@@ -301,7 +301,6 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-
   beerItem: {
     marginTop: beerItemMarginTop,
     width: windowWidth * 0.93,

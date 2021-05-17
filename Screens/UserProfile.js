@@ -33,7 +33,8 @@ class UserProfile extends React.PureComponent {
       offset: 0,  //Bestämmer vilken sida från vår api vi laddar in.
       orderingValue: "",
       error: null,
-      username: ""
+      username: "",
+      isFetching: false
     };
   }
 
@@ -44,14 +45,22 @@ class UserProfile extends React.PureComponent {
     this.fetchReview(this.state.username, 0, this.state.orderingValue)
   }
 
-  fetchReview = (username, offset, orderingValue) => {
+  fetchReview = (username, offset, orderingValue, firstLoad) => {
     getValueFor("Token").then((token) => {
         axios
         .get(`http://127.0.0.1:8000/review/?limit=20&user=${username}&offset=${offset}&ordering=${orderingValue}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
         .then(response => {
-          this.setState({
-            reviews: this.state.reviews.concat(response.data.results),
-          });
+          if (firstLoad) {
+            this.setState({
+              reviews: response.data.results,
+              isFetching: false,
+            })
+          }
+          else {
+            this.setState({
+              reviews: this.state.reviews.concat(response.data.results),
+            })
+          }
         })
         .catch(error => {
           this.setState({error: error.message});
@@ -66,24 +75,27 @@ class UserProfile extends React.PureComponent {
           offset: prevState.offset + 20,
         }),
         () => {
-          this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue);
+          this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue, false);
         },
       );
     };
   }
 
   componentDidMount() {
-    this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      getValueFor("Username").then((username) => {
-        this.setState({username: username})
-        this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue);
-      })
+    getValueFor("Username").then((username) => {
+      this.setState({username: username})
+      this.fetchReview(this.state.username, this.state.offset, this.state.orderingValue, true);
     })
   }
 
-  componentWillUnmount() {
-    this._unsubscribe()
+  onRefresh() {
+    this.setState({
+      isFetching: true,
+      offset: 0
+    },
+    () => {this.fetchReview(this.state.username, 0, this.state.orderingValue, true);});
   }
+
 
   renderBeerImage = (beer_image, resolution, imageStyle) => {
     if (beer_image == null) {
@@ -195,6 +207,8 @@ class UserProfile extends React.PureComponent {
           data={this.state.reviews}
           keyExtractor={(beer, index) => String(index)}
           renderItem={({ item }) => this._renderListItem(item)}
+          onRefresh={() => this.onRefresh()}
+          refreshing={this.state.isFetching}
           onEndReached={this.fetchMoreReviews}
           onEndReachedThreshold={2}
           ListHeaderComponent={this.renderListHeader}/>
@@ -233,20 +247,23 @@ const pickerSelectStyles = StyleSheet.create({
 const styles = StyleSheet.create({
 
   topSection: {
-    backgroundColor: topSectionBackgroundColor, 
-    borderWidth: 3,
-    borderTopColor: 'transparent',
-    borderColor: primaryColor,
-    width: windowWidth * 0.93, 
+    backgroundColor: topSectionBackgroundColor,
+    width: windowWidth, 
     paddingHorizontal: 10, 
     paddingBottom: 15, 
     paddingTop: 10, 
     borderBottomRightRadius: 25, 
     borderBottomLeftRadius: 25,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 1,
+      height: 1
+    },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
   },
-
   viewStyle: {
-    marginTop: 15,
+    marginTop: 20,
     width: windowWidth * 0.93,
     backgroundColor: '#ffffff',
     borderRadius: 15,
