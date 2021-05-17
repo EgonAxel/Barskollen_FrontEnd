@@ -8,6 +8,7 @@ import * as SecureStore from 'expo-secure-store';
 const primaryColor = '#f89c11';
 const colorOnCard = "#ffffff";          // Backbground dolor on the individual beer card
 const colorOnReviewCard = colorOnCard;  // Background color on the review cards below the individual beer
+const colorOnProfileIcon = "#a46404";
 
 async function getValueFor(key) {
  let result = await SecureStore.getItemAsync(key);
@@ -438,7 +439,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   usernameIcon: {
-    color: '#7e520f',
+    color: colorOnProfileIcon,
     marginTop: reviewUsernameMarginTop + 3,
     paddingRight: 5,
   },

@@ -11,6 +11,7 @@ const primaryColor = '#f89c11';
 const topSectionBackgroundColor = "#ffffff";
 const sortingBackgroundColor = "#fffbf5";
 const colorBehindCards = "#fafafa";
+const colorOnProfileIcon = "#a46404";
 
 async function getValueFor(key) {
   let result = await SecureStore.getItemAsync(key);
@@ -128,7 +129,7 @@ class UserProfile extends React.PureComponent {
     <View style={styles.topSection}>
       <View style = {styles.userNameAndLogout}>
       <View style={styles.userNameAndIcon}>
-        <MaterialIcons name="person" size={26} color={'#7e520f'} />
+        <MaterialIcons name="person" size={26} color={colorOnProfileIcon} />
         <Text style={styles.userNameText}>{this.state.username}</Text>
       </View> 
         <TouchableOpacity style = {styles.logoutIcon}
@@ -143,7 +144,7 @@ class UserProfile extends React.PureComponent {
               })
             }>
           {/* <Text style = {styles.logoutText}>Logga ut</Text> */}
-          <Ionicons name="log-out-outline" size={30} color="#ffffff"/>
+          <Ionicons name="log-out-outline" size={30} color={topSectionBackgroundColor}/>
           <Text style={styles.logoutText}>Logga ut</Text>
         </TouchableOpacity>
       </View>
