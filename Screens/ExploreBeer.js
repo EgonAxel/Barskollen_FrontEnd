@@ -64,13 +64,22 @@ class Beers extends React.PureComponent {
   handleFilterAction = (text) => {
     this.setState({
       offset: 0,
-      beers: []})
+      beers: []
+    })
     if (typeof text != "undefined") {
       this.fetchBeer(0, text, this.state.orderingValue, this.state.beerType)
     }
     else {
-      this.fetchBeer(0, "", this.state.orderingValue, this.state.beerType)
+      this.fetchBeer(0, this.state.searchText, this.state.orderingValue, this.state.beerType)
     }
+  }
+
+  resetTextInput = () => {
+    this.setState({
+      searchText: "",
+    })
+    this.textInput.clear()
+    this.handleFilterAction("")
   }
 
   fetchBeer = (offset, searchText, orderingValue, beerType) => {
@@ -172,16 +181,22 @@ class Beers extends React.PureComponent {
     return (
       <SafeAreaView style={styles.safeAreaView}>
         <View style={styles.filterAndSearchArea}>
-          <TextInput style = {styles.searchBar}
-            useNativeAndroidPickerStyle={false}
-            clearButtonMode = 'always'
-            underlineColorAndroid = "transparent"
-            placeholder = "Sök efter bärs..."
-            placeholderTextColor = "grey"
-            autoCapitalize = "none"
-            returnKeyType="search"
-            onChangeText={this.handleSearchText}
-          />
+          <View>
+            <TextInput style = {styles.searchBar}
+              ref={input => { this.textInput = input }}
+              useNativeAndroidPickerStyle={false}
+              clearButtonMode = 'always'
+              underlineColorAndroid = "transparent"
+              placeholder = "Sök efter bärs..."
+              placeholderTextColor = "grey"
+              autoCapitalize = "none"
+              returnKeyType="search"
+              onChangeText={this.handleSearchText}
+            />
+            <TouchableOpacity style = {styles.resetButton} onPress = {this.resetTextInput}>
+              <Text>Rensa</Text>
+            </TouchableOpacity>
+          </View>
           <View style={ Platform.OS === 'ios'
             ? pickerSelectStyles.inputIOS
             : pickerSelectStyles.inputAndroid, 
@@ -189,9 +204,11 @@ class Beers extends React.PureComponent {
               justifyContent:"space-between"}}>  
             <RNPickerSelect style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
-              placeholder={{label: '', 
-                            inputLabel: 'Ölsort',
-                            value: ''}}
+              placeholder={{
+                label: '', 
+                inputLabel: 'Ölsort',
+                value: ''
+              }}
               onValueChange={(value) => this.setState({
                 beerType: value},
                 this.handleFilterAction)}
@@ -208,9 +225,10 @@ class Beers extends React.PureComponent {
             <RNPickerSelect style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
               placeholder={{
-                            label: '',
-                            inputLabel: 'Sortering',
-                            value: ''}}
+                label: '',
+                inputLabel: 'Sortering',
+                value: ''
+              }}
               onValueChange={(value) => this.setState({
                 orderingValue: value},
                 this.handleFilterAction)}
@@ -327,11 +345,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 17,
     paddingVertical: 10,
     marginBottom: 10,
-    width: windowWidth * 0.85,
+    width: windowWidth * 0.75,
     borderColor: borderColor,
     borderWidth: 2.5,
     borderRadius: searchBarBorderRadius,
     backgroundColor: colorFilterButtonsAndSearchbar
+  },
+  resetButton: {
+    width: windowWidth * 0.2,
+    alignItems: 'center',
+    fontSize: 14,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderWidth: 2.5,
+    borderColor: borderColor,
+    borderRadius: searchBarBorderRadius,
+    color: '#0a0600',
+    backgroundColor: colorFilterButtonsAndSearchbar,
   },
   filterAndSearchArea: {
     paddingBottom: 15,
