@@ -1,15 +1,13 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image} from 'react-native';
-import * as SecureStore from 'expo-secure-store';
-import { Header } from 'react-native-elements';
-import axios from 'axios';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, Dimensions} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import MakeItRain from 'react-native-make-it-rain';
-import { render } from 'react-dom';
 import CountDown from 'react-native-countdown-component';
 import moment from 'moment'
+
+const primaryColor = '#f89c11';
 
 //const AppButton istället för vanlig button för att få en redigerbar knapp som funkar på både ios o andriod.
 // länk för knappar: https://blog.logrocket.com/creating-custom-buttons-in-react-native/
@@ -51,6 +49,16 @@ class Home extends React.PureComponent {
     )
   }
 
+  isItFridayText = () => {
+    let fridayCountdown = this.untilFriday()
+    if (fridayCountdown < 0) {
+      return ("Äntligen fredag!")
+    }
+    else {
+      return ("Det är fredag om...")
+    }
+  }
+
   fridaySecondText = () => {
     let fridayCountdown = this.untilFriday()
     if (fridayCountdown < 0) {
@@ -73,53 +81,58 @@ class Home extends React.PureComponent {
 
   render(){
     return (
-      <SafeAreaProvider style = {{backgroundColor: '#ffff'}}>
-        <View>
-          <Header                   // --- För att ha en header behövs en safearea runt appen 
-            containerStyle={{
-              backgroundColor: '#ffff',
-              justifyContent: 'space-around', 
-              zIndex: 100,
-            }}
-            centerComponent={
-              <Image style = {{ width: 150, height: 150}}source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>}
-          />         
-          <View style={styles.buttonContainer}>
-            <Text style = {styles.fridayTextStyle}>Det är fredag om...</Text>
-            <CountDown
-              until={this.untilFriday()}  
-              size={30}
-              digitStyle={{backgroundColor: '#009688'}}
-              digitTxtStyle={{color: '#ffffff'}}
-              timeLabels={{d: 'Dagar', h: 'Timmar', m: 'Minuter', s: 'Sekunder'}}
-              style = {{zIndex: 100, paddingVertical: 10}}
+      <SafeAreaProvider style = {{backgroundColor: '#ffffff'}}>
+        <ImageBackground source={require('../images/humle.jpg')} style={styles.backgroundImage} blurRadius={0} opacity={1}>
+          <View>
+          <Image style = {{width: 175, height: 175, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Barskollen_logo_v2.png')}/>
+            {/* <Header                   // --- För att ha en header behövs en safearea runt appen 
+              containerStyle={{
+                backgroundColor: 'transparent',
+                justifyContent: 'space-around', 
+                zIndex: 100,
+              }}
+              centerComponent={
+                <Image style = {{ width: 150, height: 150}}source = {require('../images/Bärskollen_logga_v.2-NOBACKR.png')}/>}
+            />          */}
+            <View style={styles.buttonContainer}>
+              <Text style = {styles.fridayTextStyle}>{this.isItFridayText()}</Text>
+              <CountDown
+                until={this.untilFriday()}  
+                size={30}
+                digitStyle={{backgroundColor: primaryColor}}
+                digitTxtStyle={{color: '#ffffff'}}
+                timeLabels={{d: 'Dagar', h: 'Timmar', m: 'Minuter', s: 'Sekunder'}}
+                style = {{zIndex: 100, paddingVertical: 10}}
+              />
+              <Text style = {styles.fridayTextStyle}>{this.fridaySecondText()}</Text>
+              <AppButton
+                title="Hitta nya öl"
+                onPress={() => {{ this.props.navigation.navigate('Utforska')} }}
+              />
+              <AppButton 
+                title="Mina öl"
+                onPress={() => {{ this.props.navigation.navigate('Mitt konto')} }}
+              />
+              <StatusBar style="dark"/>
+            </View>
+            <MakeItRain
+              numItems={this.rainingBeerNumber()}
+              itemComponent={<Ionicons name="beer"  size={50}/>}
+              itemDimensions = {{ width: 50, height: 50 }}
+              itemTintStrength={0}
+              fallSpeed = {10}
+              flipSpeed = {0.1}
+              horizSpeed = {20}
+              continous = {true}
             />
-            <Text style = {styles.fridayTextStyle}>{this.fridaySecondText()}</Text>
-            <AppButton 
-              title="Hitta nya öl"
-              onPress={() => {{ this.props.navigation.navigate('Utforska')} }}
-            />
-            <AppButton 
-              title="Mina öl"
-              onPress={() => {{ this.props.navigation.navigate('Mitt konto')} }}
-            />
-            <StatusBar style="dark"/>
           </View>
-          <MakeItRain
-            numItems={this.rainingBeerNumber()}
-            itemComponent={<Ionicons name="beer"  size={50}/>}
-            itemDimensions = {{ width: 50, height: 50 }}
-            itemTintStrength={0}
-            fallSpeed = {10}
-            flipSpeed = {0.1}
-            horizSpeed = {20}
-            continous = {true}
-          />
-        </View>
+        </ImageBackground>
       </SafeAreaProvider> 
       )
     }
   }
+
+const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   buttonContainer: {
@@ -127,13 +140,33 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'center',
   },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+  },
   appButtonContainer: {
+    width: windowWidth * 0.7,
+    alignSelf: 'center',
     margin: 15,
-    elevation: 8,
-    backgroundColor: "#009688",
-    borderRadius: 10,
+    backgroundColor: primaryColor,
+    borderRadius: 30,
     paddingVertical: 20,
     paddingHorizontal: 12,
+    shadowColor: "#9f5f04",
+    shadowOffset: {
+      width: 1,
+      height: 1 
+    },
+    shadowOpacity: 0.75,
+    shadowRadius: 2,
+  },
+  appButtonText: {
+    fontSize: 20,
+    color: "#ffffff",
+    fontWeight: "bold",
+    alignSelf: "center",
+    textTransform: "uppercase"
   },
   fridayTextStyle: {
     fontSize: 22,
@@ -142,14 +175,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     textTransform: "uppercase",
     padding: 10,
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    overflow: "hidden",
   }, 
-  appButtonText: {
-    fontSize: 18,
-    color: "#fff",
-    fontWeight: "bold",
-    alignSelf: "center",
-    textTransform: "uppercase"
-  }
 })
 
 export default Home

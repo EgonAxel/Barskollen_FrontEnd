@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, ImageBackground, KeyboardAvoidingView } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Image, ImageBackground, KeyboardAvoidingView } from 'react-native'
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import moment, { parseTwoDigitYear } from 'moment';
 
+const primaryColor = '#f89c11';
 
 async function save(key, value) {
    await SecureStore.setItemAsync(key, value);
@@ -90,6 +90,7 @@ async function save(key, value) {
          <View style = {styles.container}>
             <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}>
                <KeyboardAvoidingView behavior="position">
+                  <Image style = {{width: 240, height: 240, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Barskollen_logo_v2.png')}/>
                   <Text style = {styles.topTitle}>Registrera dig</Text>
                   <TextInput style = {styles.textInputFields}
                      underlineColorAndroid = "transparent"
@@ -173,7 +174,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
    },
    topTitle:  {
-    //  fontFamily: 'Avenir',
       fontWeight: '700',
       fontSize: 30,
       alignSelf: 'center',
@@ -189,21 +189,19 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
      },
    textInputFields: {
-     // fontFamily: 'Avenir',
       paddingLeft: 15,
       marginTop: 10,
       marginRight: 40,
       marginBottom: 5,
       marginLeft: 40,
       height: 40,
-      borderColor: '#009688',
+      borderColor: primaryColor,
       borderWidth: 2,
       borderRadius: 10,
       backgroundColor: 'white'
    },
    registerButton: {
-     // fontFamily: 'Avenir',
-      backgroundColor: '#009688',
+      backgroundColor: primaryColor,
       padding: 10,
       marginTop: 10,
       marginRight: 40,
@@ -221,18 +219,17 @@ const styles = StyleSheet.create({
       height: 30,
       borderRadius: 10,
       backgroundColor: 'white',
-      opacity: 0.5,
+
    },
    registerButtonText: {
-     // fontFamily: 'Avenir',
+      fontSize: 16,
       fontWeight: '700',
       alignSelf: 'center',
       color: 'white'
    },
    alreadyHaveAnAccountText: {
-     // fontFamily: 'Avenir',
-      fontWeight: '700',
+      fontWeight: '500',
       alignSelf: 'center',
-      color: '#009688',
+      color: primaryColor,
    }
 })

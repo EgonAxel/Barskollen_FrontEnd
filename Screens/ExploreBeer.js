@@ -5,6 +5,13 @@ import * as SecureStore from 'expo-secure-store';
 import { Rating } from 'react-native-ratings';
 import RNPickerSelect from 'react-native-picker-select';
 
+const primaryColor = '#f89c11';                       //The main color seen: on stars, bottom navigation bar, borders around filter and sorting
+const colorBehindCards = "#fffdfa";                   // Behind the individual beer cards, below the search area
+const colorSearchArea = "#ffffff";                    // Behind the search bar and filter/sorting buttons
+const colorFilterButtonsAndSearchbar = "#fffbf5";     // Color inside the filtering, sorting and search bar
+const borderColor = primaryColor;                     // Color on bourder around filtering, sorting and search bar
+
+
 async function getValueFor(key) {
   let result = await SecureStore.getItemAsync(key);
   if (result) {
@@ -13,7 +20,6 @@ async function getValueFor(key) {
      return(None);
    }
  }
-
 
 class Beers extends React.PureComponent {
   constructor(props) {
@@ -109,35 +115,37 @@ class Beers extends React.PureComponent {
     })
 
     return (
-      <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+      <View style={{flex: 1, backgroundColor: colorBehindCards}}>
         <Animated.View  // - Måste ha denna styling här för att komma åt 'translate' varabel.
           style={{
             transform:[
               {translateY:translateY}
             ],
+            width: windowWidth * 0.93,
             position:'absolute',
+            alignSelf: 'center',
             top: 0,
-            left: 0,
-            right: 0,
-            borderBottomLeftRadius: 15,
-            borderBottomRightRadius: 15,
+            // left: 0,
+            // right: 0,
+            borderBottomLeftRadius: 30,
+            borderBottomRightRadius: 30,
             shadowColor: "#000000",
             shadowOffset: {
-              width: 3,
-              height: 5
+              width: 1,
+              height: 1
             },
             shadowOpacity: 0.4,
             shadowRadius: 5,
             // elevation: 601, // - Denna elevation ger ingen skugga runt objektet på android
             zIndex: 1,
-            backgroundColor: '#ffffff',
+            backgroundColor: colorSearchArea,
           }}>
           <this.renderListHeader/>
         </Animated.View>
         <FlatList
           style={{flex: 1}}
           contentContainerStyle={{
-            backgroundColor: '#ffffff',
+            backgroundColor: colorBehindCards,
             alignItems: 'center',
             justifyContent: 'center',
             marginTop: this.state.toggleSearchMargin,
@@ -181,7 +189,9 @@ class Beers extends React.PureComponent {
               justifyContent:"space-between"}}>  
             <RNPickerSelect style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
-              placeholder={{ label: 'Ölsort', value: "" }}
+              placeholder={{label: '', 
+                            inputLabel: 'Ölsort',
+                            value: ''}}
               onValueChange={(value) => this.setState({
                 beerType: value},
                 this.handleFilterAction)}
@@ -198,9 +208,9 @@ class Beers extends React.PureComponent {
             <RNPickerSelect style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
               placeholder={{
-              label: 'Sortering',
-              value: "",
-              }}
+                            label: '',
+                            inputLabel: 'Sortering',
+                            value: ''}}
               onValueChange={(value) => this.setState({
                 orderingValue: value},
                 this.handleFilterAction)}
@@ -233,8 +243,8 @@ class Beers extends React.PureComponent {
                     readonly={true}
                     startingValue={item.avg_rating}
                     style={styles.ratingStyleRecommendation}
-                    imageSize={20}
-                    ratingColor='#009688'
+                    imageSize={30}
+                    ratingColor={primaryColor}
                     ratingBackgroundColor='#dadada'
                     tintColor='white'
                   />
@@ -270,9 +280,10 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderWidth: 2.5,
-    borderColor: '#009688',
+    borderColor: borderColor,
     borderRadius: searchBarBorderRadius,
-    color: '#009688',
+    color: '#0a0600',
+    backgroundColor: colorFilterButtonsAndSearchbar,
   },
   inputAndroid: {
     minWidth: windowWidth * 0.22,
@@ -282,9 +293,10 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderWidth: 2.5,
-    borderColor: '#009688',
+    borderColor: borderColor,
     borderRadius: searchBarBorderRadius,
-    color: '#009688',
+    color: '#0a0600',
+    backgroundColor: colorFilterButtonsAndSearchbar,
   },
 });
 
@@ -317,10 +329,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginBottom: 10,
     width: windowWidth * 0.85,
-    borderColor: '#009688',
+    borderColor: borderColor,
     borderWidth: 2.5,
     borderRadius: searchBarBorderRadius,
-    backgroundColor: '#ffffff'
+    backgroundColor: colorFilterButtonsAndSearchbar
   },
   filterAndSearchArea: {
     paddingBottom: 15,
@@ -368,18 +380,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'left',
   },
-  myStarStyle: {
-    color: '#009688',
-    backgroundColor: 'transparent',
-    textShadowColor: '#dadada',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 5,
-    fontSize: 25,
-  },
-  myEmptyStarStyle: {
-    color: '#009688',
-  },
-
 })
 
 export default Beers;

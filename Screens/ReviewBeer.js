@@ -5,6 +5,10 @@ import axios from 'axios';
 import { Rating } from 'react-native-ratings';
 import * as SecureStore from 'expo-secure-store';
 
+const primaryColor = '#f89c11';
+const colorOnCard = "#ffffff";
+const colorBehindCard = "#feeed8";
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -103,9 +107,9 @@ class ReviewBeer extends React.PureComponent {
                   startingValue={item.avg_rating}
                   style={styles.ratingStyleRecommendation}
                   imageSize={20}
-                  ratingColor='#009688'
+                  ratingColor={primaryColor}
                   ratingBackgroundColor='#dadada'
-                  tintColor='white'
+                  tintColor={colorOnCard}
                 />
               </View>
             </View>
@@ -130,9 +134,9 @@ class ReviewBeer extends React.PureComponent {
               startingValue={0}
               style={styles.ratingStyle}
               imageSize={35}
-              ratingColor='#009688'
+              ratingColor={primaryColor}
               ratingBackgroundColor='#dadada'
-              tintColor='white'
+              tintColor={colorOnCard}
               onFinishRating={this.handleRating}
             />
           </View>
@@ -172,7 +176,7 @@ class ReviewBeer extends React.PureComponent {
           <FlatList
             style={{flex: 1}}
             contentContainerStyle={{
-              backgroundColor: '#ffffff',
+              backgroundColor: "#ffffff",
               alignItems: 'center',
               justifyContent: 'center',
               marginTop: 15
@@ -182,8 +186,8 @@ class ReviewBeer extends React.PureComponent {
             renderItem={({ item }) => this._renderListItem(item)}
           />
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: this.state.beer.beer_ID, beer: this.state.beer, beerDataFetched: false, hasReviewed: null})}>
-            <View style={styles.button}>
-              <Text style={styles.textStyle}>Stäng</Text>
+            <View style={styles.closeButton}>
+              <Text style={styles.closeText}>Stäng</Text>
             </View>
           </TouchableOpacity>
         </Modal>    
@@ -199,14 +203,14 @@ const styles = StyleSheet.create({
   // ÖL SOM RATEAS
   wholePage: {
     height: windowHeight,
-    backgroundColor: '#ffffff',
+    backgroundColor: colorBehindCard,
   },
   viewStyle: {
     marginTop: 15,
     width: 350,
     minHeight: 500,
     maxHeight: 1000,
-    backgroundColor: '#ffffff',
+    backgroundColor: colorOnCard,
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
@@ -239,9 +243,9 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     height: 75,
     width: windowWidth * 0.7,
-    borderColor: '#009688',
+    borderColor: primaryColor,
     borderWidth: 2,
-    borderRadius: 10,
+    borderRadius: 15,
     backgroundColor: 'white',
     alignSelf: 'center',
   },
@@ -249,14 +253,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 16,
     fontWeight: '600',
-    backgroundColor: '#009688',
+    backgroundColor: primaryColor,
     color: '#ffffff',
     overflow: 'hidden',
     paddingHorizontal: 35,
     paddingVertical: 15,
     marginTop: 10,
     marginBottom: 25,
-    borderRadius: usedBorderRadius,
+    borderRadius: 25,
   },
   beerImage: {
     width: 125,
@@ -350,24 +354,21 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     alignSelf: 'flex-start'
   },
-  button: {
+  closeButton: {
     width: windowWidth * 0.4,
     alignSelf: 'center',
     fontSize: 16,
     fontWeight: '600',
-    backgroundColor: '#009688',
+    backgroundColor: primaryColor,
     color: '#ffffff',
     overflow: 'hidden',
     paddingHorizontal: 35,
     paddingVertical: 15,
     marginTop: 10,
     marginBottom: 50,
-    borderRadius: usedBorderRadius,
+    borderRadius: 25,
   },
-  buttonClose: {
-    backgroundColor: "#009688",
-  },
-  textStyle: {
+  closeText: {
     color: "white",
     fontWeight: "bold",
     textAlign: "center"

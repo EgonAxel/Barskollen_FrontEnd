@@ -2,13 +2,15 @@ import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createStackNavigator, } from '@react-navigation/stack';
 import { MaterialCommunityIcons, MaterialIcons, Ionicons } from '@expo/vector-icons';
-import { BorderlessButton } from "react-native-gesture-handler";
-import SearchLayout from "react-navigation-addon-search-layout";
 import Home from './Home';
 import ExploreBeer from './ExploreBeer';
 import UserProfile from './UserProfile';
 import IndividualBeer from './IndividualBeer';
 import ReviewBeer from './ReviewBeer';
+
+const primaryColor = "#f89c11";
+const headerColor = "#ffffff";
+const headerTextColor = "#17161b" // The text in the header is not pure black (but very close), due to eye contrast reasons
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -16,9 +18,9 @@ function NavigationControls() {
   return (          
       <Tab.Navigator
         initialRouteName="Home"
-        activeColor="#fff"
-        labelStyle={{ fontSize: 12 }}
-        barStyle={{ backgroundColor: '#009688' } }
+        activeColor="#ffffff"
+        labelStyle={{ fontSize: 14 }}
+        barStyle={{ backgroundColor: primaryColor } }
       >
         <Tab.Screen
             name="Mitt konto"
@@ -65,8 +67,8 @@ function ExploreBeerStackScreen() {
         component={ExploreBeer} 
         options={{ 
           title: 'Utforska',
-          headerTitleStyle: { alignSelf: 'center' },
-          headerStyle: { backgroundColor: '#fff' }
+          headerTitleStyle: { alignSelf: 'center', color: headerTextColor },
+          headerStyle: { backgroundColor: "#ffffff"}
           }}
       />
       <ExploreBeerStack.Screen 
@@ -75,7 +77,7 @@ function ExploreBeerStackScreen() {
         options={{ 
           title: 'Info',
           headerTitleStyle: { alignSelf: 'flex-start' },
-          headerStyle: { backgroundColor: '#fff' }
+          headerStyle: { backgroundColor: headerColor }
         }}
       />
       <ExploreBeerStack.Screen 
@@ -84,7 +86,7 @@ function ExploreBeerStackScreen() {
         options={{ 
           title: 'Betygssätt öl' ,
           headerTitleStyle: { alignSelf: 'flex-start' },
-          headerStyle: { backgroundColor: '#fff' }
+          headerStyle: { backgroundColor: headerColor }
         }} 
       />
     </ExploreBeerStack.Navigator>
@@ -103,7 +105,7 @@ function UserProfileStackScreen() {
           title: 'Mitt konto' ,
           headerTitleStyle: { alignSelf: 'flex-start' },
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: headerColor,
             }}
           } 
       />

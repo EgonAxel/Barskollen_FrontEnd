@@ -1,13 +1,16 @@
 import React from 'react';
-import {View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, Button, Dimensions, ImageBackground} from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import Stars from 'react-native-stars';
 import { Rating } from 'react-native-ratings';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Ionicons } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
 import RNPickerSelect from 'react-native-picker-select';
+
+const primaryColor = '#f89c11';
+const topSectionBackgroundColor = "#ffffff";
+const sortingBackgroundColor = "#fffbf5";
+const colorBehindCards = "#fafafa";
 
 async function getValueFor(key) {
   let result = await SecureStore.getItemAsync(key);
@@ -109,7 +112,7 @@ class UserProfile extends React.PureComponent {
                 startingValue={item.rating}
                 style={styles.reviewStarStyle}
                 imageSize={35}
-                ratingColor='#009688'
+                ratingColor={primaryColor}
                 ratingBackgroundColor='#dadada'
                 tintColor='white'
               />
@@ -122,9 +125,12 @@ class UserProfile extends React.PureComponent {
 
   renderListHeader = () => {
     return (
-    <View>
+    <View style={styles.topSection}>
       <View style = {styles.userNameAndLogout}>
-      {/* <ImageBackground source={require('../images/blurry.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}> */}
+      <View style={styles.userNameAndIcon}>
+        <MaterialIcons name="person" size={26} color={'#7e520f'} />
+        <Text style={styles.userNameText}>{this.state.username}</Text>
+      </View> 
         <TouchableOpacity style = {styles.logoutIcon}
             onPress={() =>
               deleteValueFor("Username").then(() => {
@@ -137,12 +143,9 @@ class UserProfile extends React.PureComponent {
               })
             }>
           {/* <Text style = {styles.logoutText}>Logga ut</Text> */}
-          <Ionicons name="log-out-outline" size={30}/>
+          <Ionicons name="log-out-outline" size={30} color="#ffffff"/>
+          <Text style={styles.logoutText}>Logga ut</Text>
         </TouchableOpacity>
-        <View style={styles.userNameAndIcon}>
-          <MaterialIcons name="person-outline" size={26} color={'#009688'} />
-          <Text style={styles.userNameText}>{this.state.username}</Text>
-        </View> 
       </View>
       <View>
         <View style={ Platform.OS === 'ios'
@@ -153,18 +156,19 @@ class UserProfile extends React.PureComponent {
               }}> 
             <View style = {styles.usernameMyBeerAndSorting}>
               <View style = {styles.myBeersSorting}>
-                <Text style={styles.myBeersText}>Mina recensioner:</Text>
+                <Text style={styles.myBeersText}>Mina recensioner</Text>
                 <RNPickerSelect style={pickerSelectStyles}
                   useNativeAndroidPickerStyle={false}
                   placeholder={{
-                  label: 'Sortera datum (nyast först)',
-                  value: '-review_date',
-                  inputLabel: 'Datum (nyast först)',
+                  label: '',
+                  inputLabel: 'Sortera öl',
+                  value: null,
                   }}
                   onValueChange={(value) => this.setState({
                     orderingValue: value},
                     this.handleFilterAction)}
                   items={[
+                    { label: 'Sortera datum (nyast först)', value: '-review_date', inputLabel: 'Datum (nyast först)' },
                     { label: 'Sortera datum (äldst först)', value: 'review_date', inputLabel: 'Datum (äldst först)' },
                     { label: 'Sortera på rating (fallande)', value: '-rating', inputLabel: 'Rating (fallande)' },
                     { label: 'Sortera på rating (stigande)', value: 'rating', inputLabel: 'Rating (stigande)' },
@@ -174,7 +178,6 @@ class UserProfile extends React.PureComponent {
           </View>
         </View>
       </View>
-      {/* </ImageBackground> */}
     </View>
     )
   }
@@ -185,7 +188,7 @@ class UserProfile extends React.PureComponent {
         <FlatList
           style={{flex: 1}}
           contentContainerStyle={{
-            backgroundColor: '#ffffff',
+            backgroundColor: colorBehindCards,
             alignItems: 'center',
             justifyContent: 'center',
           }}
@@ -205,33 +208,46 @@ const windowHeight = Dimensions.get('window').height;
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: { //
-    backgroundColor: '#ffffff',
+    backgroundColor: sortingBackgroundColor,
     fontSize: 16,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    marginLeft: 10,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
     borderWidth: 2,
-    borderColor: '#009688',
-    borderRadius: 10,
-    color: '#000000',
+    borderColor: primaryColor,
+    borderRadius: 30,
+    color: "#0a0600",
     alignSelf: 'center',
   },
   inputAndroid: {
+    backgroundColor: sortingBackgroundColor,
     fontSize: 16,
     paddingVertical: 5,
     paddingHorizontal: 30,
     borderWidth: 2,
-    borderColor: '#009688',
+    borderColor: primaryColor,
     borderRadius: 10,
-    color: '#000000',
+    color: primaryColor,
   },
 });
 
 const styles = StyleSheet.create({
 
+  topSection: {
+    backgroundColor: topSectionBackgroundColor, 
+    borderWidth: 3,
+    borderTopColor: 'transparent',
+    borderColor: primaryColor,
+    width: windowWidth * 0.93, 
+    paddingHorizontal: 10, 
+    paddingBottom: 15, 
+    paddingTop: 10, 
+    borderBottomRightRadius: 25, 
+    borderBottomLeftRadius: 25,
+  },
+
   viewStyle: {
     marginTop: 15,
-    width: 350,
+    width: windowWidth * 0.93,
     backgroundColor: '#ffffff',
     borderRadius: 15,
     borderStyle: 'solid', 
@@ -254,8 +270,9 @@ const styles = StyleSheet.create({
   },
   userNameAndLogout: {
     flexDirection: 'row', 
+    alignSelf: 'center',
     justifyContent: 'space-between', 
-    width: windowWidth * 0.9,
+    width: windowWidth * 0.8,
   },
   backgroundImage: {
     resizeMode: "cover",
@@ -264,25 +281,26 @@ const styles = StyleSheet.create({
     height: 150,
   },
   myBeersSorting: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'space-between'
-
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   logoutIcon: {
-    backgroundColor: '#ffffff',
+    backgroundColor: primaryColor,
     flexDirection: 'row',
     marginVertical: 10,
-    padding: 10,
-    // borderWidth: 2,
-    // borderColor: '#009688',
+    paddingVertical: 3,
+    paddingHorizontal: 10,
     borderRadius: 10,
   },
   logoutText: {
     fontSize: 16,
-    fontWeight: '700',
-    textAlign: 'center',
-    padding: 2,
+    fontWeight: '600',
+    paddingTop: 5,
+    paddingLeft: 5,
+    paddingRight: 3,
+    marginBottom: 7,
+    color: "#ffffff"
   },
   userNameText: {
     fontSize: 22,
@@ -298,10 +316,10 @@ const styles = StyleSheet.create({
   },
   myBeersText: {
     fontSize: 18,
-    color: 'black',
+    color: '#0a0600',
     fontWeight: "700",
     alignSelf: "center",
-    marginBottom: 5,
+    marginBottom: 10,
   },
   searchButtonText: {
     fontWeight: '700',
@@ -331,7 +349,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingBottom: 20,
     fontSize: 14,
-    color: 'black',
+    color: '#000000',
   },
   dateOfReview: {
     paddingLeft: 5,
@@ -354,17 +372,6 @@ const styles = StyleSheet.create({
   alcohol_percentage: {
     fontSize: 14,
     textAlign: 'left',
-  },
-  myStarStyle: {
-    color: '#009688',
-    backgroundColor: 'transparent',
-    textShadowColor: '#dadada',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 5,
-    fontSize: 35,
-  },
-  myEmptyStarStyle: {
-    color: '#009688',
   },
   ratingStars: {
     alignSelf: "center",

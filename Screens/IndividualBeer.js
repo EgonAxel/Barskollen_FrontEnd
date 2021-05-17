@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions, Modal } from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions, Modal, ImageBackground } from 'react-native';
 import axios from 'axios';
-import Stars from 'react-native-stars';
 import { Rating } from 'react-native-ratings';
 import { Ionicons } from '@expo/vector-icons';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as SecureStore from 'expo-secure-store';
+
+const primaryColor = '#f89c11';
+const colorOnCard = "#ffffff";          // Backbground dolor on the individual beer card
+const colorOnReviewCard = colorOnCard;  // Background color on the review cards below the individual beer
 
 async function getValueFor(key) {
  let result = await SecureStore.getItemAsync(key);
@@ -161,9 +163,9 @@ class IndividualBeer extends React.PureComponent {
             startingValue={item.rating}
             style={styles.reviewStarStyle}
             imageSize={35}
-            ratingColor='#009688'
+            ratingColor={primaryColor}
             ratingBackgroundColor='#dadada'
-            tintColor='white'
+            tintColor={colorOnReviewCard}
           />
           <Text style = {styles.reviewText}>{item.review_text} </Text>
         </View>
@@ -186,7 +188,7 @@ class IndividualBeer extends React.PureComponent {
             startingValue={item.rating}
             style={styles.reviewStarStyle}
             imageSize={35}
-            ratingColor='#009688'
+            ratingColor={primaryColor}
             ratingBackgroundColor='#dadada'
             tintColor='white'
           />
@@ -206,9 +208,9 @@ class IndividualBeer extends React.PureComponent {
             startingValue={this.state.userRating}
             style={styles.reviewStarStyle}
             imageSize={35}
-            ratingColor='#009688'
+            ratingColor={primaryColor}
             ratingBackgroundColor='#dadada'
-            tintColor='white'
+            tintColor={colorOnCard}
           />
           <Text style = {styles.averageRatingText}>{'Din rating: ' + Number(this.state.userRating) + ' av 5'}</Text>
           <View>
@@ -265,16 +267,16 @@ class IndividualBeer extends React.PureComponent {
                 <Text style = {styles.tasteClockStyle}>{'Fyllighet: ' + this.state.beer_fullness}</Text>
                 <Text style = {styles.tasteClockStyle}>{'Sötma: ' +  this.state.beer_sweetness}</Text>
               </View> */}
-              <View style = {styles.ratingStars}>
+              <View>
                 <Rating
                   type='custom'
                   readonly={true}
                   startingValue={this.state.beer.avg_rating}
                   style={styles.reviewStarStyle}
                   imageSize={35}
-                  ratingColor='#009688'
+                  ratingColor={primaryColor}
                   ratingBackgroundColor='#dadada'
-                  tintColor='white'
+                  tintColor={colorOnCard}
                 />
               </View>
               <Text style = {styles.averageRatingText}>{'Medelrating: ' + Number(this.state.beer.avg_rating).toFixed(1) + ' av 5'}</Text>
@@ -292,43 +294,46 @@ class IndividualBeer extends React.PureComponent {
   render() {
     const { recommendationsModalVisible } = this.state;
     return (
-      <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-        <FlatList
-          contentContainerStyle={{
-            backgroundColor: '#ffffff',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          data={this.state.reviews}
-          keyExtractor={(review, index) => String(index)}
-          renderItem={({ item }) => this._renderListItem(item)}
-          ListHeaderComponent={this.renderListHeader()}
-        />
-        <Modal 
-          visible={recommendationsModalVisible}
-          animationType="slide"
-          useNativeDriver={true} 
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            this.setModalVisible(!recommendationsModalVisible);}}>
-          <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
-          <Text style = {styles.recommendationText}>Här är några öl du kanske gillar {'\n'} baserat på ditt betyg.</Text>
+      <View>
+        <ImageBackground source={require('../images/humle7.jpg')} style={styles.backgroundImage} blurRadius={0} opacity={0.8}>
           <FlatList
-            style={{flex: 1}}
             contentContainerStyle={{
-              backgroundColor: '#ffffff',
+              // backgroundColor: '#ffffff',
               alignItems: 'center',
               justifyContent: 'center',
-              marginTop: 15 }}
-              data={this.state.recommendations}
-              keyExtractor={(beer, index) => String(index)}
-              renderItem={({ item }) => this._renderModalListItem(item)}/>
-          <TouchableOpacity onPress={() => this.setModalVisible(false)}>
-            <View style={styles.button}>
-              <Text style={styles.textStyle}>Stäng</Text>
-            </View>
-          </TouchableOpacity>
-        </Modal>
+            }}
+            data={this.state.reviews}
+            keyExtractor={(review, index) => String(index)}
+            renderItem={({ item }) => this._renderListItem(item)}
+            ListHeaderComponent={this.renderListHeader()}
+          />
+          <Modal 
+            style={{backgroundColor: "blue"}}
+            visible={recommendationsModalVisible}
+            animationType="slide"
+            useNativeDriver={true} 
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+              this.setModalVisible(!recommendationsModalVisible);}}>
+            <Text style = {styles.recommendationHeader}>Rekommendationer</Text>
+            <Text style = {styles.recommendationText}>Här är några öl du kanske gillar {'\n'} baserat på ditt betyg.</Text>
+            <FlatList
+              style={{flex: 1}}
+              contentContainerStyle={{
+                backgroundColor: "#ffffff",
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: 15 }}
+                data={this.state.recommendations}
+                keyExtractor={(beer, index) => String(index)}
+                renderItem={({ item }) => this._renderModalListItem(item)}/>
+            <TouchableOpacity onPress={() => this.setModalVisible(false)}>
+              <View style={styles.closeButton}>
+                <Text style={styles.closeTextStyle}>Stäng</Text>
+              </View>
+            </TouchableOpacity>
+          </Modal>
+        </ImageBackground>
       </View>
     );
   }
@@ -351,7 +356,7 @@ class IndividualBeer extends React.PureComponent {
                 startingValue={item.avg_rating}
                 style={styles.ratingStyle}
                 imageSize={28}
-                ratingColor='#009688'
+                ratingColor={primaryColor}
                 ratingBackgroundColor='#dadada'
                 tintColor='white'
               />
@@ -375,7 +380,7 @@ const styles = StyleSheet.create({
     width: 350,
     maxHeight: windowHeight,
     marginTop: 15,
-    backgroundColor: '#ffffff',
+    backgroundColor: colorOnCard,
     borderRadius: usedBorderRadius,
     borderStyle: 'solid', 
     borderColor: '#dadada',
@@ -387,6 +392,12 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.3,
     shadowRadius: 3,
+  },
+  backgroundImage: {
+    resizeMode: "cover",
+    justifyContent: "center",
+    borderRadius: usedBorderRadius,
+    overflow: "hidden"
   },
   beerTitles: {
     maxWidth: windowWidth * 0.75,
@@ -416,11 +427,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     paddingRight: 5,
   },
-  usernameIcon: {
-    color: '#009688',
-    marginTop: reviewUsernameMarginTop + 3,
-    paddingRight: 5,
-  },
   reviewText: {
     fontSize: 18,
     fontWeight: '500',
@@ -432,7 +438,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   usernameIcon: {
-    color: '#009688',
+    color: '#7e520f',
     marginTop: reviewUsernameMarginTop + 3,
     paddingRight: 5,
   },
@@ -472,14 +478,21 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 16,
     fontWeight: '600',
-    backgroundColor: '#009688',
+    backgroundColor: primaryColor,
     color: '#ffffff',
     overflow: 'hidden',
-    paddingHorizontal: 35,
+    paddingHorizontal: 25,
     paddingVertical: 15,
     marginTop: 10,
     marginBottom: 25,
-    borderRadius: usedBorderRadius,
+    borderRadius: 25,
+    shadowColor: "#9f5f04",
+    shadowOffset: {
+      width: 3,
+      height: 3 
+    },
+    shadowOpacity: 1,
+    shadowRadius: 3,
   },
   textWrap: {
     alignItems: 'center',
@@ -527,7 +540,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 15,
     width: 350,
-    backgroundColor: '#ffffff',
+    backgroundColor: colorOnReviewCard,
     borderRadius: 15,
     borderStyle: 'solid', 
     borderColor: '#dadada',
@@ -620,25 +633,21 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     alignSelf: 'flex-start'
   },
-  button: {
+  closeButton: {
     width: windowWidth * 0.4,
     alignSelf: 'center',
     fontSize: 16,
     fontWeight: '600',
-    backgroundColor: '#009688',
+    backgroundColor: primaryColor,
     color: '#ffffff',
     overflow: 'hidden',
     paddingHorizontal: 35,
     paddingVertical: 15,
     marginTop: 10,
     marginBottom: 50,
-    borderRadius: usedBorderRadius,
+    borderRadius: 25,
   },
-  buttonClose: {
-    marginBottom: 50,
-    backgroundColor: "#009688",
-  },
-  textStyle: {
+  closeTextStyle: {
     color: "white",
     fontWeight: "bold",
     textAlign: "center"
