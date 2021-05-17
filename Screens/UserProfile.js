@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { Rating } from 'react-native-ratings';
@@ -146,14 +146,25 @@ class UserProfile extends React.PureComponent {
       </View> 
         <TouchableOpacity style = {styles.logoutIcon}
             onPress={() =>
-              deleteValueFor("Username").then(() => {
-                deleteValueFor("Token").then(() => {
-                  this.props.navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Auth' }]
-                  })
-                })
-              })
+              Alert.alert(
+                'Logga ut', "Har du bärsat klart, " + this.state.username + "?",
+                [
+                  {text: 'Avbryt' },
+                  {text: 'Logga ut', onPress: () =>
+                    deleteValueFor("Username").then(() => {
+                      deleteValueFor("Token").then(() => {
+                        this.props.navigation.reset({
+                          index: 0,
+                          routes: [{ name: 'Auth' }]
+                        })
+                      })
+                    })
+                  },
+                ],
+                { 
+                  cancelable: false 
+                }
+              )
             }>
           {/* <Text style = {styles.logoutText}>Logga ut</Text> */}
           <Ionicons name="log-out-outline" size={30} color={topSectionBackgroundColor}/>
