@@ -147,7 +147,7 @@ class UserProfile extends React.PureComponent {
         <TouchableOpacity style = {styles.logoutIcon}
             onPress={() =>
               Alert.alert(
-                'Logga ut', "Har du bärsat klart, " + this.state.username + "?",
+                'Logga ut', "\n Har du bärsat klart, " + this.state.username + "?",
                 [
                   {text: 'Avbryt' },
                   {text: 'Logga ut', onPress: () =>
@@ -208,7 +208,7 @@ class UserProfile extends React.PureComponent {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, backgroundColor: topSectionBackgroundColor}}>
         <FlatList
           style={{flex: 1}}
           contentContainerStyle={{
@@ -269,10 +269,10 @@ const styles = StyleSheet.create({
     shadowColor: "#000000",
     shadowOffset: {
       width: 1,
-      height: 1
+      height: 5
     },
-    shadowOpacity: 0.4,
-    shadowRadius: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   viewStyle: {
     marginTop: 20,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     alignSelf: 'center',
     justifyContent: 'space-between', 
-    width: windowWidth * 0.8,
+    width: windowWidth * 0.89,
   },
   backgroundImage: {
     resizeMode: "cover",

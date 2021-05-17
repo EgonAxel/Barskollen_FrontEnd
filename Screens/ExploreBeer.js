@@ -5,12 +5,11 @@ import * as SecureStore from 'expo-secure-store';
 import { Rating } from 'react-native-ratings';
 import RNPickerSelect from 'react-native-picker-select';
 
-const primaryColor = '#f89c11';                       //The main color seen: on stars, bottom navigation bar, borders around filter and sorting
-const colorBehindCards = "#fffdfa";                   // Behind the individual beer cards, below the search area
-const colorSearchArea = "#ffffff";                    // Behind the search bar and filter/sorting buttons
-const colorFilterButtonsAndSearchbar = "#fffbf5";     // Color inside the filtering, sorting and search bar
-const borderColor = primaryColor;                     // Color on bourder around filtering, sorting and search bar
-
+const primaryColor = '#f89c11';
+const colorBehindCards = "#fffdfa";
+const colorSearchArea = "#ffffff";
+const colorFilterButtonsAndSearchbar = "#fffbf5";
+const borderColor = primaryColor;
 
 async function getValueFor(key) {
   let result = await SecureStore.getItemAsync(key);
@@ -31,6 +30,7 @@ class Beers extends React.PureComponent {
       orderingValue: "",
       beerType: "",
       toggleSearchMargin: 140,
+      resetButtonTextColor: "gray",
       error: null,
     };
   }
@@ -40,6 +40,16 @@ class Beers extends React.PureComponent {
   // it. Since setState() is asynchronous, the text is both passed to the state variable (for
   // the fetchMoreBeers() calls), as well as the initial API call.
   handleSearchText = (text) => {
+    if (text != "") {
+      this.setState({
+        resetButtonTextColor: "#0a0600",
+      })
+    }
+    else {
+      this.setState({
+        resetButtonTextColor: "gray"
+      })
+    }
     if (text.codePointAt(0) == 229) {
       let newText = "Å" + text.substr(1)
       this.setState({searchText: newText})
@@ -64,7 +74,7 @@ class Beers extends React.PureComponent {
   handleFilterAction = (text) => {
     this.setState({
       offset: 0,
-      beers: []
+      beers: [],
     })
     if (typeof text != "undefined") {
       this.fetchBeer(0, text, this.state.orderingValue, this.state.beerType)
@@ -77,6 +87,7 @@ class Beers extends React.PureComponent {
   resetTextInput = () => {
     this.setState({
       searchText: "",
+      resetButtonTextColor: "gray",
     })
     this.textInput.clear()
     this.handleFilterAction("")
@@ -134,8 +145,6 @@ class Beers extends React.PureComponent {
             position:'absolute',
             alignSelf: 'center',
             top: 0,
-            // left: 0,
-            // right: 0,
             borderBottomLeftRadius: 30,
             borderBottomRightRadius: 30,
             shadowColor: "#000000",
@@ -181,7 +190,7 @@ class Beers extends React.PureComponent {
     return (
       <SafeAreaView style={styles.safeAreaView}>
         <View style={styles.filterAndSearchArea}>
-          <View>
+          <View style={styles.searchBarRow}> 
             <TextInput style = {styles.searchBar}
               ref={input => { this.textInput = input }}
               useNativeAndroidPickerStyle={false}
@@ -194,7 +203,7 @@ class Beers extends React.PureComponent {
               onChangeText={this.handleSearchText}
             />
             <TouchableOpacity style = {styles.resetButton} onPress = {this.resetTextInput}>
-              <Text>Rensa</Text>
+              <Text style={{color: this.state.resetButtonTextColor}}>Rensa</Text>
             </TouchableOpacity>
           </View>
           <View style={ Platform.OS === 'ios'
@@ -247,7 +256,6 @@ class Beers extends React.PureComponent {
 
   _renderListItem(item) {
     return(
-      // Bortkommenderad från <Card>: pointerEvents="none">
       <View style = {styles.beerItem}>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('IndividualBeer', {beer_ID: item.beer_ID, beer: item, beerDataFetched: true, hasReviewed: null})}>
               <View style = {styles.beerInstance}>
@@ -340,27 +348,31 @@ const styles = StyleSheet.create({
   safeAreaView: {
     alignSelf: 'center',
   },
+  searchBarRow: {
+    flexDirection: 'row',
+  },
   searchBar: {
     marginTop: 15,
+    marginRight: 10,
     paddingHorizontal: 17,
     paddingVertical: 10,
     marginBottom: 10,
-    width: windowWidth * 0.75,
+    width: windowWidth * 0.69,
     borderColor: borderColor,
     borderWidth: 2.5,
     borderRadius: searchBarBorderRadius,
     backgroundColor: colorFilterButtonsAndSearchbar
   },
   resetButton: {
+    marginTop: 15,
+    paddingHorizontal: 17,
+    paddingVertical: 10,
+    marginBottom: 10,
     width: windowWidth * 0.2,
     alignItems: 'center',
-    fontSize: 14,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
     borderWidth: 2.5,
     borderColor: borderColor,
     borderRadius: searchBarBorderRadius,
-    color: '#0a0600',
     backgroundColor: colorFilterButtonsAndSearchbar,
   },
   filterAndSearchArea: {

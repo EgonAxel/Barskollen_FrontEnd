@@ -62,7 +62,10 @@ class ReviewBeer extends React.PureComponent {
   }
 
   getRecommendations(beer_ID, starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
-    const beer_type_encoded = encodeURIComponent(beer_type)
+    var beer_type_encoded = encodeURIComponent(beer_type)
+    if (beer_type_encoded == "null") {
+      var beer_type_encoded = ""
+    }
     getValueFor("Token").then((token) => {
       const interval = 6 - starValue
       axios

@@ -6,8 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 
 const primaryColor = '#f89c11';
-const colorOnCard = "#ffffff";          // Backbground dolor on the individual beer card
-const colorOnReviewCard = colorOnCard;  // Background color on the review cards below the individual beer
+const colorOnCard = "#ffffff";
+const colorOnReviewCard = colorOnCard;
 const colorOnProfileIcon = "#a46404";
 
 async function getValueFor(key) {
@@ -114,7 +114,10 @@ class IndividualBeer extends React.PureComponent {
   }
 
   getRecommendations(beer_ID, starValue, beer_type, beer_bitterness, beer_fullness, beer_sweetness) {
-    const beer_type_encoded = encodeURIComponent(beer_type)
+    var beer_type_encoded = encodeURIComponent(beer_type)
+    if (beer_type_encoded == "null") {
+       var beer_type_encoded = ""
+    }
     getValueFor("Token").then((token) => {
       const interval = 6 - starValue
       axios
@@ -299,7 +302,6 @@ class IndividualBeer extends React.PureComponent {
         <ImageBackground source={require('../images/humle7.jpg')} style={styles.backgroundImage} blurRadius={0} opacity={0.8}>
           <FlatList
             contentContainerStyle={{
-              // backgroundColor: '#ffffff',
               alignItems: 'center',
               justifyContent: 'center',
             }}
