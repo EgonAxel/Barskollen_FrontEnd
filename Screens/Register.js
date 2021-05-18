@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Image, ImageBackground, KeyboardAvoidingView } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Image, ImageBackground, ScrollView  } from 'react-native'
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
@@ -57,7 +57,7 @@ async function save(key, value) {
          return
       }
       axios
-      .post(`http://127.0.0.1:8000/register/`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
+      .post(`http://192.168.1.73:8000/register/`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
       .then(response => {
          if (response.request.status === 201) { 
             console.log('Genererad token: ', response.data.token);
@@ -89,7 +89,7 @@ async function save(key, value) {
       return (
          <View style = {styles.container}>
             <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}>
-               <KeyboardAvoidingView behavior="position">
+               <ScrollView>
                   <Image style = {{width: 240, height: 240, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Barskollen_logo_v2.png')}/>
                   <Text style = {styles.topTitle}>Registrera dig</Text>
                   <TextInput style = {styles.textInputFields}
@@ -160,7 +160,7 @@ async function save(key, value) {
                      }>
                      <Text style = {styles.alreadyHaveAnAccountText}> Jag har redan ett konto </Text>
                   </TouchableOpacity>
-               </KeyboardAvoidingView>
+               </ScrollView>
             </ImageBackground>
          </View>
       )
