@@ -15,6 +15,10 @@ shift- or option-click on the folder, and copy the folder's name as a search pat
 
 Open a new terminal window, write 'cd ' and enter the folder's path you just have copied, and press 'enter'.
 
+```bash
+pip install
+```
+
 # Run the application
 
 # Connect to BackEnd
