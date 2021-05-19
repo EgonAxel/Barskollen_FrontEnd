@@ -6,13 +6,13 @@ Kandidatarbete VT2021
 
 # Connect to BackEnd
 
-To connect to the database start 'Barskollen_BackEnd' (https://github.com/sjogr3n/Barskollen_BackEnd)
+To connect to the database, start 'Barskollen_BackEnd' (https://github.com/sjogr3n/Barskollen_BackEnd)
 
 Copy the path to your running API
 
 Insert the path in all '.get' & '.post' functions. 
 
-The path need to be inserted in 11 places in the following files:
+The path need to be inserted in a total of 11 places in the following files:
 
 ExploreBeer.js, IndividualBeer.js, LogIn.js, Register.js, ReviewBeer.js, USerProfile.js
 
