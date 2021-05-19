@@ -4,6 +4,9 @@ Jakob Reinholdsson, Carl Lindholm, Egon Axelsson, Simon Sjögren
 
 Kandidatarbete VT2021
 
+# Barskollen description:
+Bärskollen is a cross-platform application for ios and andriod where users are given the ability to review, preview and get recommendations of Swedish beers.
+
 # Get started
 
 Download the 'Barskollen_FrontEnd' repository as a zip (https://github.com/EgonAxel/Barskollen_FrontEnd) and place the folder locally on your computer.
