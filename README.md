@@ -21,7 +21,8 @@ Open a new terminal window, write 'cd ' and enter the folder's path you just hav
 
 Mac users will need to install [Xcode](https://developer.apple.com/xcode/) to be able to run the application.
 
-Run the command 'pip install' in your terminal window to install all the relevant dependencies
+After that, run the command 'pip install' in your terminal window.
+The command will then install all the relevant dependencies for the application.
 
 ```bash
 pip install
