@@ -15,7 +15,7 @@ Download the 'Barskollen_FrontEnd' repository as a zip (https://github.com/EgonA
 
 shift- or option-click on the folder, and copy the folder's name as a search path.
 
-Open a new terminal window, write 'cd ' and enter the folder's path you just have copied, and press 'enter'.
+Open a new terminal window, write 'cd ' to change directory and enter the folder's path you just have copied, and press enter.
 
 # Installations
 
