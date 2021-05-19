@@ -1,10 +1,12 @@
 # Barskollen_FrontEnd
 
-Jakob Reinholdsson, Carl Lindholm, Egon Axelsson, Simon Sjögren
+Bärskollen,
+
+written by Jakob Reinholdsson, Carl Lindholm, Egon Axelsson, Simon Sjögren
 
 Kandidatarbete VT2021
 
-# Barskollen description:
+# Bärskollen description:
 Bärskollen is a cross-platform application for ios and andriod where users are given the ability to review, preview and get recommendations of Swedish beers.
 
 # Get started
@@ -14,6 +16,12 @@ Download the 'Barskollen_FrontEnd' repository as a zip (https://github.com/EgonA
 shift- or option-click on the folder, and copy the folder's name as a search path.
 
 Open a new terminal window, write 'cd ' and enter the folder's path you just have copied, and press 'enter'.
+
+# Installations
+
+Mac users will need to install [Xcode](https://developer.apple.com/xcode/) to be able to run the application.
+
+Run the command 'pip install' in your terminal window to install all the relevant dependencies
 
 ```bash
 pip install
