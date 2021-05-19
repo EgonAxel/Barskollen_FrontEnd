@@ -6,7 +6,13 @@ Kandidatarbete VT2021
 
 # Get started
 
+Download the 'Barskollen_FrontEnd' repository as a zip (https://github.com/EgonAxel/Barskollen_FrontEnd) and place the folder locally on your computer.
 
+shift- or option-click on the folder, and copy the folder's name as a search path.
+
+Open a new terminal window, write 'cd ' and enter the folder's path you just have copied, and press 'enter'.
+
+# Run the application
 
 # Connect to BackEnd
 
@@ -14,7 +20,7 @@ To connect to the database, start 'Barskollen_BackEnd' (https://github.com/sjogr
 
 Copy the path to your running API
 
-Insert the path in all '.get' & '.post' functions. 
+Insert the path in all '.get' & '.post' functions (The default path is 127.0.0.1:8000). 
 
 The path need to be inserted in a total of 11 places in the following files:
 
