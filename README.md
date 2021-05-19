@@ -4,6 +4,10 @@ Jakob Reinholdsson, Carl Lindholm, Egon Axelsson, Simon Sjögren
 
 Kandidatarbete VT2021
 
+# Get started
+
+
+
 # Connect to BackEnd
 
 To connect to the database, start 'Barskollen_BackEnd' (https://github.com/sjogr3n/Barskollen_BackEnd)
