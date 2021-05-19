@@ -96,7 +96,7 @@ class Beers extends React.PureComponent {
   fetchBeer = (offset, searchText, orderingValue, beerType) => {
     getValueFor("Token").then((token) => {
       axios
-      .get(`http://192.168.1.73:8000/beer/?limit=20&offset=${offset}&search=${searchText.replace(' ','+')}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
+      .get(`http://127.0.0.1:8000/beer/?limit=20&offset=${offset}&search=${searchText.replace(' ','+')}&ordering=${orderingValue}&beer_type=${beerType}`, {headers: { 'Authorization': `Token ` + token}}) //Här behävs din egen adress till APIn
       .then(response => {
         this.setState({
           beers: this.state.beers.concat(response.data.results),
@@ -147,7 +147,7 @@ class Beers extends React.PureComponent {
             top: 0,
             borderBottomLeftRadius: 30,
             borderBottomRightRadius: 30,
-            shadowColor: "#000000",
+            shadowColor: "#0a0600",
             shadowOffset: {
               width: 1,
               height: 1
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 1,
-    shadowColor: "#000000",
+    shadowColor: "#0a0600",
     shadowOffset: {
       width: 3,
       height: 3

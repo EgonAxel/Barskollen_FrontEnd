@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 2,
-    shadowColor: "#000000",
+    shadowColor: "#0a0600",
     shadowOffset: {
       width: 3,
       height: 3
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 25,
     fontWeight: '700',
-    color: '#000000',
+    color: '#0a0600',
     marginTop: 40,
   },
   commentWrap: {
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 1,
-    shadowColor: "#000000",
+    shadowColor: "#0a0600",
     shadowOffset: {
       width: 1,
       height: 1
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     margin: 5,
     padding: 5,
-    shadowColor: "#000",
+    shadowColor: "#0a0600",
     shadowOffset: {
       width: 0,
       height: 2

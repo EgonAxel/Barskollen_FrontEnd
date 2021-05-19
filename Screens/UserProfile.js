@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     paddingTop: 10, 
     borderBottomRightRadius: 25, 
     borderBottomLeftRadius: 25,
-    shadowColor: "#000000",
+    shadowColor: "#0a0600",
     shadowOffset: {
       width: 1,
       height: 5
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 1,
-    shadowColor: "#000000",
+    shadowColor: "#0a0600",
     shadowOffset: {
       width: 1,
       height: 1
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingBottom: 20,
     fontSize: 14,
-    color: '#000000',
+    color: '#0a0600',
   },
   dateOfReview: {
     paddingLeft: 5,

@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid', 
     borderColor: '#dadada',
     borderWidth: 1,
-    shadowColor: "#000000",
+    shadowColor: "#0a0600",
     shadowOffset: {
       width: 1,
       height: 1
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     borderColor: '#dadada',
     borderWidth: 1,
     padding: 5,
-    shadowColor: "#000",
+    shadowColor: "#0a0600",
     shadowOffset: {
       width: 0,
       height: 2
