@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import RNPickerSelect from 'react-native-picker-select';
 
-const primaryColor = '#f89c11';
+const primaryColor = '#f89c12';
 const topSectionBackgroundColor = "#ffffff";
 const sortingBackgroundColor = "#fffbf5";
 const colorBehindCards = "#fafafa";

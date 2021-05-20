@@ -5,7 +5,7 @@ import { Rating } from 'react-native-ratings';
 import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 
-const primaryColor = '#f89c11';
+const primaryColor = '#f89c12';
 const colorOnCard = "#ffffff";
 const colorOnReviewCard = colorOnCard;
 const colorOnProfileIcon = "#a46404";

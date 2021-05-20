@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import { Rating } from 'react-native-ratings';
 import RNPickerSelect from 'react-native-picker-select';
 
-const primaryColor = '#f89c11';
+const primaryColor = '#f89c12';
 const colorBehindCards = "#fffdfa";
 const colorSearchArea = "#ffffff";
 const colorFilterButtonsAndSearchbar = "#fffbf5";

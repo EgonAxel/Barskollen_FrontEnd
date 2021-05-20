@@ -8,7 +8,7 @@ import UserProfile from './UserProfile';
 import IndividualBeer from './IndividualBeer';
 import ReviewBeer from './ReviewBeer';
 
-const primaryColor = "#f89c11";
+const primaryColor = "#f89c12";
 const headerColor = "#ffffff";
 const headerTextColor = "#17161b" // The text in the header is not pure black (but very close), due to eye contrast reasons
 

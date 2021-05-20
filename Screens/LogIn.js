@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, ImageBackgr
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const primaryColor = '#f89c11';
+const primaryColor = '#f89c12';
 
 async function save(key, value) {
    await SecureStore.setItemAsync(key, value);

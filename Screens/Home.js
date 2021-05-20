@@ -7,7 +7,7 @@ import MakeItRain from 'react-native-make-it-rain';
 import CountDown from 'react-native-countdown-component';
 import moment from 'moment'
 
-const primaryColor = '#f89c11';
+const primaryColor = '#f89c12';
 
 //const AppButton istället för vanlig button för att få en redigerbar knapp som funkar på både ios o andriod.
 // länk för knappar: https://blog.logrocket.com/creating-custom-buttons-in-react-native/
