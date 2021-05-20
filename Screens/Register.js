@@ -88,9 +88,9 @@ async function save(key, value) {
    render() {
       return (
          <View style = {styles.container}>
-            <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={10} opacity={0.6}>
+            <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={5} opacity={0.6}>
                <ScrollView>
-                  <Image style = {{width: 240, height: 240, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Barskollen_logo_v2.png')}/>
+                  <Image style = {{width: 240, height: 240, marginTop: 50, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Barskollen_logo_v2.png')}/>
                   <Text style = {styles.topTitle}>Registrera dig</Text>
                   <TextInput style = {styles.textInputFields}
                      underlineColorAndroid = "transparent"
