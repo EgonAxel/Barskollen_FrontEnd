@@ -4,6 +4,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 const primaryColor = '#f89c12';
+const usedBorderRadius = 25;
 
 async function save(key, value) {
    await SecureStore.setItemAsync(key, value);
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
       height: 40,
       borderColor: primaryColor,
       borderWidth: 2,
-      borderRadius: 10,
+      borderRadius: usedBorderRadius,
       backgroundColor: 'white'
    },
    submitButton: {
@@ -133,16 +134,15 @@ const styles = StyleSheet.create({
       marginBottom: 5,
       marginLeft: 40,
       height: 40,
-      borderRadius: 10,
+      borderRadius: usedBorderRadius,
    },
    registerButton: {
-      padding: 5,
+      padding: 8,
       marginTop: 20,
       marginRight: 80,
       marginBottom: 5,
       marginLeft: 80,
-      height: 30,
-      borderRadius: 10,
+      borderRadius: usedBorderRadius,
       backgroundColor: 'white',
    },
    submitButtonText: {

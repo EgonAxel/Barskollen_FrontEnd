@@ -319,8 +319,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginVertical: 10,
     paddingVertical: 3,
-    paddingHorizontal: 10,
-    borderRadius: 10,
+    paddingHorizontal: 12,
+    borderRadius: 25,
   },
   logoutText: {
     fontSize: 16,
