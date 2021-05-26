@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Image, ImageBackground, ScrollView  } from 'react-native'
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { KeyboardAvoidingView } from 'react-native';
 
 const primaryColor = '#f89c12';
 const usedBorderRadius = 25;
@@ -57,8 +58,9 @@ async function save(key, value) {
          Alert.alert('Födelsedatum saknas','Fyll i födelsedatum')
          return
       }
+      let dob_formatted = dob.substr(0, 4) + "-" + dob.substr(4, 2) + "-" + dob.substr(6, 2)
       axios
-      .post(`http://192.168.1.73:8000/register/`, {username:username, password:pass, email:email, date_of_birth:dob}) //Här behövs din egen adress till APIn
+      .post(`http://192.168.10.132:8000/register/`, {username: username, password: pass, email: email, date_of_birth: dob_formatted}) //Här behövs din egen adress till APIn
       .then(response => {
          if (response.request.status === 201) { 
             console.log('Genererad token: ', response.data.token);
@@ -78,7 +80,7 @@ async function save(key, value) {
             Alert.alert('Inte riktigt ännu','Du behöver vara minst 18 år för att registrera ett konto.')
          }
          else if (typeof error.response.data.date_of_birth == 'object') {
-            Alert.alert('Felaktigt födelsedatum','Ange ett födelsedatum på formatet ÅÅÅÅ-MM-DD')
+            Alert.alert('Felaktigt födelsedatum','Ange ett födelsedatum på formatet ÅÅÅÅMMDD')
          }
          else if (error.response.status !== 201) {
             Alert.alert('Kunde inte skapa konto','Kontrollera att fälten fyllts i korrekt')
@@ -90,78 +92,85 @@ async function save(key, value) {
       return (
          <View style = {styles.container}>
             <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={5} opacity={0.6}>
-               <ScrollView>
-                  <Image style = {{width: 240, height: 240, marginTop: 50, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Barskollen_logo_v2.png')}/>
-                  <Text style = {styles.topTitle}>Registrera dig</Text>
-                  <TextInput style = {styles.textInputFields}
-                     underlineColorAndroid = "transparent"
-                     placeholder = "Användarnamn"
-                     placeholderTextColor = "grey"
-                     autoCapitalize = "none"
-                     returnKeyType="next"
-                     onChangeText = {this.handleUsername}
-                     onSubmitEditing={() => { this.emailInput.focus(); }}
-                     blurOnSubmit={false}/>
-                     
-                  <TextInput style = {styles.textInputFields}
-                     ref={(input) => { this.emailInput = input; }}
-                     underlineColorAndroid = "transparent"
-                     placeholder = "Email-adress"
-                     placeholderTextColor = "grey"
-                     autoCapitalize = "none"
-                     returnKeyType="next"
-                     onChangeText = {this.handleEmail}
-                     onSubmitEditing={() => { this.birthDateInput.focus(); }}
-                     blurOnSubmit={false}/>
+               <KeyboardAvoidingView behavior='position'>
+                  <ScrollView>
+                     <Image style = {{width: 240, height: 240, marginTop: 50, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Barskollen_logo_v2.png')}/>
+                     <Text style = {styles.topTitle}>Registrera dig</Text>
+                     <TextInput style = {styles.textInputFields}
+                        underlineColorAndroid = "transparent"
+                        placeholder = "Användarnamn"
+                        placeholderTextColor = "grey"
+                        autoCapitalize = "none"
+                        textContentType = "username"
+                        returnKeyType="next"
+                        onChangeText = {this.handleUsername}
+                        onSubmitEditing={() => { this.emailInput.focus(); }}
+                        blurOnSubmit={false}/>
+                        
+                     <TextInput style = {styles.textInputFields}
+                        ref={(input) => { this.emailInput = input; }}
+                        underlineColorAndroid = "transparent"
+                        placeholder = "Email-adress"
+                        placeholderTextColor = "grey"
+                        autoCapitalize = "none"
+                        textContentType = "emailAddress"
+                        returnKeyType="next"
+                        onChangeText = {this.handleEmail}
+                        onSubmitEditing={() => { this.birthDateInput.focus(); }}
+                        blurOnSubmit={false}/>
 
-                  <TextInput style = {styles.textInputFields}
-                     ref={(input) => { this.birthDateInput = input; }}
-                     underlineColorAndroid = "transparent"
-                     placeholder = "Födelsedatum (ÅÅÅÅ-MM-DD)"
-                     placeholderTextColor = "grey"
-                     autoCapitalize = "none"
-                     returnKeyType="next"
-                     onChangeText = {this.handleDateOfBirth}
-                     onSubmitEditing={() => { this.passwordInput.focus(); }}
-                     blurOnSubmit={false}/>
+                     <TextInput style = {styles.textInputFields}
+                        ref={(input) => { this.birthDateInput = input; }}
+                        underlineColorAndroid = "transparent"
+                        placeholder = "Födelsedatum (ÅÅÅÅMMDD)"
+                        placeholderTextColor = "grey"
+                        keyboardType = "numeric"
+                        autoCapitalize = "none"
+                        textContentType = "none"
+                        returnKeyType="next"
+                        onChangeText = {this.handleDateOfBirth}
+                        onSubmitEditing={() => { this.passwordInput.focus(); }}
+                        blurOnSubmit={false}/>
 
-                  <TextInput secureTextEntry={true} style = {styles.textInputFields}
-                     ref={(input) => { this.passwordInput = input; }}
-                     underlineColorAndroid = "transparent"
-                     placeholder = "Lösenord"
-                     placeholderTextColor = "grey"
-                     autoCapitalize = "none"
-                     returnKeyType="next"
-                     onChangeText = {this.handlePassword}
-                     onSubmitEditing={() => { this.confirmPasswordInput.focus(); }}
-                     blurOnSubmit={false}/>
+                     <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                        ref={(input) => { this.passwordInput = input; }}
+                        underlineColorAndroid = "transparent"
+                        placeholder = "Lösenord"
+                        placeholderTextColor = "grey"
+                        autoCapitalize = "none"
+                        returnKeyType="next"
+                        onChangeText = {this.handlePassword}
+                        onSubmitEditing={() => { this.confirmPasswordInput.focus(); }}
+                        blurOnSubmit={false}/>
 
-                  <TextInput secureTextEntry={true} style = {styles.textInputFields}
-                     ref={(input) => { this.confirmPasswordInput = input; }}
-                     underlineColorAndroid = "transparent"
-                     placeholder = "Bekräfta lösenord"
-                     placeholderTextColor = "grey"
-                     autoCapitalize = "none"
-                     returnKeyType="go"
-                     onChangeText = {this.handleConfirmPassword}/>
+                     <TextInput secureTextEntry={true} style = {styles.textInputFields}
+                        ref={(input) => { this.confirmPasswordInput = input; }}
+                        underlineColorAndroid = "transparent"
+                        placeholder = "Bekräfta lösenord"
+                        placeholderTextColor = "grey"
+                        autoCapitalize = "none"
+                        textContentType = "none"
+                        returnKeyType="go"
+                        onChangeText = {this.handleConfirmPassword}/>
 
-                  <TouchableOpacity
-                     style = {styles.registerButton}
-                     onPress = {
-                        () => this.registerUser(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
-                     }>
+                     <TouchableOpacity
+                        style = {styles.registerButton}
+                        onPress = {
+                           () => this.registerUser(this.state.username,  this.state.password, this.state.confirmPassword, this.state.email, this.state.dateOfBirth)
+                        }>
 
-                     <Text style = {styles.registerButtonText}> Registrera konto </Text>
-                  </TouchableOpacity>
+                        <Text style = {styles.registerButtonText}> Registrera konto </Text>
+                     </TouchableOpacity>
 
-                  <TouchableOpacity
-                     style = {styles.alreadyHaveAnAccount}
-                     onPress = {
-                        () => this.props.navigation.replace('LoginScreen')
-                     }>
-                     <Text style = {styles.alreadyHaveAnAccountText}> Jag har redan ett konto </Text>
-                  </TouchableOpacity>
-               </ScrollView>
+                     <TouchableOpacity
+                        style = {styles.alreadyHaveAnAccount}
+                        onPress = {
+                           () => this.props.navigation.replace('LoginScreen')
+                        }>
+                        <Text style = {styles.alreadyHaveAnAccountText}> Jag har redan ett konto </Text>
+                     </TouchableOpacity>
+                  </ScrollView>
+               </KeyboardAvoidingView>
             </ImageBackground>
          </View>
       )
