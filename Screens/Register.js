@@ -60,7 +60,7 @@ async function save(key, value) {
       }
       let dob_formatted = dob.substr(0, 4) + "-" + dob.substr(4, 2) + "-" + dob.substr(6, 2)
       axios
-      .post(`http://192.168.10.132:8000/register/`, {username: username, password: pass, email: email, date_of_birth: dob_formatted}) //Här behövs din egen adress till APIn
+      .post(`http://192.168.1.73:8000/register/`, {username: username, password: pass, email: email, date_of_birth: dob_formatted}) //Här behövs din egen adress till APIn
       .then(response => {
          if (response.request.status === 201) { 
             console.log('Genererad token: ', response.data.token);
@@ -92,8 +92,8 @@ async function save(key, value) {
       return (
          <View style = {styles.container}>
             <ImageBackground source={require('../images/login.jpg')} style={styles.backgroundImage} blurRadius={5} opacity={0.6}>
-               <KeyboardAvoidingView behavior='position'>
-                  <ScrollView>
+               <KeyboardAvoidingView  behavior={Platform.OS === "ios" ? "position" : null}>
+                  <ScrollView> 
                      <Image style = {{width: 240, height: 240, marginTop: 50, resizeMode: 'contain', alignSelf: 'center'}} source = {require('../images/Barskollen_logo_v2.png')}/>
                      <Text style = {styles.topTitle}>Registrera dig</Text>
                      <TextInput style = {styles.textInputFields}
@@ -169,7 +169,7 @@ async function save(key, value) {
                         }>
                         <Text style = {styles.alreadyHaveAnAccountText}> Jag har redan ett konto </Text>
                      </TouchableOpacity>
-                  </ScrollView>
+                  </ScrollView> 
                </KeyboardAvoidingView>
             </ImageBackground>
          </View>
